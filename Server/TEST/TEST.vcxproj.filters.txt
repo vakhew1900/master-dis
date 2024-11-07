@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Исходные файлы\TestComparisonGraph">
+      <UniqueIdentifier>{b22750d3-a0bb-4bbb-b010-06ddcfd23620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph">
+      <UniqueIdentifier>{3d881b9d-7e29-4fa5-beff-ce7c235111ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestBiggestCommonSubgraphLabels">
+      <UniqueIdentifier>{57eeda8c-b91d-4dc5-ac91-82e862000ab6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestLabelsGenerator">
+      <UniqueIdentifier>{b29a7c5b-b187-4920-864f-f2a25eca9690}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestSubgraph">
+      <UniqueIdentifier>{9296591a-5d75-4625-8fdf-a0d29c4b6439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestEqualSubgraph">
+      <UniqueIdentifier>{a9f3d16a-8b92-493e-aeb0-83263027dfb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGitLogHandler">
+      <UniqueIdentifier>{9ac87eb1-02ae-4db7-8c56-8461749a19f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGitLogHandler\TestGenerateListOfEdges">
+      <UniqueIdentifier>{34771bef-60d9-46f1-8e7e-345d4b1c766f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestGraphConstructor">
+      <UniqueIdentifier>{31be025e-f139-4ce1-a7a3-ef91f6f5af45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestGetNumberVertexes">
+      <UniqueIdentifier>{c6caa220-e62d-4e76-ba12-0c5158328464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestGetTails">
+      <UniqueIdentifier>{5b16fbef-a335-4206-82bf-692789b0053a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestGetLabels">
+      <UniqueIdentifier>{2b3f1084-e73f-42dd-9932-db4926b95c99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestGetVertexes">
+      <UniqueIdentifier>{0c3a89dc-41ad-4488-b317-c93e10c99962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestAllLabels">
+      <UniqueIdentifier>{80cabbdc-d6e9-4d5b-986b-4268547822b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestAddEdge">
+      <UniqueIdentifier>{da244b95-c001-4646-bf9d-5a407258bf18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestRemoveEdge">
+      <UniqueIdentifier>{ae824cb3-d68e-45f9-9cb6-c0b8e7ff092b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestAddLabel">
+      <UniqueIdentifier>{aa22956c-42c0-4641-85c3-261e35293a20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestRemoveLabel">
+      <UniqueIdentifier>{37fc8e38-1274-4280-8616-f0c252780f03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestSortedVertexesInformationWithTransformedLabels">
+      <UniqueIdentifier>{15eccc14-163c-4ffe-89fb-325bc37ab4fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\TestGraph\TestCombinations">
+      <UniqueIdentifier>{b7accbb1-829c-4b50-bb60-0fdeb793d09f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBiggestCommonSubgraph.cpp">
+      <Filter>Исходные файлы\TestGraph\TestBiggestCommonSubgraphLabels</Filter>
+    </ClCompile>
+    <ClCompile Include="TestComparisonGraph.cpp">
+      <Filter>Исходные файлы\TestComparisonGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLabelsGenerator.cpp">
+      <Filter>Исходные файлы\TestLabelsGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSubgraph.cpp">
+      <Filter>Исходные файлы\TestGraph\TestSubgraph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestEqualSubgraph.cpp">
+      <Filter>Исходные файлы\TestGraph\TestEqualSubgraph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestConstructor.cpp">
+      <Filter>Исходные файлы\TestGraph\TestGraphConstructor</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGetNumberVertexes.cpp">
+      <Filter>Исходные файлы\TestGraph\TestGetNumberVertexes</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGetTails.cpp">
+      <Filter>Исходные файлы\TestGraph\TestGetTails</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGetLabels.cpp">
+      <Filter>Исходные файлы\TestGraph\TestGetLabels</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGetVertexes.cpp">
+      <Filter>Исходные файлы\TestGraph\TestGetVertexes</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAddEdge.cpp">
+      <Filter>Исходные файлы\TestGraph\TestAddEdge</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAddLabel.cpp">
+      <Filter>Исходные файлы\TestGraph\TestAddLabel</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRemoveEdge.cpp">
+      <Filter>Исходные файлы\TestGraph\TestRemoveEdge</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRemoveLabel.cpp">
+      <Filter>Исходные файлы\TestGraph\TestRemoveLabel</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAllLabels.cpp">
+      <Filter>Исходные файлы\TestGraph\TestAllLabels</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCombinations.cpp">
+      <Filter>Исходные файлы\TestGraph\TestCombinations</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSortedVertexesInformationWithTransformedLabels.cpp">
+      <Filter>Исходные файлы\TestGraph\TestSortedVertexesInformationWithTransformedLabels</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGenerateListOfEdges.cpp">
+      <Filter>Исходные файлы\TestGitLogHandler\TestGenerateListOfEdges</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

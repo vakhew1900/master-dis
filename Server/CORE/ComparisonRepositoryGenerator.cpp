@@ -194,6 +194,7 @@ int ComparisonRepositoryGenerator::DetermineNumberByCommit(Commit& commit) {
 void ComparisonRepositoryGenerator::cmp(string actual_link, string expected_link) {
     setlocale(LC_ALL, "Russian");
 
+    // получить репозитории
     const auto actual_repository = GenerateRepositoryFromGitLink(actual_link);
     const auto expected_repository = GenerateRepositoryFromGitLink(expected_link);
 

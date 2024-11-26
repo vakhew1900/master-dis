@@ -9,6 +9,12 @@ int LabelsGenerator::GetLabelByID(int label_id) const {
 }
 
 int LabelsGenerator::GenerateLabelId(const StringLabel& string_label) {
+	/*
+	* Для каждого метки проверяем есть ли у нас уже такая метка
+	* если есть то присваем ей номер метки иначе создаем новый номер метки
+	* делаем сопостовление id метки и номера
+	*/
+
 	++id_counter;
 	StringLabel copy = string_label;
 	sort(copy.value.begin(), copy.value.end());
@@ -39,17 +45,22 @@ LabelsGenerator::LabelsGenerator(const Repository& first_repository, const Repos
 
 	vector<vector<vector<string>>> first_repository_files;
 	vector<vector<vector<string>>> second_repository_files;
+	// получаем список очищенныз ханков без мета информации
 	for (const auto& commit : first_repository.commits) {
 		first_repository_files.push_back(PrepareClear(commit.diffs));
 	}
 	for (const auto& commit : second_repository.commits) {
 		second_repository_files.push_back(PrepareClear(commit.diffs));
 	}
+	
+	// получаем строки с контекстом
 	vector<StringLabel> labels_first_repository = GetStringLabels(first_repository_files);
 	vector<StringLabel> labels_second_repository = GetStringLabels(second_repository_files);
 	set<StringLabel> all_labels(labels_first_repository.begin(), labels_first_repository.end());
 
 	bool found_label_splitting = 1;
+
+	// пока присутствуют метки которые отсутствуют в сете всех меток
 	while (found_label_splitting) { // а если различий нет?
 		found_label_splitting = 0;
 		for (const StringLabel& label_from_all : all_labels) {
@@ -57,17 +68,17 @@ LabelsGenerator::LabelsGenerator(const Repository& first_repository, const Repos
 				StringLabel common_part = CommonStringsWithContext(label_from_all, label_from_second);
 				StringLabel difference_part_one = DifferenceStringsWithContext(label_from_all, label_from_second);
 				StringLabel difference_part_two = DifferenceStringsWithContext(label_from_second, label_from_all);
-				if (!all_labels.count(common_part) && !common_part.value.empty()) {
+				if (!all_labels.count(common_part) && !common_part.value.empty()) { // общая часть отстутсвует в сете всех меток
 					found_label_splitting = 1;
 					all_labels.insert(common_part);
 				}
 
-				if (!all_labels.count(difference_part_one) && !difference_part_one.value.empty()) {
+				if (!all_labels.count(difference_part_one) && !difference_part_one.value.empty()) { // разница 1 и 2 репозитория отсуствует в списке всех меток
 					found_label_splitting = 1;
 					all_labels.insert(difference_part_one);
 				}
 
-				if (!all_labels.count(difference_part_two) && !difference_part_two.value.empty()) {
+				if (!all_labels.count(difference_part_two) && !difference_part_two.value.empty()) { // разница 2 и 1 репозитория отсутсвует в списке всех меток
 					found_label_splitting = 1;
 					all_labels.insert(difference_part_two);
 				}
@@ -87,19 +98,21 @@ LabelsGenerator::LabelsGenerator(const Repository& first_repository, const Repos
 	unordered_map<int, multiset<int>> first_labels;
 	unordered_map<int, multiset<int>> second_labels;
 
-	for (const StringLabel& string_label : all_labels) {
+	for (const StringLabel& string_label : all_labels) { // для всех найденных меток
 		if (string_label.value.empty()) {
 			continue;
 		}
-		for (int i = 0; i < labels_first_repository.size(); ++i) {
+
+		// добавляем к каждому коммиту 1 репозитория список id метки если она присутсвтует в нем
+		for (int i = 0; i < labels_first_repository.size(); ++i) { 
 			int commit_number = first_repository_commit_numbers[i];
-			while (IsSubset(labels_first_repository[i].value, string_label.value)) {
+			while (IsSubset(labels_first_repository[i].value, string_label.value)) { 
 				RemoveSubset(labels_first_repository[i].value, string_label.value);
 				first_labels[commit_number].insert(GenerateLabelId(string_label));
 			}
 		}
 
-
+		// добавляем к каждому коммиту 2 репозитория список id метки если она присутсвтует в нем
 		for (int i = 0; i < labels_second_repository.size(); ++i) {
 			int commit_number = second_repository_commit_numbers[i];
 
@@ -110,6 +123,7 @@ LabelsGenerator::LabelsGenerator(const Repository& first_repository, const Repos
 		}
 	}
 
+	// возвращаем список  id меток для первого и второго репозитория
 	vertexex_to_labelsids = { first_labels , second_labels };
 }
 
@@ -125,7 +139,8 @@ LabelsGenerator::LabelsGenerator(pair<unordered_map<int, multiset<int>>, unorder
 	this->labels_id_to_label = labels_id_to_label;
 }
 
-
+/* Получает из текста git diff отдельные ханки без мета информции
+*/
 HunkStringWithContext LabelsGenerator::PrepareClear(const vector<vector<string>>& commit_diff) {
 	//тут еще на ханки разбивается
 	vector<vector<string>> result;
@@ -177,7 +192,9 @@ HunkStringWithContext LabelsGenerator::PrepareClear(const vector<vector<string>>
 	return result;
 }
 
-
+/*
+* Получает список меток из ханков.
+*/
 vector<LabelsGenerator::StringLabel> LabelsGenerator::GetStringLabels(const vector<HunkStringWithContext>& repository_hunks) {
 	//тут отношение коммит - коммит, так как лэйбл здесь один большой для всего коммита
 	vector<StringLabel> result;
@@ -187,8 +204,8 @@ vector<LabelsGenerator::StringLabel> LabelsGenerator::GetStringLabels(const vect
 		for (const auto& hunk : commit) {
 			for (int i = 0; i < hunk.size(); ++i) {
 				StringWithContext string_with_context;
-				if (hunk[i][0] == '+' || hunk[i][0] == '-') {
-					for (int j = max(i - 3, 0); j <= min(i + 3, ((int) hunk.size()) - 1); ++j) {
+				if (hunk[i][0] == '+' || hunk[i][0] == '-') { // если строка является изменением 
+					for (int j = max(i - 3, 0); j <= min(i + 3, ((int) hunk.size()) - 1); ++j) { // то добавляем в строку с контекстом помимо самой строки еще три сверзу и сниху
 						string_with_context.push_back(hunk[j]);
 					}
 					label.value.push_back(string_with_context);
@@ -202,6 +219,8 @@ vector<LabelsGenerator::StringLabel> LabelsGenerator::GetStringLabels(const vect
 }
 
 
+/* Возвращает список строк которые содержатся в обоих строковых заметках
+*/
 LabelsGenerator::StringLabel LabelsGenerator::CommonStringsWithContext(const StringLabel& first, const StringLabel& second) {
 	LabelsGenerator::StringLabel result;
 
@@ -228,6 +247,8 @@ LabelsGenerator::StringLabel LabelsGenerator::CommonStringsWithContext(const Str
 	return result;
 }
 
+/* Возвращает список строк которые содержатся в первой строковой метке и не содержится во второй
+*/
 LabelsGenerator::StringLabel LabelsGenerator::DifferenceStringsWithContext(const StringLabel& first, const StringLabel& second) {
 	LabelsGenerator::StringLabel result;
 
@@ -250,6 +271,9 @@ LabelsGenerator::StringLabel LabelsGenerator::DifferenceStringsWithContext(const
 	return result;
 }
 
+/* Проверяет содержит ли значение подмножество
+* 
+*/
 bool LabelsGenerator::IsSubset(const vector<vector<string>>& value, const vector<vector<string>>& subset) {
 	multiset<vector<string>> value_set(value.begin(), value.end());
 
@@ -265,6 +289,10 @@ bool LabelsGenerator::IsSubset(const vector<vector<string>>& value, const vector
 	return true;
 }
 
+/* Удаление подмножества
+* @param value - значение откуда удалаляется множество
+* @param subset - множество
+*/
 void LabelsGenerator::RemoveSubset(vector<vector<string>>& value, const vector<vector<string>>& subset) {
 	multiset<vector<string>> value_set(value.begin(), value.end());
 

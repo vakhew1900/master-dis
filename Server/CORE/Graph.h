@@ -53,7 +53,7 @@ public:
     *   в данном графе остаются только требуемые вершины, а также дуги между ними,
     *   также добавляется дуга между вершинами from и to добавляется, если в исходном под графе
     *   был путь из вершины from в вершину to, и все вершины в пути между from и to удалены
-    *   \param[in] labels - метки вершин входящие в подграф
+    *   \param[in] labels - id меток вершин входящие в подграф
     *   \return подграф
     */
     Graph Subgraph(const multiset<int>& labels) const;
@@ -110,8 +110,8 @@ public:
 private:
     //! Идентификаторы вершин
     multiset<int> vertexes;
-    unordered_map<int, multiset<int>> tails_list;
-    unordered_map<int, multiset<int>> labels_list;
+    unordered_map<int, multiset<int>> tails_list; // вершина и мультисет ее детей
+    unordered_map<int, multiset<int>> labels_list; // вершина и список id меток для нее
     LabelsGenerator labels_generator;
 
     /*! \brief Рекурсивная функция генерации всех возможных сочнтаний из n по k

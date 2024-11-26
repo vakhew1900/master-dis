@@ -48,7 +48,7 @@ Graph::Graph(const vector<pair<int, int>>& list_of_edges,
         AddEdge(edge.first, edge.second);
     }
     this->labels_generator = labels_generator;
-    if (is_first) {
+    if (is_first) { // возвращает список id в зависимости от того на каком какой этот сейчас граф
         for (const auto& vertex_and_labels : labels_generator.vertexex_to_labelsids.first) {
             for (const auto& label : vertex_and_labels.second) {
                 AddLabel(vertex_and_labels.first, label);
@@ -171,7 +171,9 @@ Graph Graph::Subgraph(const multiset<int>& labels) const {
     Graph subgraph = *this;
     //todo не очень круто, что здесь удаляемые лейблы, а не нормальные
    
-    for (auto& vertex_to_label: subgraph.labels_list) {
+
+    // удалить метки из мультимножетсва меток в сете пар метки вершины
+    for (auto& vertex_to_label: subgraph.labels_list) { 
         for (auto label : labels) {
             vertex_to_label.second.erase(label);
         }
@@ -181,12 +183,13 @@ Graph Graph::Subgraph(const multiset<int>& labels) const {
         //const auto& reachable_matrix = ReachableMatrix();
 
         multiset<int> vertexes_copy = subgraph.vertexes;
+
         for (auto vertex : vertexes_copy) {
-            if (subgraph.labels_list[vertex].empty()) {
+            if (subgraph.labels_list[vertex].empty()) { // вершина не содержит больше меток (пустая)
                 subgraph.labels_list.erase(vertex);
                 subgraph.vertexes.erase(vertex);
                 //todo надо соптимайзить эту штуку, но в будущем
-                for (const auto& u: vertexes) {
+                for (const auto& u: vertexes) {  // соединить ее родителей с ее предками
                     if (GetTails(u).count(vertex)) {
                         for (auto v : GetTails(vertex)){
                             if (subgraph.vertexes.count(u) && subgraph.vertexes.count(v))
@@ -199,8 +202,8 @@ Graph Graph::Subgraph(const multiset<int>& labels) const {
     }
 
     for (auto vertex: vertexes) {
-        if (!subgraph.vertexes.count(vertex)) {
-            subgraph.tails_list.erase(vertex);
+        if (!subgraph.vertexes.count(vertex)) {  // подграф не содержит вершину
+            subgraph.tails_list.erase(vertex); // удалить связь с родителями вершины
             for (const auto& u: vertexes) {
                 if (subgraph.GetTails(u).count(vertex)) {
                     subgraph.RemoveEdge(u, vertex);
@@ -240,6 +243,8 @@ pair<multiset<int>, multiset<int>> Graph::BiggestCommonSubgraph(
     const auto first_graph_all_labels = first_graph.AllLabels();
     const auto second_graph_all_labels = second_graph.AllLabels();
 
+
+    // создаем общий список всех меток
     multiset<int> all_labels;
 
     for (auto label : first_graph_all_labels) {
@@ -270,8 +275,8 @@ pair<multiset<int>, multiset<int>> Graph::BiggestCommonSubgraph(
 
     const int max_possible_count_error = all_labels.size();
 
-   
-    for (int count_error = 0; count_error < max_possible_count_error; ++count_error) {
+   // проверяем различные комбинации 
+    for (int count_error = 0; count_error < max_possible_count_error; ++count_error) { // идем по ходу увелечения возможных ошибок
         vector<multiset<int>> combinations;
         Combinations(max_possible_count_error, max_possible_count_error - count_error, combinations);
 
@@ -279,12 +284,13 @@ pair<multiset<int>, multiset<int>> Graph::BiggestCommonSubgraph(
             auto end = std::chrono::system_clock::now();
             std::chrono::duration<double> elapsed_seconds = end - start;
             if (elapsed_seconds.count() > 45) {
+                //TODO заменить на выкидывание ошибки
                 cout << "Программа не может найти ошибки, так как их слишком много\n";
                 system("pause");
                 exit(0);
             }
             //combination = { 1, 2, 4, 5 };
-            multiset<int> current_labels;
+            multiset<int> current_labels; // список удаляемых заметок
             for (int i = 0; i < max_possible_count_error; ++i){
                 if (!combination.count(i)) {
                     current_labels.insert(all_labels_vector[i]);

@@ -177,6 +177,7 @@
     <ClCompile Include="TestGetNumberVertexes.cpp" />
     <ClCompile Include="TestGetTails.cpp" />
     <ClCompile Include="TestGetVertexes.cpp" />
+    <ClCompile Include="TestMadeListOfEdgesFromListOfEdgesCommit.cpp" />
     <ClCompile Include="TestRemoveEdge.cpp" />
     <ClCompile Include="TestRemoveLabel.cpp" />
     <ClCompile Include="TestSortedVertexesInformationWithTransformedLabels.cpp" />

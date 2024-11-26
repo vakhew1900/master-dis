@@ -155,8 +155,6 @@ namespace TEST_SORTED_VERTEXES_INFORMATION_WITH_TRANSFORMED_LABELS
 			auto actual = Graph(actual_list_of_edges, actual_labels_generator, true);
 
 
-
-
 			Assert::IsTrue(
 				expected.SortedVertexesInformationWithTransformedLabels() == actual.SortedVertexesInformationWithTransformedLabels());
 		}

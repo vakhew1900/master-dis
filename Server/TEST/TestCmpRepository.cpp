@@ -473,7 +473,7 @@ namespace TEST_CMP_REPOSITORIES
 		}
 
 
-		TEST_METHOD(RepositoryHasTwoBranchBiggestSubgraphNotEqualRepository) // показать ОА
+		TEST_METHOD(RepositoryHasSeveralBranchBiggestSubgraphNotEqualRepository) // показать ОА
 		{
 			Commit commit = Commit("actual hash", { firstDiff }, 1);
 			Commit commit2 = Commit("actual hash 2", { secondDiff }, 2);
@@ -519,6 +519,56 @@ namespace TEST_CMP_REPOSITORIES
 				Assert::IsTrue(expectedErrorCommitRepository == actualErrorCommitRepository);
 			}
 
+		}
+
+
+
+		TEST_METHOD(RepositoryHasMerge) // показать ОА
+		{
+			Commit commit = Commit("actual hash", { firstDiff }, 1);
+			Commit commit2 = Commit("actual hash 2", { secondDiff }, 2);
+			Commit commit3 = Commit("actual hash 3", { thirdDiff }, 3);
+			Commit commit4 = Commit("actual hash 4", { fourthDiff }, 4);
+			Commit commit5 = Commit("actual hash 5", { fithDiff }, 5);
+
+			Commit expectedCommit = Commit("expected hash", { firstDiff }, 1);
+			Commit expectedCommit2 = Commit("expected hash 2", { secondDiff }, 2);
+			Commit expectedCommit3 = Commit("expected hash 3", { thirdDiff }, 3);
+			Commit expectedCommit4 = Commit("expected hash 4", { fourthDiff }, 4);
+			Commit expectedCommit5 = Commit("expected hash 5", { fithDiff }, 5);
+
+			{
+				Repository actualRepository({ commit,commit2, commit3, commit4, commit5 }, { {1, 2}, {2, 3}, { 2, 4 }, { 3, 5 }, {4, 5} });
+				Repository expectedRepository({ expectedCommit, expectedCommit2, expectedCommit3, expectedCommit4, expectedCommit5 }, { {1, 2}, {2, 3}, { 2, 4 }, { 3, 5 }, {4, 5} });
+
+				ComparisonRepositoryGenerator generator;
+				ErrorCommitRepository actualErrorCommitRepository = generator.cmp(expectedRepository, actualRepository);
+
+				ErrorCommitRepository expectedErrorCommitRepository({}, {}, {});
+				Assert::IsTrue(expectedErrorCommitRepository == actualErrorCommitRepository);
+			}
+
+			{
+				Repository actualRepository({ commit,commit2, commit3, commit4, commit5 }, { {1, 2}, {2, 3}, { 2, 4 }, { 3, 5 }, {4, 5} });
+				Repository expectedRepository({ expectedCommit, expectedCommit2, expectedCommit4, expectedCommit5 }, { {1, 2}, { 2, 4 }, { 2, 5 }, {4, 5} });
+
+				ComparisonRepositoryGenerator generator;
+				ErrorCommitRepository actualErrorCommitRepository = generator.cmp(expectedRepository, actualRepository);
+
+				ErrorCommitRepository expectedErrorCommitRepository({}, {}, {commit3});
+				Assert::IsTrue(expectedErrorCommitRepository == actualErrorCommitRepository);
+			}
+
+			{
+				Repository actualRepository({ commit,commit2, commit4, commit5 }, { {1, 2}, { 2, 4 }, { 2, 5 }, {4, 5} });
+				Repository expectedRepository({ expectedCommit, expectedCommit2, expectedCommit3, expectedCommit4, expectedCommit5 }, { {1, 2}, {2, 3}, { 2, 4 }, { 3, 5 }, {4, 5} });
+
+				ComparisonRepositoryGenerator generator;
+				ErrorCommitRepository actualErrorCommitRepository = generator.cmp(expectedRepository, actualRepository);
+
+				ErrorCommitRepository expectedErrorCommitRepository({}, { expectedCommit3 }, {});
+				Assert::IsTrue(expectedErrorCommitRepository == actualErrorCommitRepository);
+			}
 		}
 	};
 

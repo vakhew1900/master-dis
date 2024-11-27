@@ -69,7 +69,7 @@ void ComparisonRepositoryGenerator::GenerateVertexesForComparisonRepository(
     // надо сделать новый граф (ComparisonGraph) и у него сделать для каждой вершины соответсвие в актуальном и ожидаемом графе
     // по этому графу довольно легко можно построить будет (ComparisonRepository)
     // надо бы еще хранить номер ветки, чтобы вычислять дельту в коммите
-    //TODO: тот ебейший алгоритм
+    //TODO: тот  алгоритм
     /*
     //! Добавляем коммиты актуального репозитория
     for (auto vertex : actual_repository.commits) {
@@ -278,4 +278,132 @@ void ComparisonRepositoryGenerator::cmp(string actual_link, string expected_link
     if (count_errors == 0) {
         cout << "Ошибок найдено не было\n";
     }
+}
+
+
+ErrorCommitRepository ComparisonRepositoryGenerator::cmp(Repository& expected_repository, Repository& actual_repository) {
+
+    const vector<pair<int, int>> actual_repository_edges(actual_repository.edges.begin(), actual_repository.edges.end());
+    const vector<pair<int, int>> expectedl_repository_edges(expected_repository.edges.begin(), expected_repository.edges.end());
+
+    LabelsGenerator labels_generator(actual_repository, expected_repository);
+
+    const auto actual_graph = Graph(actual_repository_edges, labels_generator, true); //, labels.first);
+    const auto expected_graph = Graph(expectedl_repository_edges, labels_generator, false);//, labels.second);
+
+    const auto& labels_ids = Graph::BiggestCommonSubgraph((actual_graph), (expected_graph));
+
+    int count_errors = 0;
+    ErrorCommitRepository result;
+
+    for (const auto vertex : actual_graph.GetVertexes()) {
+        const auto& vertex_labels = actual_graph.GetLabels(vertex);
+
+        if (vertex_labels.empty()) {
+            continue;
+        }
+
+        int count_labels_in_result = 0;
+
+        for (const auto vertex_label : vertex_labels) {
+            if (labels_ids.first.count(vertex_label)) {
+                count_labels_in_result++;
+            }
+        }
+
+        if (count_labels_in_result == 0) {
+            for (const auto& commit : actual_repository.commits) {
+                if (commit.number == vertex) {
+                    ++count_errors;
+                    result.addExtraCommit(commit);
+                }
+            }
+        }
+        else if (count_labels_in_result < vertex_labels.size()) {
+            for (const auto& commit : actual_repository.commits) {
+                if (commit.number == vertex) {
+                    ++count_errors;
+                    result.addErrorCommit(commit);
+                }
+            }
+        }
+    }
+
+    for (const auto vertex : expected_graph.GetVertexes()) {
+        const auto& vertex_labels = expected_graph.GetLabels(vertex);
+
+        if (vertex_labels.empty()) {
+            continue;
+        }
+
+        int count_labels_in_result = 0;
+
+        for (const auto vertex_label : vertex_labels) {
+            if (labels_ids.second.count(vertex_label)) {
+                count_labels_in_result++;
+            }
+        }
+
+        if (count_labels_in_result == 0) {
+            for (const auto& commit : expected_repository.commits) {
+                if (commit.number == vertex) {
+                    ++count_errors;
+                    result.addMissCommit(commit);
+                }
+            }
+        }
+    }
+    
+    return result;
+}
+
+void ErrorCommitRepository::addErrorCommit(Commit commit)
+{
+    this->errorCommits.push_back(commit);
+}
+
+void ErrorCommitRepository::addMissCommit(Commit commit)
+{
+    this->missCommits.push_back(commit);
+}
+
+void ErrorCommitRepository::addExtraCommit(Commit commit) // Исправлено: убрано 's'
+{
+    this->extraCommits.push_back(commit);
+}
+
+vector<Commit> ErrorCommitRepository::getExtraCommits() const
+{
+    return this->extraCommits;
+}
+
+vector<Commit> ErrorCommitRepository::getMissCommits() const
+{
+    return this->missCommits;
+}
+
+vector<Commit> ErrorCommitRepository::getErrorCommits() const
+{
+    return this->errorCommits;
+}
+
+
+set<string> setOfCommitHash(const vector<Commit> commits) {
+    set<string> result;
+    for (auto commit : commits) {
+        result.insert(commit.hash);
+    }
+    return result;
+}
+
+bool ErrorCommitRepository::operator==(const ErrorCommitRepository& other)
+{
+    auto errors = setOfCommitHash(this->getErrorCommits());
+    auto miss = setOfCommitHash(this->getMissCommits());
+    auto extra = setOfCommitHash(this->getExtraCommits());
+
+    auto otherErrors = setOfCommitHash(other.getErrorCommits());
+    auto otherMiss = setOfCommitHash(other.getMissCommits());
+    auto otherExtra = setOfCommitHash(other.getExtraCommits());
+    return errors == otherErrors && miss == otherMiss && otherExtra == otherExtra;
 }

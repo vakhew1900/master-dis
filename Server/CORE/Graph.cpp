@@ -255,22 +255,6 @@ pair<multiset<int>, multiset<int>> Graph::BiggestCommonSubgraph(
         all_labels.insert(label);
     }
 
-    /*for (auto label : first_graph_all_labels) {
-        cout << label << endl;
-    }
-
-    cout << endl;
-
-    for (auto label : second_graph_all_labels) {
-        cout << label << endl;
-    }
-
-    cout << endl;
-
-    for (auto label : all_labels) {
-        cout << label << endl;
-    }*/
-
     vector<int> all_labels_vector(all_labels.begin(), all_labels.end());
 
     const int max_possible_count_error = all_labels.size();
@@ -297,7 +281,7 @@ pair<multiset<int>, multiset<int>> Graph::BiggestCommonSubgraph(
                 }
             }
             
-            if (EqualSubgraphs(first_graph, second_graph, current_labels) != make_pair(multiset<int>(), multiset<int>())) {
+            if (EqualSubgraphs(first_graph, second_graph, current_labels) != make_pair(multiset<int>(), multiset<int>())) { // не пустой подграф
                 return EqualSubgraphs(first_graph, second_graph, current_labels);
             }
 

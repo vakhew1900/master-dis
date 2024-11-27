@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ComparisonRepositoryGenerator.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ComparisonRepository.cpp">
+      <Filter>git</Filter>
+    </ClCompile>
+    <ClCompile Include="ComparisonGraph.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="GitLogHandler.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="LabelsGenerator.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ComparisonRepositoryGenerator.h" />
+    <ClInclude Include="Commit.h">
+      <Filter>git</Filter>
+    </ClInclude>
+    <ClInclude Include="Repository.h">
+      <Filter>git</Filter>
+    </ClInclude>
+    <ClInclude Include="ComparisonRepository.h">
+      <Filter>git</Filter>
+    </ClInclude>
+    <ClInclude Include="ComparisonGraph.h">
+      <Filter>graph</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
+      <Filter>graph</Filter>
+    </ClInclude>
+    <ClInclude Include="GitLogHandler.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="LabelsGenerator.h">
+      <Filter>support</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="git">
+      <UniqueIdentifier>{09d8493c-0707-499a-b11c-f9fa04f3c687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graph">
+      <UniqueIdentifier>{44965ae2-7725-4e70-a8b3-95e449aa3885}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="support">
+      <UniqueIdentifier>{74b0f642-cf48-4a26-aae2-67ee0df4ec85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

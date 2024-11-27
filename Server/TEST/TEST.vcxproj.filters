@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="TestConstructor.cpp" />
+    <ClCompile Include="TestSubgraph.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSortedVertexesInformationWithTransformedLabels.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRemoveEdge.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLabelsGenerator.cpp">
+      <Filter>label</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCombinations.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAddEdge.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAddLabel.cpp">
+      <Filter>label</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAllLabels.cpp">
+      <Filter>label</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBiggestCommonSubgraph.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestComparisonGraph.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestEqualSubgraph.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGetLabels.cpp">
+      <Filter>label</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCmpRepository.cpp">
+      <Filter>git</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRemoveLabel.cpp">
+      <Filter>label</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGenerateListOfEdges.cpp">
+      <Filter>git</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMadeListOfEdgesFromListOfEdgesCommit.cpp">
+      <Filter>git</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGetNumberVertexes.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGetTails.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGetVertexes.cpp">
+      <Filter>graph</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="graph">
+      <UniqueIdentifier>{b427a415-0592-445e-a489-97d8a5f41fe5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="git">
+      <UniqueIdentifier>{a62af372-59be-47f7-9c0f-075b1bedba1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="label">
+      <UniqueIdentifier>{55582fe8-187d-448d-9ae4-0ab84279c392}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

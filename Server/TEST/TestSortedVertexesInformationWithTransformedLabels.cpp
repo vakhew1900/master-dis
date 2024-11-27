@@ -151,12 +151,35 @@ namespace TEST_SORTED_VERTEXES_INFORMATION_WITH_TRANSFORMED_LABELS
 
 			LabelsGenerator actual_labels_generator({ actual_vertex_to_labels , unordered_map<int, multiset<int>>() }, actual_ids_to_labels);
 
-			vector<pair<int, int>> actual_list_of_edges = { {1, 2} };
+			vector<pair<int, int>> actual_list_of_edges = { {2, 1} }; 
 			auto actual = Graph(actual_list_of_edges, actual_labels_generator, true);
 
 
 			Assert::IsTrue(
 				expected.SortedVertexesInformationWithTransformedLabels() == actual.SortedVertexesInformationWithTransformedLabels());
+		}
+
+		TEST_METHOD(LabelIdNotEqualLabel3)
+		{
+			unordered_map<int, multiset<int>> expected_vertex_to_labels{ {1, {1}}, {2, {2}} };
+			unordered_map<int, int> expected_ids_to_labels{ { 1, 1 }, {2, 2} };
+
+			LabelsGenerator expected_labels_generator({ expected_vertex_to_labels , unordered_map<int, multiset<int>>() }, expected_ids_to_labels);
+
+			vector<pair<int, int>> expected_list_of_edges = { {1, 2} };
+			auto expected = Graph(expected_list_of_edges, expected_labels_generator, true);
+
+			unordered_map<int, multiset<int>> actual_vertex_to_labels{ {1, {3}}, {2, {4}} };
+			unordered_map<int, int> actual_ids_to_labels{ {4, 1 }, {3, 2} };
+
+			LabelsGenerator actual_labels_generator({ actual_vertex_to_labels , unordered_map<int, multiset<int>>() }, actual_ids_to_labels);
+
+			vector<pair<int, int>> actual_list_of_edges = { {1, 2} }; // направленность ребра 
+			auto actual = Graph(actual_list_of_edges, actual_labels_generator, true);
+
+
+			Assert::IsTrue(
+				expected.SortedVertexesInformationWithTransformedLabels() != actual.SortedVertexesInformationWithTransformedLabels());
 		}
 
 	};

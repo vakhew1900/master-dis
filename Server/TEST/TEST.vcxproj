@@ -164,6 +164,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TestBiggestCommonSubgraph.cpp" />
+    <ClCompile Include="TestCmpRepository.cpp" />
     <ClCompile Include="TestComparisonGraph.cpp" />
     <ClCompile Include="TestGenerateListOfEdges.cpp" />
     <ClCompile Include="TestLabelsGenerator.cpp" />

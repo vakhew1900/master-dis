@@ -59,10 +59,15 @@ LabelsGenerator::LabelsGenerator(const Repository& first_repository, const Repos
 	set<StringLabel> all_labels(labels_first_repository.begin(), labels_first_repository.end());
 
 	bool found_label_splitting = 1;
-
+	int cnt = 0;
 	// пока присутствуют метки которые отсутствуют в сете всех меток
 	while (found_label_splitting) { // а если различий нет?
 		found_label_splitting = 0;
+		cnt++;
+
+		if (cnt == 1000) {
+			cout << "error";
+		}
 		for (const StringLabel& label_from_all : all_labels) {
 			for (const StringLabel& label_from_second : labels_second_repository) {
 				StringLabel common_part = CommonStringsWithContext(label_from_all, label_from_second);

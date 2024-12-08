@@ -48,6 +48,19 @@ GitLogHandler::GitLogHandler(const string& directoryName) {
     while (getline(input, line)) {
         git_log.push_back(line);
     }
+
+    reverse(git_log.begin(), git_log.end());
+
+    for (int i = 0; i < git_log.size(); i++) {
+        for (int j = 0; j < git_log[i].size(); j++) {
+            if (git_log[i][j] == '/') {
+                git_log[i][j] = '\\';
+            }
+            else if (git_log[i][j] == '\\') {
+                git_log[i][j] = '/';
+            }
+        }
+    }
 }
 
 GitLogHandler::GitLogHandler(const vector<string> log) {
@@ -139,6 +152,16 @@ queue<GitLogHandler::TextPoint> GitLogHandler::InitializeQueueForTextSearch() co
     //! Результат выполнения функции
     queue<TextPoint> result;
 
+    for (int i = 0; i < git_log.size(); i++) {
+        if (git_log[begin_str][begin_stb] != '*') {
+            begin_str++;
+        }
+        else {
+            break;
+        }
+    }
+
+
     //! Кладём в очередь начальную точку
     TextPoint begin_point(begin_hash, begin_str, begin_stb);
     result.push(begin_point);
@@ -170,6 +193,14 @@ void GitLogHandler::TransitionByText(const TextPoint& current_point, GitLogHandl
     const int cur_row = current_point.GetRow();
     const int cur_col = current_point.GetCol();
 
+    if (cur_row == 93) {
+        cout << "ffff";
+    }
+
+    if (cur_row >= this->git_log.size()) {
+        return;
+    }
+
     //! '*' - является указателем на коммит.
     if (git_log[cur_row][cur_col] == '*') {
         //! Определяем хеш коммита по строке в с ним
@@ -179,7 +210,7 @@ void GitLogHandler::TransitionByText(const TextPoint& current_point, GitLogHandl
         if (cur_hash != "") {
             //! Направление ребра здесь не случайно, так как в гит коммиты идут снизу вверх,
             //! а мы их обрабатываем сверху вниз
-            list_of_edges.push_back({ new_hash, cur_hash });
+            list_of_edges.push_back({ cur_hash, new_hash });
         }
 
         //! Переходим вверх для поиска следующих вершин

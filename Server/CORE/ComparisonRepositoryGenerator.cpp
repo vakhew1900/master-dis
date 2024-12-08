@@ -201,9 +201,18 @@ void ComparisonRepositoryGenerator::cmp(string actual_link, string expected_link
     const vector<pair<int, int>> actual_repository_edges(actual_repository.edges.begin(), actual_repository.edges.end());
     const vector<pair<int, int>> expectedl_repository_edges(expected_repository.edges.begin(), expected_repository.edges.end());
 
+    for (auto commit : actual_repository.commits) {
+        cout << commit.number << " " << commit.hash << "\n";
+    }
+
+    for (auto pr : actual_repository_edges) {
+        cout << pr.first << " " << pr.second << "\n";
+    }
+
     LabelsGenerator labels_generator(actual_repository, expected_repository);
 
-    string queryLog = "del \"" + actual_link + "\\gitlog.txt\"";
+
+   string queryLog = "del \"" + actual_link + "\\gitlog.txt\"";
     system(queryLog.c_str());
     queryLog = "del \"" + expected_link + "\\gitlog.txt\"";
     system(queryLog.c_str());
@@ -211,7 +220,7 @@ void ComparisonRepositoryGenerator::cmp(string actual_link, string expected_link
     const auto actual_graph = Graph(actual_repository_edges, labels_generator, true); //, labels.first);
     const auto expected_graph = Graph(expectedl_repository_edges, labels_generator, false);//, labels.second);
 
-    OutputGraph actualGraph(actual_repository, actual_graph, labels_generator);
+   // OutputGraph actualGraph(actual_repository, actual_graph, labels_generator);
 
     //я вроде даже до сюда раздебажил
     const auto& labels_ids = Graph::BiggestCommonSubgraph((actual_graph), (expected_graph));
@@ -278,6 +287,10 @@ void ComparisonRepositoryGenerator::cmp(string actual_link, string expected_link
 
     if (count_errors == 0) {
         cout << "Ошибок найдено не было\n";
+    }
+
+    for (auto commit : actual_repository.commits) {
+        cout << commit.message << "\n";
     }
 }
 

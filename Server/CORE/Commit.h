@@ -21,6 +21,12 @@ struct Commit {
 		this->diffs = diffs;
 	}
 
+
+	Commit(string hash, vector<vector<string>> diffs, int number) {
+		this->hash = hash;
+		this->diffs = diffs;
+		this->number = number;
+	}
 	Commit() {
 
 	}

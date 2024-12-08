@@ -261,6 +261,7 @@ pair<multiset<int>, multiset<int>> Graph::BiggestCommonSubgraph(
 
    // провер€ем различные комбинации 
     for (int count_error = 0; count_error < max_possible_count_error; ++count_error) { // идем по ходу увелечени€ возможных ошибок
+        cout << " оличество ошибок :" << count_error << " ";
         vector<multiset<int>> combinations;
         Combinations(max_possible_count_error, max_possible_count_error - count_error, combinations);
 

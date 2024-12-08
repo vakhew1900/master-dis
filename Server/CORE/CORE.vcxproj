@@ -134,6 +134,7 @@
     <ClInclude Include="GitLogHandler.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="LabelsGenerator.h" />
+    <ClInclude Include="OutputGraph.h" />
     <ClInclude Include="Repository.h" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +145,7 @@
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="LabelsGenerator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OutputGraph.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

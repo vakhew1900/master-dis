@@ -211,6 +211,7 @@ void ComparisonRepositoryGenerator::cmp(string actual_link, string expected_link
     const auto actual_graph = Graph(actual_repository_edges, labels_generator, true); //, labels.first);
     const auto expected_graph = Graph(expectedl_repository_edges, labels_generator, false);//, labels.second);
 
+    OutputGraph actualGraph(actual_repository, actual_graph, labels_generator);
 
     //я вроде даже до сюда раздебажил
     const auto& labels_ids = Graph::BiggestCommonSubgraph((actual_graph), (expected_graph));

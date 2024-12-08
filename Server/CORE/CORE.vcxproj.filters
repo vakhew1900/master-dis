@@ -18,6 +18,7 @@
     <ClCompile Include="LabelsGenerator.cpp">
       <Filter>support</Filter>
     </ClCompile>
+    <ClCompile Include="OutputGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComparisonRepositoryGenerator.h" />
@@ -42,6 +43,7 @@
     <ClInclude Include="LabelsGenerator.h">
       <Filter>support</Filter>
     </ClInclude>
+    <ClInclude Include="OutputGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="git">

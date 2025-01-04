@@ -26,6 +26,10 @@ public:
 
 			return a.value < b.value;
 		}
+
+		bool operator == (const StringLabel& other) {
+			return this->value == other.value;
+		}
 	};
 
 	LabelsGenerator();

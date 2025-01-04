@@ -268,7 +268,7 @@ pair<multiset<int>, multiset<int>> Graph::BiggestCommonSubgraph(
         for (auto& combination : combinations) {
             auto end = std::chrono::system_clock::now();
             std::chrono::duration<double> elapsed_seconds = end - start;
-            if (elapsed_seconds.count() > 45) {
+            if (elapsed_seconds.count() > 450) {
                 //TODO заменить на выкидывание ошибки
                 cout << "Программа не может найти ошибки, так как их слишком много\n";
                 system("pause");

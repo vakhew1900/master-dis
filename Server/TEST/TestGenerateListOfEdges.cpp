@@ -67,6 +67,23 @@ namespace TEST_GENERATE_LIST_OF_EDGES
 		}
 
 
+		TEST_METHOD(Several_Bra)
+		{
+			GitLogHandler git_log(vector<string>({
+				"* commit h1",
+				"* commit h2",
+				"| ",
+				"| * commit h3",
+				"* | commit h4",
+				"|/ ",
+				"* commit h5",
+				"aaaaaaaaaaaaaaaaaa",
+				}));
+
+			Assert::IsTrue(git_log.GenerateListOfEdges() == vector<pair<string, string>>{{"h5", "h3"}, { "h5", "h4" }, { "h4", "h2" }, { "h2", "h1" }});
+		}
+
+
 		TEST_METHOD(MultiTest)
 		{
 			GitLogHandler git_log(vector<string>({

@@ -59,15 +59,12 @@ LabelsGenerator::LabelsGenerator(const Repository& first_repository, const Repos
 	set<StringLabel> all_labels(labels_first_repository.begin(), labels_first_repository.end());
 
 	bool found_label_splitting = 1;
-	int cnt = 0;
 	// пока присутствуют метки которые отсутствуют в сете всех меток
+	int cnt = 0;
 	while (found_label_splitting) { // а если различий нет?
 		found_label_splitting = 0;
 		cnt++;
-
-		if (cnt == 1000) {
-			cout << "error";
-		}
+		cout << cnt << "\n";
 		for (const StringLabel& label_from_all : all_labels) {
 			for (const StringLabel& label_from_second : labels_second_repository) {
 				StringLabel common_part = CommonStringsWithContext(label_from_all, label_from_second);
@@ -86,6 +83,7 @@ LabelsGenerator::LabelsGenerator(const Repository& first_repository, const Repos
 				if (!all_labels.count(difference_part_two) && !difference_part_two.value.empty()) { // разница 2 и 1 репозитория отсутсвует в списке всех меток
 					found_label_splitting = 1;
 					all_labels.insert(difference_part_two);
+					StringLabel tmp = DifferenceStringsWithContext(label_from_second, label_from_all);
 				}
 				if (found_label_splitting) {
 					break;
@@ -97,7 +95,8 @@ LabelsGenerator::LabelsGenerator(const Repository& first_repository, const Repos
 		}
 	}
 
-	vector<int> first_repository_commit_numbers = GetCommitNumbers(first_repository);
+	cout << "label.size()" << all_labels.size() << "\n";
+		vector<int> first_repository_commit_numbers = GetCommitNumbers(first_repository);
 	vector<int> second_repository_commit_numbers = GetCommitNumbers(second_repository);
 
 	unordered_map<int, multiset<int>> first_labels;
@@ -266,10 +265,10 @@ LabelsGenerator::StringLabel LabelsGenerator::DifferenceStringsWithContext(const
 		second_map[elem]++;
 	}
 
-	for (auto elem : first_map) {
-		int count_difference = first_map[elem.first] - second_map[elem.first];
-		for (int i = 0; i < count_difference; ++i) {
-			result.value.push_back(elem.first);
+	for (auto elem : first.value) { //
+		second_map[elem]--;
+		if(second_map[elem] < 0) {
+			result.value.push_back(elem);
 		}
 	}
 

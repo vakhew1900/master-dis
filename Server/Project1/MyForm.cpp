@@ -1,4 +1,5 @@
 #include "MyForm.h"
+#include "../CORE/OutputGraph.h"
 #include "../CORE/ComparisonRepositoryGenerator.h"
 #include <msclr/marshal_cppstd.h>
 #using <System.dll>
@@ -282,15 +283,19 @@ int main() {
 	getline(cin, actual_link);
 	cout << "Введите директорию с ожидаемым репозиторием, в формате: C:\\Users\\ochob\\OneDrive\\Рабочий стол\\vse\\diplom\\git\\VKR\\Project1\\really_test\\expected\n";
 	getline(cin, expected_link);
-	std::thread thread(generate, actual_link, expected_link), thread2(timer);
-	thread.join();
-	thread2.join();
+	ComparisonRepositoryGenerator generator; generator.cmp(actual_link, expected_link);
 	system("pause");
+
 	return 0;
-	Application::SetCompatibleTextRenderingDefault(false);
-	Application::EnableVisualStyles();
-	Project1::MyForm form;
-	Application::Run(% form);
+	//std::thread thread(generate, actual_link, expected_link), thread2(timer);
+	//thread.join();
+	//thread2.join();
+	//system("pause");
+	//return 0;
+	//Application::SetCompatibleTextRenderingDefault(false);
+	//Application::EnableVisualStyles();
+	//Project1::MyForm form;
+	//Application::Run(% form);
 
 	return 0;
 }

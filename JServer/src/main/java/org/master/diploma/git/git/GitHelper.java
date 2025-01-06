@@ -136,8 +136,8 @@ public final class GitHelper {
                     if (revCommit.getParentCount() > 0) {
                         for (RevCommit parent : revCommit.getParents()) {
                             adjacencyMatrix
-                                    .get(curNumber)
-                                    .add(getNumber.apply(parent));
+                                    .get(getNumber.apply(parent))   // добавляем в матрицу со строкой под номером родителя текущую вершину
+                                    .add(curNumber);
                         }
                     }
                 }

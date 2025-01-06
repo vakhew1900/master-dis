@@ -17,6 +17,7 @@ public class Commit extends Vertex {
     private String email;
     private List<String> diffs;
     private transient  List<DiffEntry> diffEntry;
+    private int number;
 
 
     public Commit(RevCommit revCommit) {
@@ -28,10 +29,16 @@ public class Commit extends Vertex {
         this.commitDate = Instant.ofEpochSecond(revCommit.getCommitTime());
     }
 
-    public Commit(RevCommit revCommit, List<DiffEntry> diffEntry, List<String> diffs){
+    public Commit(
+            RevCommit revCommit,
+            List<DiffEntry> diffEntry,
+            List<String> diffs,
+            int number
+    ){
         this(revCommit);
         this.diffEntry = diffEntry;
         this.diffs = diffs;
+        this.number = number;
     }
 
     public String getHash() {
@@ -92,5 +99,10 @@ public class Commit extends Vertex {
 
     public void setDiffEntry(List<DiffEntry> diffEntry) {
         this.diffEntry = diffEntry;
+    }
+
+    @Override
+    public int getNumber() {
+        return 0;
     }
 }

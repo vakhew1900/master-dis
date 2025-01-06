@@ -8,9 +8,9 @@ public abstract class Graph {
     public abstract Vertex getVertex(int number);
     public abstract void removeVertex(int number);
 
-    public abstract List<Integer> getParentNumbers();
-    public abstract List<Vertex> getParents();
+    public abstract List<Integer> getParentNumbers(int vertexNumber);
+    public abstract List<Vertex> getParents(int vertexNumber);
 
-    public abstract List<Integer> getChildrenNumbers();
-    public abstract List<Vertex> getChildren();
+    public abstract List<Integer> getChildrenNumbers(int vertexNumber);
+    public abstract List<Vertex> getChildren(int vertexNumber);
 }

@@ -16,7 +16,7 @@ public class Commit extends Vertex {
     private String author;
     private String email;
     private List<String> diffs;
-    private transient  DiffEntry diffEntry;
+    private transient  List<DiffEntry> diffEntry;
 
 
     public Commit(RevCommit revCommit) {
@@ -28,7 +28,7 @@ public class Commit extends Vertex {
         this.commitDate = Instant.ofEpochSecond(revCommit.getCommitTime());
     }
 
-    public Commit(RevCommit revCommit, DiffEntry diffEntry, List<String> diffs){
+    public Commit(RevCommit revCommit, List<DiffEntry> diffEntry, List<String> diffs){
         this(revCommit);
         this.diffEntry = diffEntry;
         this.diffs = diffs;
@@ -86,11 +86,11 @@ public class Commit extends Vertex {
         return diffs;
     }
 
-    public DiffEntry getDiffEntry() {
+    public List<DiffEntry> getDiffEntry() {
         return diffEntry;
     }
 
-    public void setDiffEntry(DiffEntry diffEntry) {
+    public void setDiffEntry(List<DiffEntry> diffEntry) {
         this.diffEntry = diffEntry;
     }
 }

@@ -2,7 +2,6 @@ package org.master.diploma.git.git;
 
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
@@ -11,7 +10,6 @@ import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 
 import java.io.ByteArrayOutputStream;
@@ -20,10 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
-import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
-import org.eclipse.jgit.treewalk.EmptyTreeIterator;
-import org.eclipse.jgit.util.io.DisabledOutputStream;
+import org.master.diploma.git.git.model.Commit;
 
 public final class GitHelper {
 
@@ -72,42 +68,39 @@ public final class GitHelper {
         }
     }
 
-    public static void printDiff(RevCommit commit, String repositoryPath)  {
+    public static Commit revCommitToCommit(RevCommit commit, String repositoryPath)  {
         try (Git git = Git.open(new File(repositoryPath))) {
             Repository repository = git.getRepository();
 
             var out = new ByteArrayOutputStream();
             try (DiffFormatter diffFormatter = new DiffFormatter(out)) {
                 diffFormatter.setRepository(repository);
-                //diffFormatter.setDiffComparator(RawTextComparator.WS_IGNORE_ALL);
+                diffFormatter.setDiffComparator(RawTextComparator.WS_IGNORE_ALL);
                 diffFormatter.setDetectRenames(true);
                 diffFormatter.setContext(3);
 
+                List<DiffEntry> diffEntries = List.of();
                 if (commit.getParentCount() > 0) {
                     for (RevCommit parent : commit.getParents()) {
-                        List<DiffEntry> diffs = diffFormatter.scan(parent.getTree(), commit.getTree());
-                        for (DiffEntry diff : diffs) {
-                            System.out.println("    " + diff.getChangeType() + " " + diff.getOldPath() + " -> " + diff.getNewPath());
-
-                            diffFormatter.format(diff);
-                            System.out.println(out.toString());
-                        }
+                        diffEntries.addAll(diffFormatter.scan(parent.getTree(), commit.getTree()));
                     }
                 } else {
                     CanonicalTreeParser newTreeParser = new CanonicalTreeParser();
-
                     try (ObjectReader reader = repository.newObjectReader()) {
                         newTreeParser.reset(reader, commit.getTree().getId());
                     }
-
                     CanonicalTreeParser oldTreeParser = new CanonicalTreeParser();
-                    List<DiffEntry> diffs = diffFormatter.scan(oldTreeParser, newTreeParser);
-                    for (DiffEntry diff : diffs) {
-                        System.out.println("    " + diff.getChangeType() + " " + diff.getOldPath() + " -> " + diff.getNewPath());
-                        diffFormatter.format(diff);
-                        System.out.println(out.toString());
-                    }
+                    diffEntries = diffFormatter.scan(oldTreeParser, newTreeParser);
                 }
+
+                List<String> diffs = new ArrayList<>();
+                for (DiffEntry diffEntry : diffEntries) {
+                    System.out.println("    " + diffEntry.getChangeType() + " " + diffEntry.getOldPath() + " -> " + diffEntry.getNewPath());
+                    diffFormatter.format(diffEntry);
+                    diffs.add(out.toString());
+                }
+
+               return new Commit(commit, diffEntries, diffs);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

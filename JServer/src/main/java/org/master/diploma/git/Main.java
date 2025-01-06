@@ -12,7 +12,7 @@ public class Main {
 
 
         commits.forEach(
-                commit ->   { System.out.println(commit.getShortMessage()); GitHelper.printDiff(commit, path); System.out.println("-----------------------------------------------------------"); }
+                commit ->   { System.out.println(commit.getShortMessage()); GitHelper.revCommitToCommit(commit, path); System.out.println("-----------------------------------------------------------"); }
         );
     }
 }

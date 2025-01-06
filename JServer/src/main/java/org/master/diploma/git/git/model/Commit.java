@@ -1,7 +1,6 @@
 package org.master.diploma.git.git.model;
 
 import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.master.diploma.git.graph.Vertex;
 

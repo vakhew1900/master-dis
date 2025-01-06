@@ -25,7 +25,7 @@ public final class GitHelper {
 
     private static final Logger logger = LogManager.getLogger(GitHelper.class);
 
-    public static List<RevCommit> getAllCommits(String path) {
+    public static List<RevCommit> getAllRevCommits(String path) {
         List<RevCommit> commits = new ArrayList<>();
         File repoDir = new File(path);
 
@@ -61,14 +61,13 @@ public final class GitHelper {
             }
 
             return commits;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
-    public static Commit revCommitToCommit(RevCommit commit, String repositoryPath)  {
+    public static Commit revCommitToCommit(RevCommit commit, String repositoryPath, int number) {
         try (Git git = Git.open(new File(repositoryPath))) {
             Repository repository = git.getRepository();
 
@@ -100,10 +99,19 @@ public final class GitHelper {
                     diffs.add(out.toString());
                 }
 
-               return new Commit(commit, diffEntries, diffs);
+                return new Commit(commit, diffEntries, diffs, number);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<Commit> getAllCommits(String path) {
+        List<RevCommit> revCommits = getAllRevCommits(path);
+        int number = 1;
+        return revCommits
+                .stream()
+                .map(revCommit -> revCommitToCommit(revCommit, path, number))
+                .toList();
     }
 }

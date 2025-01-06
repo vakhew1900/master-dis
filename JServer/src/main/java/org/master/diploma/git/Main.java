@@ -7,12 +7,12 @@ public class Main {
     public static void main(String[] args) {
 
         String path = "E:\\univer\\5_course\\diploma\\CAP\\soft\\master-dis\\JServer\\src\\test\\resources\\repositories\\test-1";
-        var commits = GitHelper.getAllCommits(path);
+        var commits = GitHelper.getAllRevCommits(path);
         System.out.println(commits.size());
 
 
-        commits.forEach(
-                commit ->   { System.out.println(commit.getShortMessage()); GitHelper.revCommitToCommit(commit, path); System.out.println("-----------------------------------------------------------"); }
-        );
+//        commits.forEach(
+//                commit ->   { System.out.println(commit.getShortMessage()); GitHelper.revCommitToCommit(commit, path); System.out.println("-----------------------------------------------------------"); }
+//        );
     }
 }

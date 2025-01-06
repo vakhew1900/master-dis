@@ -15,8 +15,10 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+
 import org.apache.logging.log4j.LogManager;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.master.diploma.git.git.model.Commit;
@@ -24,6 +26,8 @@ import org.master.diploma.git.git.model.Commit;
 public final class GitHelper {
 
     private static final Logger logger = LogManager.getLogger(GitHelper.class);
+    public static final int START_COMMIT_NUMBER = 0;
+    public static final int INCORRECT_COMMIT_NUMBER = -1;
 
     public static List<RevCommit> getAllRevCommits(String path) {
         List<RevCommit> commits = new ArrayList<>();
@@ -73,12 +77,14 @@ public final class GitHelper {
 
             var out = new ByteArrayOutputStream();
             try (DiffFormatter diffFormatter = new DiffFormatter(out)) {
+                // настройки diffFormatter
                 diffFormatter.setRepository(repository);
                 diffFormatter.setDiffComparator(RawTextComparator.WS_IGNORE_ALL);
                 diffFormatter.setDetectRenames(true);
                 diffFormatter.setContext(3);
 
                 List<DiffEntry> diffEntries = List.of();
+                // получение всех diffEntries
                 if (commit.getParentCount() > 0) {
                     for (RevCommit parent : commit.getParents()) {
                         diffEntries.addAll(diffFormatter.scan(parent.getTree(), commit.getTree()));
@@ -92,9 +98,10 @@ public final class GitHelper {
                     diffEntries = diffFormatter.scan(oldTreeParser, newTreeParser);
                 }
 
+
+                // Получить список diff`ов
                 List<String> diffs = new ArrayList<>();
                 for (DiffEntry diffEntry : diffEntries) {
-                    System.out.println("    " + diffEntry.getChangeType() + " " + diffEntry.getOldPath() + " -> " + diffEntry.getNewPath());
                     diffFormatter.format(diffEntry);
                     diffs.add(out.toString());
                 }
@@ -106,12 +113,52 @@ public final class GitHelper {
         }
     }
 
-    public static List<Commit> getAllCommits(String path) {
-        List<RevCommit> revCommits = getAllRevCommits(path);
-        int number = 1;
+    public static List<Commit> getAllCommits(List<RevCommit> revCommits, String path) {
+        AtomicInteger number = new AtomicInteger();
         return revCommits
                 .stream()
-                .map(revCommit -> revCommitToCommit(revCommit, path, number))
+                .map(revCommit -> revCommitToCommit(revCommit, path, number.getAndIncrement()))
                 .toList();
+    }
+
+    public static List<Set<Integer>> createAdjacencyMatrix(Map<String, Integer> hashToNumber, List<RevCommit> revCommits) {
+        List<Set<Integer>> adjacencyMatrix = new ArrayList<>();
+
+        for (int i = 0; i <= revCommits.size(); i++) { // инициализация матрицы. количество строк - количество коммитов
+            adjacencyMatrix.add(new HashSet<>());
+        }
+
+        Function<RevCommit, Integer> getNumber = (revCommit) -> hashToNumber.get(revCommit.name());
+
+        revCommits.forEach(
+                revCommit -> {
+                    int curNumber = getNumber.apply(revCommit);
+                    if (revCommit.getParentCount() > 0) {
+                        for (RevCommit parent : revCommit.getParents()) {
+                            adjacencyMatrix
+                                    .get(curNumber)
+                                    .add(getNumber.apply(parent));
+                        }
+                    }
+                }
+        );
+
+        return adjacencyMatrix;
+    }
+
+    /**
+     * @param commits - список коммитов
+     * @return - словарь, где ключом является hash, а значением number
+     */
+    private static Map<String, Integer> createHashToNumberMap(List<Commit> commits) {
+        Map<String, Integer> map = new HashMap<>();
+
+        commits.forEach(
+                commit -> {
+                    map.put(commit.getHash(), commit.getNumber());
+                }
+        );
+
+        return map;
     }
 }

@@ -22,12 +22,21 @@ import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.master.diploma.git.git.model.Commit;
+import org.master.diploma.git.git.model.CommitGraph;
 
 public final class GitHelper {
 
     private static final Logger logger = LogManager.getLogger(GitHelper.class);
     public static final int START_COMMIT_NUMBER = 0;
     public static final int INCORRECT_COMMIT_NUMBER = -1;
+
+
+    public static CommitGraph createCommitGraph(String path) {
+        List<RevCommit> revCommits = getAllRevCommits(path);
+        List<Commit> commits = getAllCommits(revCommits, path);
+        Map<Integer, Set<Integer>> map = createAdjacencyMatrix(createHashToNumberMap(commits), revCommits);
+        return new CommitGraph(commits, map);
+    }
 
     public static List<RevCommit> getAllRevCommits(String path) {
         List<RevCommit> commits = new ArrayList<>();
@@ -114,7 +123,7 @@ public final class GitHelper {
     }
 
     public static List<Commit> getAllCommits(List<RevCommit> revCommits, String path) {
-        AtomicInteger number = new AtomicInteger();
+        AtomicInteger number = new AtomicInteger(START_COMMIT_NUMBER);
         return revCommits
                 .stream()
                 .map(revCommit -> revCommitToCommit(revCommit, path, number.getAndIncrement()))

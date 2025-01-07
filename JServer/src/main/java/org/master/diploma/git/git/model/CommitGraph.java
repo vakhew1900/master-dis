@@ -1,8 +1,7 @@
 package org.master.diploma.git.git.model;
 
 import org.master.diploma.git.git.exception.IncorrectCommitGraphVertexTypeException;
-import org.master.diploma.git.graph.Graph;
-import org.master.diploma.git.graph.SimpleGraph;
+import org.master.diploma.git.graph.simple.SimpleGraph;
 import org.master.diploma.git.graph.Vertex;
 
 import java.util.List;

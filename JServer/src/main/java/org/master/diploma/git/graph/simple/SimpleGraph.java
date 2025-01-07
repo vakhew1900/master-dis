@@ -1,5 +1,7 @@
-package org.master.diploma.git.graph;
+package org.master.diploma.git.graph.simple;
 
+import org.master.diploma.git.graph.Graph;
+import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.exception.IncorrectVertexNumberException;
 
 import java.util.*;

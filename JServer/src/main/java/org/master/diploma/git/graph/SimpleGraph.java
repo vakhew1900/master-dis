@@ -1,5 +1,7 @@
 package org.master.diploma.git.graph;
 
+import org.master.diploma.git.graph.exception.IncorrectVertexNumberException;
+
 import java.util.*;
 
 public class SimpleGraph extends Graph {
@@ -29,8 +31,60 @@ public class SimpleGraph extends Graph {
     }
 
     @Override
-    public void removeVertex(int number) {
+    public void addVertex(Vertex vertex) {
+        if (vertex.getNumber() < adjacencyMatrix.size()) {
+            throw new IncorrectVertexNumberException("Vertex number should be more than adjacency matrix size()");
+        }
+        vertices.add(vertex);
+        numberToIndex.put(vertex.getNumber(), vertices.size() - 1);
+
+        while (adjacencyMatrix.size() <= vertex.getNumber()) {
+            adjacencyMatrix.add(new HashSet<>());
+        }
     }
+
+    @Override
+    public void removeVertex(int number) {
+        List<Integer> childrens = getChildrenNumbers(number);
+        List<Integer> parents = getParentNumbers(number);
+
+        // удаляем всех детей вершины
+        childrens.forEach(
+                child -> removeEdge(number, child)
+        );
+
+        // удаляем у родителей вершины текущую вершину
+        parents.forEach(
+                parent -> removeEdge(parent, number)
+        );
+
+        // добавляем связь parent-child
+        parents.forEach(
+                parent -> {
+                    childrens.forEach(
+                            child -> {
+                                addEdge(parent, child);
+                            }
+                    );
+                }
+        );
+    }
+
+
+    @Override
+    public void addEdge(int parent, int children) {
+        adjacencyMatrix
+                .get(getIndexByNumber(parent))
+                .add(children);
+    }
+
+    @Override
+    public void removeEdge(int parent, int children) {
+        adjacencyMatrix
+                .get(getIndexByNumber(parent))
+                .remove(getIndexByNumber(children));
+    }
+
 
     @Override
     public List<Integer> getParentNumbers(int vertexNumber) {

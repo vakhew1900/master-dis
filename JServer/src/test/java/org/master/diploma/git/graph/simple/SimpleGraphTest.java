@@ -353,4 +353,64 @@ public class SimpleGraphTest {
                 graph.getChildren(3)
         );
     }
+
+    @Test
+    public void getChildrenTest2() {
+        List<Vertex> vertices = List.of(
+                new SimpleVertex(3),
+                new SimpleVertex(2),
+                new SimpleVertex(1),
+                new SimpleVertex(0)
+        );
+
+        Graph graph = new SimpleGraph(vertices, new HashMap<>());
+
+        graph.addEdge(2, 1);
+        graph.addEdge(1, 2);
+        graph.addEdge(0, 2);
+        graph.addEdge(0, 1);
+
+        Assertions.assertEquals(List.of(1, 2), graph.getChildrenNumbers(0));
+        Assertions.assertEquals(List.of(2), graph.getChildrenNumbers(1));
+        Assertions.assertEquals(List.of(1), graph.getChildrenNumbers(2));
+        Assertions.assertEquals(List.of(), graph.getChildrenNumbers(3));
+
+        Assertions.assertEquals(
+                List.of(vertices.get(2), vertices.get(1)),
+                graph.getChildren(0)
+        );
+
+        Assertions.assertEquals(
+                List.of(vertices.get(1)),
+                graph.getChildren(1)
+        );
+
+        Assertions.assertEquals(
+                List.of(vertices.get(2)),
+                graph.getChildren(2)
+        );
+
+        Assertions.assertEquals(
+                List.of(),
+                graph.getChildren(3)
+        );
+    }
+
+
+
+    // ----------------------- addVertex -------------------------------
+
+    @Test
+    public void addVertexTest() {
+        List<Vertex> vertices = List.of(
+                new SimpleVertex(0),
+                new SimpleVertex(1),
+                new SimpleVertex(2)
+        );
+
+        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        Vertex vertex = new SimpleVertex(3);
+       graph.addVertex(vertex);
+       Assertions.assertEquals(vertex, graph.getVertex(3));
+    }
 }

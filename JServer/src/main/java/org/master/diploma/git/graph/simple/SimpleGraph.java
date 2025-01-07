@@ -125,13 +125,14 @@ public class SimpleGraph extends Graph {
 
     @Override
     public List<Integer> getChildrenNumbers(int vertexNumber) {
+        validateVertex(vertexNumber);
         return new ArrayList<>(adjacencyMatrix.get(vertexNumber));
     }
 
     @Override
     public List<Vertex> getChildren(int vertexNumber) {
         List<Vertex> vertices = new ArrayList<>();
-        getParentNumbers(vertexNumber).forEach(
+        getChildrenNumbers(vertexNumber).forEach(
                 children -> {
                     vertices.add(getVertex(children));
                 }

@@ -6,6 +6,7 @@ import org.master.diploma.git.graph.Vertex;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 public class Commit extends Vertex {
 
@@ -104,5 +105,35 @@ public class Commit extends Vertex {
     @Override
     public int getNumber() {
         return number;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Commit commit = (Commit) o;
+        return number == commit.number &&
+                Objects.equals(hash, commit.hash) &&
+                Objects.equals(message, commit.message) &&
+                Objects.equals(commitDate, commit.commitDate) &&
+                Objects.equals(authorDate, commit.authorDate) &&
+                Objects.equals(author, commit.author) &&
+                Objects.equals(email, commit.email) &&
+                Objects.equals(diffs, commit.diffs) &&
+                Objects.equals(diffEntry, commit.diffEntry);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                hash,
+                message,
+                commitDate,
+                authorDate,
+                author,
+                email,
+                diffs,
+                diffEntry,
+                number
+        );
     }
 }

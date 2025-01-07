@@ -6,7 +6,12 @@ public abstract class Graph {
 
     public abstract List<Vertex> getVertices();
     public abstract Vertex getVertex(int number);
+
+    public abstract void addVertex(Vertex vertex);
     public abstract void removeVertex(int number);
+
+    public abstract void addEdge(int parent, int children);
+    public abstract void removeEdge(int parent, int children);
 
     public abstract List<Integer> getParentNumbers(int vertexNumber);
     public abstract List<Vertex> getParents(int vertexNumber);

@@ -72,18 +72,31 @@ public class SimpleGraph extends Graph {
 
     @Override
     public void addEdge(int parent, int children) {
+        validateVertex(parent);
         adjacencyMatrix
-                .get(getIndexByNumber(parent))
+                .get(parent)
                 .add(children);
     }
 
     @Override
     public void removeEdge(int parent, int children) {
+        validateVertex(parent);
         adjacencyMatrix
-                .get(getIndexByNumber(parent))
-                .remove(getIndexByNumber(children));
+                .get(parent)
+                .remove(children);
     }
 
+    private void validateVertex(int number) {
+        var vertex = getVertex(number);
+
+        if(Objects.isNull(vertex)){
+            throw new IncorrectVertexNumberException("Vertex is not exist in graph");
+        }
+
+        if (!adjacencyMatrix.containsKey(number)) {
+            adjacencyMatrix.put(number, new HashSet<>());
+        }
+    }
 
     @Override
     public List<Integer> getParentNumbers(int vertexNumber) {
@@ -129,5 +142,9 @@ public class SimpleGraph extends Graph {
 
     private int getIndexByNumber(int number) {
         return numberToIndex.get(number);
+    }
+
+    protected Map<Integer, Set<Integer>> getAdjacencyMatrix() {
+        return adjacencyMatrix;
     }
 }

@@ -6,6 +6,7 @@ import org.master.diploma.git.graph.simple.SimpleGraph;
 import org.master.diploma.git.graph.simple.SimpleVertex;
 
 import java.util.List;
+import java.util.Map;
 
 public class SimpleGraphTest {
 
@@ -20,7 +21,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(vertices, List.of());
+        Graph graph = new SimpleGraph(vertices, Map.of());
 
         Assertions.assertEquals(vertices, graph.getVertices());
     }
@@ -28,7 +29,7 @@ public class SimpleGraphTest {
     @Test
     public void getVerticesEmptyTest() {
         List<Vertex> vertices = List.of();
-        Graph graph = new SimpleGraph(vertices, List.of());
+        Graph graph = new SimpleGraph(vertices, Map.of());
         Assertions.assertEquals(vertices, graph.getVertices());
     }
 
@@ -37,7 +38,7 @@ public class SimpleGraphTest {
         List<Vertex> vertices = List.of(
                 new SimpleVertex(0)
         );
-        Graph graph = new SimpleGraph(vertices, List.of());
+        Graph graph = new SimpleGraph(vertices, Map.of());
         Assertions.assertEquals(vertices, graph.getVertices());
     }
 
@@ -51,7 +52,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(vertices, List.of());
+        Graph graph = new SimpleGraph(vertices, Map.of());
 
         for (int i = 0; i < vertices.size(); i++) {
             Assertions.assertEquals(vertices.get(i), graph.getVertex(i));
@@ -66,7 +67,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(0)
         );
 
-        Graph graph = new SimpleGraph(vertices, List.of());
+        Graph graph = new SimpleGraph(vertices, Map.of());
 
         for (int i = 0; i < vertices.size(); i++) {
             Assertions.assertEquals(vertices.get(i), graph.getVertex(2 - i));
@@ -81,7 +82,9 @@ public class SimpleGraphTest {
                 new SimpleVertex(0)
         );
 
-        Graph graph = new SimpleGraph(vertices, List.of());
+        Graph graph = new SimpleGraph(vertices, Map.of());
         Assertions.assertThrows(NullPointerException.class, ()-> graph.getVertex(4));
     }
+
+    //----------------------------addVertex
 }

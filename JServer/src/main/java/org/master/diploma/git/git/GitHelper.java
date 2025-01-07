@@ -121,11 +121,11 @@ public final class GitHelper {
                 .toList();
     }
 
-    public static List<Set<Integer>> createAdjacencyMatrix(Map<String, Integer> hashToNumber, List<RevCommit> revCommits) {
-        List<Set<Integer>> adjacencyMatrix = new ArrayList<>();
+    public static Map<Integer, Set<Integer>> createAdjacencyMatrix(Map<String, Integer> hashToNumber, List<RevCommit> revCommits) {
+        Map<Integer, Set<Integer>> adjacencyMatrix = new HashMap<>();
 
         for (int i = 0; i <= revCommits.size(); i++) { // инициализация матрицы. количество строк - количество коммитов
-            adjacencyMatrix.add(new HashSet<>());
+            adjacencyMatrix.put(i, new HashSet<>());
         }
 
         Function<RevCommit, Integer> getNumber = (revCommit) -> hashToNumber.get(revCommit.name());

@@ -10,9 +10,9 @@ public class SimpleGraph extends Graph {
 
     private List<Vertex> vertices;
     private Map<Integer, Integer> numberToIndex;
-    private List<Set<Integer>> adjacencyMatrix; // здесь уже не индексы вершин а номера
+    private Map<Integer, Set<Integer>> adjacencyMatrix; // здесь уже не индексы вершин а номера
 
-    public SimpleGraph(List<Vertex> vertices, List<Set<Integer>> adjacencyMatrix) {
+    public SimpleGraph(List<Vertex> vertices, Map<Integer, Set<Integer>> adjacencyMatrix) {
         this.adjacencyMatrix = adjacencyMatrix;
         this.vertices = vertices;
         this.numberToIndex = new HashMap<>();
@@ -34,15 +34,12 @@ public class SimpleGraph extends Graph {
 
     @Override
     public void addVertex(Vertex vertex) {
-        if (vertex.getNumber() < adjacencyMatrix.size()) {
+        if (adjacencyMatrix.containsKey(vertex.getNumber())) {
             throw new IncorrectVertexNumberException("Vertex number should be more than adjacency matrix size()");
         }
         vertices.add(vertex);
         numberToIndex.put(vertex.getNumber(), vertices.size() - 1);
-
-        while (adjacencyMatrix.size() <= vertex.getNumber()) {
-            adjacencyMatrix.add(new HashSet<>());
-        }
+        adjacencyMatrix.put(vertex.getNumber(), new HashSet<>());
     }
 
     @Override

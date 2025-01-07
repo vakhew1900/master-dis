@@ -334,8 +334,8 @@ public class SimpleGraphTest {
         Assertions.assertEquals(List.of(), graph.getChildrenNumbers(3));
 
         Assertions.assertEquals(
-               List.of(vertices.get(1), vertices.get(2)),
-               graph.getChildren(0)
+                List.of(vertices.get(1), vertices.get(2)),
+                graph.getChildren(0)
         );
 
         Assertions.assertEquals(
@@ -397,7 +397,6 @@ public class SimpleGraphTest {
     }
 
 
-
     // ----------------------- addVertex -------------------------------
 
     @Test
@@ -410,7 +409,146 @@ public class SimpleGraphTest {
 
         Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
         Vertex vertex = new SimpleVertex(3);
-       graph.addVertex(vertex);
-       Assertions.assertEquals(vertex, graph.getVertex(3));
+        graph.addVertex(vertex);
+        Assertions.assertEquals(vertex, graph.getVertex(3));
+    }
+
+    // ----------------------- removeVertex -------------------------------
+
+    @Test
+    public void removeVertexWithoutParentAndChildTest() {
+        List<Vertex> vertices = List.of(
+                new SimpleVertex(0),
+                new SimpleVertex(1),
+                new SimpleVertex(2),
+                new SimpleVertex(3)
+        );
+
+        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 2);
+        graph.addEdge(1, 2);
+
+        graph.removeVertex(3);
+
+        List<Vertex> expectedVertices = List.of(
+                vertices.get(0),
+                vertices.get(1),
+                vertices.get(2)
+        );
+
+        Map<Integer, Set<Integer>> expectedAdjancyMap = Map.of(
+                0, Set.of(1, 2),
+                1, Set.of(2)
+        );
+
+        Assertions.assertEquals(expectedVertices, graph.getVertices());
+        Assertions.assertEquals(expectedAdjancyMap, ((SimpleGraph) graph).getAdjacencyMatrix());
+    }
+
+
+    @Test
+    public void removeVertexIsRootTest() {
+        List<Vertex> vertices = List.of(
+                new SimpleVertex(0),
+                new SimpleVertex(1),
+                new SimpleVertex(2),
+                new SimpleVertex(3)
+        );
+
+        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 2);
+        graph.addEdge(1, 2);
+        graph.addEdge(2, 3);
+
+        graph.removeVertex(0);
+
+        List<Vertex> expectedVertices = List.of(
+                vertices.get(1),
+                vertices.get(2),
+                vertices.get(3)
+        );
+
+        Map<Integer, Set<Integer>> expectedAdjancyMap = Map.of(
+                1, Set.of(2),
+                2, Set.of(3)
+        );
+
+        Assertions.assertEquals(expectedVertices, graph.getVertices());
+        Assertions.assertEquals(expectedAdjancyMap, ((SimpleGraph) graph).getAdjacencyMatrix());
+    }
+
+
+    @Test
+    public void removeVertexHasNoChildrenTest() {
+        List<Vertex> vertices = List.of(
+                new SimpleVertex(0),
+                new SimpleVertex(1),
+                new SimpleVertex(2),
+                new SimpleVertex(3)
+        );
+
+        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 2);
+        graph.addEdge(1, 2);
+        graph.addEdge(2, 3);
+
+        graph.removeVertex(3);
+
+        List<Vertex> expectedVertices = List.of(
+                vertices.get(0),
+                vertices.get(1),
+                vertices.get(2)
+        );
+
+        Map<Integer, Set<Integer>> expectedAdjancyMap = Map.of(
+                0, Set.of(1, 2),
+                1, Set.of(2),
+                2, Set.of()
+        );
+
+        Assertions.assertEquals(expectedVertices, graph.getVertices());
+        Assertions.assertEquals(expectedAdjancyMap, ((SimpleGraph) graph).getAdjacencyMatrix());
+    }
+
+    @Test
+    public void removeVertexTest() {
+        List<Vertex> vertices = List.of(
+                new SimpleVertex(0),
+                new SimpleVertex(1),
+                new SimpleVertex(2),
+                new SimpleVertex(3),
+                new SimpleVertex(4),
+                new SimpleVertex(5)
+        );
+
+        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(2, 3);
+        graph.addEdge(3, 4);
+        graph.addEdge(3, 5);
+
+        graph.removeVertex(3);
+
+        List<Vertex> expectedVertices = List.of(
+                vertices.get(0),
+                vertices.get(1),
+                vertices.get(2),
+                vertices.get(4),
+                vertices.get(5)
+        );
+
+        Map<Integer, Set<Integer>> expectedAdjancyMap = Map.of(
+                0, Set.of(1, 2),
+                1, Set.of(4, 5),
+                2, Set.of(4, 5)
+        );
+
+        Assertions.assertEquals(expectedVertices, graph.getVertices());
+        Assertions.assertEquals(expectedAdjancyMap, ((SimpleGraph) graph).getAdjacencyMatrix());
     }
 }

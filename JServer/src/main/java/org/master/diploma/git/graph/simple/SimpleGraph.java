@@ -44,6 +44,9 @@ public class SimpleGraph extends Graph {
 
     @Override
     public void removeVertex(int number) {
+        if (getVertex(number) == null) {
+            return;
+        }
         List<Integer> childrens = getChildrenNumbers(number);
         List<Integer> parents = getParentNumbers(number);
 
@@ -67,6 +70,18 @@ public class SimpleGraph extends Graph {
                     );
                 }
         );
+
+        int deleteIndex = -1;
+
+        for(int i = 0; i < vertices.size(); i++) {
+            if (vertices.get(i).getNumber() == number) {
+                deleteIndex = i;
+                break;
+            }
+        }
+
+        vertices.remove(deleteIndex);
+        adjacencyMatrix.remove(number);
     }
 
 
@@ -89,7 +104,7 @@ public class SimpleGraph extends Graph {
     private void validateVertex(int number) {
         var vertex = getVertex(number);
 
-        if(Objects.isNull(vertex)){
+        if (Objects.isNull(vertex)) {
             throw new IncorrectVertexNumberException("Vertex is not exist in graph");
         }
 
@@ -103,7 +118,7 @@ public class SimpleGraph extends Graph {
         List<Integer> numbers = new ArrayList<>();
 
         for (int i = 0; i < adjacencyMatrix.size(); i++) {
-            if (adjacencyMatrix.get(i).contains(vertexNumber)) { // строка содержит номер нашей вершины
+            if (adjacencyMatrix.containsKey(i) && adjacencyMatrix.get(i).contains(vertexNumber)) { // строка содержит номер нашей вершины
                 numbers.add(i); // вершина с номером i является родителем
             }
         }

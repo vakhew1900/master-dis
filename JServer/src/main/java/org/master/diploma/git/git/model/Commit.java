@@ -2,13 +2,13 @@ package org.master.diploma.git.git.model;
 
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.master.diploma.git.graph.Vertex;
+import org.master.diploma.git.graph.label.LabelVertex;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
-public class Commit extends Vertex {
+public class Commit extends LabelVertex {
 
     private String hash;
     private String message;
@@ -17,7 +17,7 @@ public class Commit extends Vertex {
     private String author;
     private String email;
     private List<String> diffs;
-    private transient List<DiffEntry> diffEntry;
+    private transient List<DiffEntry> diffEntries;
     private int number;
 
 
@@ -37,7 +37,7 @@ public class Commit extends Vertex {
             int number
     ) {
         this(revCommit);
-        this.diffEntry = diffEntry;
+        this.diffEntries = diffEntry;
         this.diffs = diffs;
         this.number = number;
     }
@@ -94,12 +94,12 @@ public class Commit extends Vertex {
         return diffs;
     }
 
-    public List<DiffEntry> getDiffEntry() {
-        return diffEntry;
+    public List<DiffEntry> getDiffEntries() {
+        return diffEntries;
     }
 
-    public void setDiffEntry(List<DiffEntry> diffEntry) {
-        this.diffEntry = diffEntry;
+    public void setDiffEntries(List<DiffEntry> diffEntries) {
+        this.diffEntries = diffEntries;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class Commit extends Vertex {
                 Objects.equals(author, commit.author) &&
                 Objects.equals(email, commit.email) &&
                 Objects.equals(diffs, commit.diffs) &&
-                Objects.equals(diffEntry, commit.diffEntry);
+                Objects.equals(diffEntries, commit.diffEntries);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class Commit extends Vertex {
                 author,
                 email,
                 diffs,
-                diffEntry,
+                diffEntries,
                 number
         );
     }

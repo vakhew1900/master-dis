@@ -92,7 +92,7 @@ public final class GitHelper {
                 diffFormatter.setDetectRenames(true);
                 diffFormatter.setContext(3);
 
-                List<DiffEntry> diffEntries = List.of();
+                List<DiffEntry> diffEntries = new ArrayList<>();
                 // получение всех diffEntries
                 if (commit.getParentCount() > 0) {
                     for (RevCommit parent : commit.getParents()) {
@@ -130,10 +130,10 @@ public final class GitHelper {
                 .toList();
     }
 
-    public static Map<Integer, Set<Integer>> createAdjacencyMatrix(Map<String, Integer> hashToNumber, List<RevCommit> revCommits) {
+    private static Map<Integer, Set<Integer>> createAdjacencyMatrix(Map<String, Integer> hashToNumber, List<RevCommit> revCommits) {
         Map<Integer, Set<Integer>> adjacencyMatrix = new HashMap<>();
 
-        for (int i = 0; i <= revCommits.size(); i++) { // инициализация матрицы. количество строк - количество коммитов
+        for (int i = 0; i < revCommits.size(); i++) { // инициализация матрицы. количество строк - количество коммитов
             adjacencyMatrix.put(i, new HashSet<>());
         }
 

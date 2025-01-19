@@ -90,7 +90,7 @@ public final class GitHelper {
                 diffFormatter.setRepository(repository);
                 diffFormatter.setDiffComparator(RawTextComparator.WS_IGNORE_ALL);
                 diffFormatter.setDetectRenames(true);
-                diffFormatter.setContext(3);
+                diffFormatter.setContext(0);
 
                 List<DiffEntry> diffEntries = new ArrayList<>();
                 // получение всех diffEntries

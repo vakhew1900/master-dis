@@ -20,7 +20,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(vertices, Map.of());
+        Graph graph = new SimpleGraph<Vertex>(vertices, Map.of());
 
         Assertions.assertEquals(vertices, graph.getVertices());
     }
@@ -28,7 +28,7 @@ public class SimpleGraphTest {
     @Test
     public void getVerticesEmptyTest() {
         List<Vertex> vertices = List.of();
-        Graph graph = new SimpleGraph(vertices, Map.of());
+        Graph graph = new SimpleGraph<Vertex>(vertices, Map.of());
         Assertions.assertEquals(vertices, graph.getVertices());
     }
 
@@ -37,7 +37,7 @@ public class SimpleGraphTest {
         List<Vertex> vertices = List.of(
                 new SimpleVertex(0)
         );
-        Graph graph = new SimpleGraph(vertices, Map.of());
+        Graph graph = new SimpleGraph<Vertex>(vertices, Map.of());
         Assertions.assertEquals(vertices, graph.getVertices());
     }
 
@@ -51,7 +51,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(vertices, Map.of());
+        Graph graph = new SimpleGraph<Vertex>(vertices, Map.of());
 
         for (int i = 0; i < vertices.size(); i++) {
             Assertions.assertEquals(vertices.get(i), graph.getVertex(i));
@@ -66,7 +66,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(0)
         );
 
-        Graph graph = new SimpleGraph(vertices, Map.of());
+        Graph graph = new SimpleGraph<Vertex>(vertices, Map.of());
 
         for (int i = 0; i < vertices.size(); i++) {
             Assertions.assertEquals(vertices.get(i), graph.getVertex(2 - i));
@@ -81,7 +81,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(0)
         );
 
-        Graph graph = new SimpleGraph(vertices, Map.of());
+        Graph graph = new SimpleGraph<Vertex>(vertices, Map.of());
         Assertions.assertThrows(NullPointerException.class, () -> graph.getVertex(4));
     }
 
@@ -95,7 +95,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(vertices, new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(vertices, new HashMap<>());
 
         graph.addEdge(0, 1);
         graph.addEdge(1, 2);
@@ -122,7 +122,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(vertices, new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(vertices, new HashMap<>());
 
         graph.addEdge(0, 1);
         graph.addEdge(1, 2);
@@ -150,7 +150,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(vertices, new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(vertices, new HashMap<>());
 
         graph.addEdge(2, 1);
         graph.addEdge(1, 2);
@@ -180,7 +180,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(
+        Graph graph = new SimpleGraph<Vertex>(
                 vertices,
                 new HashMap<>()
         );
@@ -214,7 +214,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(
+        Graph graph = new SimpleGraph<Vertex>(
                 vertices,
                 new HashMap<>()
         );
@@ -249,7 +249,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(vertices, new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(vertices, new HashMap<>());
 
         graph.addEdge(2, 1);
         graph.addEdge(1, 2);
@@ -283,7 +283,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(0)
         );
 
-        Graph graph = new SimpleGraph(vertices, new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(vertices, new HashMap<>());
 
         graph.addEdge(2, 1);
         graph.addEdge(1, 2);
@@ -321,7 +321,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(3)
         );
 
-        Graph graph = new SimpleGraph(vertices, new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(vertices, new HashMap<>());
 
         graph.addEdge(2, 1);
         graph.addEdge(1, 2);
@@ -363,7 +363,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(0)
         );
 
-        Graph graph = new SimpleGraph(vertices, new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(vertices, new HashMap<>());
 
         graph.addEdge(2, 1);
         graph.addEdge(1, 2);
@@ -407,7 +407,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(2)
         );
 
-        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(new ArrayList<>(vertices), new HashMap<>());
         Vertex vertex = new SimpleVertex(3);
         graph.addVertex(vertex);
         Assertions.assertEquals(vertex, graph.getVertex(3));
@@ -424,7 +424,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(3)
         );
 
-        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(new ArrayList<>(vertices), new HashMap<>());
         graph.addEdge(0, 1);
         graph.addEdge(0, 2);
         graph.addEdge(1, 2);
@@ -456,7 +456,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(3)
         );
 
-        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(new ArrayList<>(vertices), new HashMap<>());
         graph.addEdge(0, 1);
         graph.addEdge(0, 2);
         graph.addEdge(1, 2);
@@ -489,7 +489,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(3)
         );
 
-        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(new ArrayList<>(vertices), new HashMap<>());
         graph.addEdge(0, 1);
         graph.addEdge(0, 2);
         graph.addEdge(1, 2);
@@ -524,7 +524,7 @@ public class SimpleGraphTest {
                 new SimpleVertex(5)
         );
 
-        Graph graph = new SimpleGraph(new ArrayList<>(vertices), new HashMap<>());
+        Graph graph = new SimpleGraph<Vertex>(new ArrayList<>(vertices), new HashMap<>());
         graph.addEdge(0, 1);
         graph.addEdge(0, 2);
         graph.addEdge(1, 3);

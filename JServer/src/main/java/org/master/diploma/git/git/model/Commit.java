@@ -3,12 +3,14 @@ package org.master.diploma.git.git.model;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.master.diploma.git.graph.label.LabelVertex;
+import org.master.diploma.git.label.GitLabel;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Commit extends LabelVertex {
+public class Commit extends LabelVertex implements Cloneable {
 
     private String hash;
     private String message;
@@ -19,6 +21,7 @@ public class Commit extends LabelVertex {
     private List<String> diffs;
     private transient List<DiffEntry> diffEntries;
     private int number;
+    private transient RevCommit revCommit;
 
 
     public Commit(RevCommit revCommit) {
@@ -28,6 +31,7 @@ public class Commit extends LabelVertex {
         this.email = revCommit.getAuthorIdent().getEmailAddress();
         this.authorDate = revCommit.getAuthorIdent().getWhenAsInstant();
         this.commitDate = Instant.ofEpochSecond(revCommit.getCommitTime());
+        this.revCommit = revCommit;
     }
 
     public Commit(
@@ -135,5 +139,18 @@ public class Commit extends LabelVertex {
                 diffEntries,
                 number
         );
+    }
+
+    @Override
+    public Commit clone() {
+        Commit commit = new Commit(
+                revCommit,
+                this.diffEntries,
+                this.diffs,
+                this.number
+        );
+        List <GitLabel> gitLabels = new ArrayList<>(getLabels());
+        commit.addLabels(gitLabels);
+        return commit;
     }
 }

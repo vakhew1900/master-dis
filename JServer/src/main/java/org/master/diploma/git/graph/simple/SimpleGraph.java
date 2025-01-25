@@ -6,7 +6,7 @@ import org.master.diploma.git.graph.exception.IncorrectVertexNumberException;
 
 import java.util.*;
 
-public class SimpleGraph extends Graph {
+public class SimpleGraph extends Graph implements Cloneable{
 
     private List<Vertex> vertices;
     private Map<Integer, Integer> numberToIndex;
@@ -163,4 +163,24 @@ public class SimpleGraph extends Graph {
     protected Map<Integer, Set<Integer>> getAdjacencyMatrix() {
         return adjacencyMatrix;
     }
+
+    @Override
+    public SimpleGraph clone() {
+        List<Vertex>  tmpVertices = vertices.stream().map(Vertex::clone).toList();
+        Map<Integer, Set<Integer>> tmpAdjancyMatrix = cloneAdjancyMatrix();
+        return new SimpleGraph(tmpVertices, tmpAdjancyMatrix);
+    }
+
+    private Map<Integer, Set<Integer>> cloneAdjancyMatrix() {
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+
+        adjacencyMatrix.forEach(
+                (key, value) -> {
+                    map.put(key, new HashSet<>(value));
+                }
+        );
+        return map;
+    }
+
+
 }

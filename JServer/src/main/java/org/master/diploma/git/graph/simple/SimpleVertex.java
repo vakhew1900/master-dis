@@ -13,4 +13,9 @@ public class SimpleVertex extends Vertex {
     public int getNumber() {
         return number;
     }
+
+    @Override
+    public SimpleVertex clone() {
+        return new SimpleVertex(number);
+    }
 }

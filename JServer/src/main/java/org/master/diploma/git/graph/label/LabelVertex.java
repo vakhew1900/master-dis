@@ -3,11 +3,12 @@ package org.master.diploma.git.graph.label;
 import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.label.GitLabel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class LabelVertex extends Vertex {
 
-    private List<GitLabel> labels;
+    private List<GitLabel> labels = new ArrayList<>();
     public List<GitLabel> getLabels() {
         return labels;
     }

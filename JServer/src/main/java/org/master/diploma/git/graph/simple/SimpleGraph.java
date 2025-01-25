@@ -6,13 +6,13 @@ import org.master.diploma.git.graph.exception.IncorrectVertexNumberException;
 
 import java.util.*;
 
-public class SimpleGraph extends Graph implements Cloneable{
+public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable{
 
-    private List<Vertex> vertices;
+    private List<T> vertices;
     private Map<Integer, Integer> numberToIndex;
     private Map<Integer, Set<Integer>> adjacencyMatrix; // здесь уже не индексы вершин а номера
 
-    public SimpleGraph(List<Vertex> vertices, Map<Integer, Set<Integer>> adjacencyMatrix) {
+    public SimpleGraph(List<T> vertices, Map<Integer, Set<Integer>> adjacencyMatrix) {
         this.adjacencyMatrix = adjacencyMatrix;
         this.vertices = vertices;
         this.numberToIndex = new HashMap<>();
@@ -23,17 +23,17 @@ public class SimpleGraph extends Graph implements Cloneable{
     }
 
     @Override
-    public List<Vertex> getVertices() {
+    public List<T> getVertices() {
         return vertices;
     }
 
     @Override
-    public Vertex getVertex(int number) {
+    public T getVertex(int number) {
         return vertices.get(getIndexByNumber(number));
     }
 
     @Override
-    public void addVertex(Vertex vertex) {
+    public void addVertex(T vertex) {
         if (adjacencyMatrix.containsKey(vertex.getNumber())) {
             throw new IncorrectVertexNumberException("Vertex number should be more than adjacency matrix size()");
         }
@@ -126,8 +126,8 @@ public class SimpleGraph extends Graph implements Cloneable{
     }
 
     @Override
-    public List<Vertex> getParents(int vertexNumber) {
-        List<Vertex> vertices = new ArrayList<>();
+    public List<T> getParents(int vertexNumber) {
+        List<T> vertices = new ArrayList<>();
 
         getParentNumbers(vertexNumber).forEach(
                 parent -> {
@@ -145,8 +145,8 @@ public class SimpleGraph extends Graph implements Cloneable{
     }
 
     @Override
-    public List<Vertex> getChildren(int vertexNumber) {
-        List<Vertex> vertices = new ArrayList<>();
+    public List<T> getChildren(int vertexNumber) {
+        List<T> vertices = new ArrayList<>();
         getChildrenNumbers(vertexNumber).forEach(
                 children -> {
                     vertices.add(getVertex(children));
@@ -160,15 +160,15 @@ public class SimpleGraph extends Graph implements Cloneable{
         return numberToIndex.get(number);
     }
 
-    protected Map<Integer, Set<Integer>> getAdjacencyMatrix() {
+    public Map<Integer, Set<Integer>> getAdjacencyMatrix() {
         return adjacencyMatrix;
     }
 
     @Override
-    public SimpleGraph clone() {
-        List<Vertex>  tmpVertices = vertices.stream().map(Vertex::clone).toList();
+    public SimpleGraph<T> clone() {
+        List<T>  tmpVertices = (List<T>) vertices.stream().map(T::clone).toList();
         Map<Integer, Set<Integer>> tmpAdjancyMatrix = cloneAdjancyMatrix();
-        return new SimpleGraph(tmpVertices, tmpAdjancyMatrix);
+        return new SimpleGraph<T>(tmpVertices, tmpAdjancyMatrix);
     }
 
     private Map<Integer, Set<Integer>> cloneAdjancyMatrix() {

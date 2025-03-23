@@ -9,10 +9,36 @@ import java.util.List;
 public class GraphHelper {
 
 
+    private List<Integer> getMaximumChildWeight(List<List<Integer>> matrix) {
+        List<List<Integer>> newMatrix = new ArrayList<>( // 0-индексация будет заменена на 1 индексацию
+                Collections.nCopies(
+                        matrix.size() + 1,
+                        new ArrayList<>(Collections.nCopies(matrix.get(0).size() + 1, 0))
+                )
+        );
+
+        for (int i = 1; i < matrix.size(); i++) {
+            for (int j = 1; j < matrix.get(i).size(); j++) {
+                newMatrix.get(i).set(j, matrix.get(i - 1).get(j - 1) + 1);
+            }
+        }
+
+        List<Integer> temp = HungarianAlgorithm(newMatrix);
+        List<Integer> result = new ArrayList<>();
+
+        for (int i = 1; i < temp.size(); i++) { // делаем сдвиг влево
+            result.add(temp.get(i) - 1);
+        }
+
+        return result;
+    }
+
     /**
      * Венгерский алгоритм источник:http://www.e-maxx-ru.1gb.ru/algo/assignment_hungary#5
      */
-    private List<Integer> HungarianAlgorithm(List<List<Integer>> a, int n, int m) {
+    private List<Integer> HungarianAlgorithm(List<List<Integer>> a) {
+        int n = a.size() - 1;
+        int m = a.get(0).size() - 1;
         List<Integer> u = new ArrayList<>(Collections.nCopies(n + 1, 0)); // Инициализируем нулями
         List<Integer> v = new ArrayList<>(Collections.nCopies(m + 1, 0)); // Инициализируем нулями
         List<Integer> p = new ArrayList<>(Collections.nCopies(m + 1, 0)); // Инициализируем нулями
@@ -20,7 +46,7 @@ public class GraphHelper {
         for (int i = 1; i <= n; ++i) {
             p.set(0, i);
             int j0 = 0;
-            List<Integer> minv= new ArrayList<>(Collections.nCopies(m + 1, Constants.INFINITY));
+            List<Integer> minv = new ArrayList<>(Collections.nCopies(m + 1, Constants.INFINITY));
             List<Boolean> used = new ArrayList<>(Collections.nCopies(m + 1, false));
             do {
                 used.set(j0, true);

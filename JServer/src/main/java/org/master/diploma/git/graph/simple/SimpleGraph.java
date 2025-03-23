@@ -47,11 +47,11 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
         if (getVertex(number) == null) {
             return;
         }
-        List<Integer> childrens = getChildrenNumbers(number);
+        List<Integer> children = getChildrenNumbers(number);
         List<Integer> parents = getParentNumbers(number);
 
         // удаляем всех детей вершины
-        childrens.forEach(
+        children.forEach(
                 child -> removeEdge(number, child)
         );
 
@@ -63,7 +63,7 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
         // добавляем связь parent-child
         parents.forEach(
                 parent -> {
-                    childrens.forEach(
+                    children.forEach(
                             child -> {
                                 addEdge(parent, child);
                             }

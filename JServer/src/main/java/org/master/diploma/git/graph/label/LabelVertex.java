@@ -44,4 +44,16 @@ public abstract class LabelVertex extends Vertex {
             labels.remove(deleteIndex);
         }
     }
+
+    @Override
+    public boolean canRelate(Vertex vertex) {
+        boolean result = false;
+
+        for (var label : getLabels()) {
+            for (var otherLabel : getLabels()) {
+                result = result || label.equals(otherLabel);
+            }
+        }
+        return result;
+    }
 }

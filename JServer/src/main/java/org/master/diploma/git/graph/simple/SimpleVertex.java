@@ -5,6 +5,7 @@ import org.master.diploma.git.graph.Vertex;
 public class SimpleVertex extends Vertex {
 
     int number;
+
     public SimpleVertex(int number) {
         this.number = number;
     }
@@ -17,5 +18,10 @@ public class SimpleVertex extends Vertex {
     @Override
     public SimpleVertex clone() {
         return new SimpleVertex(number);
+    }
+
+    @Override
+    public boolean canRelate(Vertex vertex) {
+        return true;
     }
 }

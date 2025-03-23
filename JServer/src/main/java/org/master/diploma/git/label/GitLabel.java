@@ -20,6 +20,14 @@ public class GitLabel extends Label {
         return number;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this.getClass().equals(obj.getClass())) {
+            return this.number == ((GitLabel) obj).getNumber();
+        }
+        return false;
+    }
+
     public GitLabelInfo getLabelInfo() {
         return labelInfo;
     }

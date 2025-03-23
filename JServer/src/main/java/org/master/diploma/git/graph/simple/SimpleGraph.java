@@ -6,7 +6,7 @@ import org.master.diploma.git.graph.exception.IncorrectVertexNumberException;
 
 import java.util.*;
 
-public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable{
+public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable {
 
     private List<T> vertices;
     private Map<Integer, Integer> numberToIndex;
@@ -73,7 +73,7 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
 
         int deleteIndex = -1;
 
-        for(int i = 0; i < vertices.size(); i++) {
+        for (int i = 0; i < vertices.size(); i++) {
             if (vertices.get(i).getNumber() == number) {
                 deleteIndex = i;
                 break;
@@ -166,7 +166,7 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
 
     @Override
     public SimpleGraph<T> clone() {
-        List<T>  tmpVertices = (List<T>) vertices.stream().map(T::clone).toList();
+        List<T> tmpVertices = (List<T>) vertices.stream().map(T::clone).toList();
         Map<Integer, Set<Integer>> tmpAdjancyMatrix = cloneAdjancyMatrix();
         return new SimpleGraph<T>(tmpVertices, tmpAdjancyMatrix);
     }
@@ -182,5 +182,14 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
         return map;
     }
 
+    @Override
+    public int getRoot() {
+        for (int i = 0; i < vertices.size(); i++) {
+            if (this.getParents(i).isEmpty()) {
+                return i;
+            }
+        }
 
+        throw new IncorrectVertexNumberException("Root number not found");
+    }
 }

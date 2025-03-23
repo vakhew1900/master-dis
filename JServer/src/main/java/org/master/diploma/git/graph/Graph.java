@@ -18,4 +18,5 @@ public abstract class Graph<T extends Vertex> {
 
     public abstract List<Integer> getChildrenNumbers(int vertexNumber);
     public abstract List<T> getChildren(int vertexNumber);
+    public abstract int getRoot();
 }

@@ -1,18 +1,38 @@
 package org.master.diploma.git;
 
 import org.master.diploma.git.git.GitHelper;
+import org.master.diploma.git.git.model.Commit;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Main {
 
     public static void main(String[] args) {
 
         String path = "E:\\univer\\5_course\\diploma\\CAP\\soft\\master-dis\\JServer\\src\\test\\resources\\repositories\\test-1";
-        var commits = GitHelper.getAllRevCommits(path);
-        System.out.println(commits.size());
+        var gitGraph = GitHelper.createCommitGraph(path);
+        gitGraph.getVertices().forEach(
+                vertex -> {
+                    ((Commit) vertex).getDiffs().forEach(
+                            System.out::println
+                    );
+                }
+        );
 
+        gitGraph.getVertices().forEach(
+                vertex -> {
+                    ((Commit) vertex).getDiffEntries().forEach(
+                            diffEntry -> {
+                             System.out.println("old" + diffEntry.getOldPath());
+                             System.out.println("new" + diffEntry.getNewPath());
+                            }
+                    );
+                }
+        );
 
-//        commits.forEach(
-//                commit ->   { System.out.println(commit.getShortMessage()); GitHelper.revCommitToCommit(commit, path); System.out.println("-----------------------------------------------------------"); }
-//        );
+        System.out.println("Ffff");
     }
 }

@@ -1,6 +1,5 @@
 package org.master.diploma.git.graph;
 
-import org.master.diploma.git.graph.simple.SimpleVertex;
 import org.master.diploma.git.support.Constants;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ public class GraphHelper {
 
     private static int UN_INIT = -1;
 
-    public static <T extends SimpleVertex> int findBiggestSubSequenceSubgraph(
+    public static <T extends Vertex> int findBiggestSubSequenceSubgraph(
             Graph<T> first,
             Graph<T> second
     ) {
@@ -21,9 +20,11 @@ public class GraphHelper {
         List<List<Integer>> dp = new ArrayList<>(
                 Collections.nCopies(
                         first.getVertices().size(),
-                        Collections.nCopies(
-                                second.getVertices().size(),
-                                UN_INIT
+                        new ArrayList<>(
+                                Collections.nCopies(
+                                        second.getVertices().size(),
+                                        UN_INIT
+                                )
                         )
                 )
         );
@@ -37,7 +38,7 @@ public class GraphHelper {
         );
     }
 
-    private static <T extends SimpleVertex> int findBiggestSubSequenceSubgraph(
+    private static <T extends Vertex> int findBiggestSubSequenceSubgraph(
             List<List<Integer>> dp,
             int u,
             int v,
@@ -60,7 +61,10 @@ public class GraphHelper {
                     Collections.nCopies(
                             first.getVertices().size(),
                             new ArrayList<>(
-                                    second.getVertices().size()
+                                    Collections.nCopies(
+                                            second.getVertices().size(),
+                                            0
+                                    )
                             )
                     )
             );
@@ -171,7 +175,7 @@ public class GraphHelper {
                 int j1 = -1;
 
                 for (int j = 1; j <= m; ++j) {
-                    if (used.get(j)) {
+                    if (!used.get(j)) {
                         int cur = a.get(i0).get(j) - u.get(i0) - v.get(j);
                         if (cur < minv.get(j)) {
                             minv.set(j, cur);

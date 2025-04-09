@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Commit extends LabelVertex implements Cloneable {
+public class Commit extends LabelVertex<GitLabel> implements Cloneable {
 
     private String hash;
     private String message;

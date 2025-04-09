@@ -6,7 +6,6 @@ public abstract class Vertex implements Cloneable {
 
     public abstract int getNumber();
 
-
     public Commit asCommit() {
         return (Commit) this;
     }

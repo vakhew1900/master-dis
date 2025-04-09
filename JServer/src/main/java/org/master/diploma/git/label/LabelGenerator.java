@@ -4,5 +4,5 @@ import org.master.diploma.git.git.model.CommitGraph;
 
 public abstract class LabelGenerator {
 
-    public abstract void makeLabelFprGitGraph(CommitGraph commitGraph);
+    public abstract void makeLabelForGitGraph(CommitGraph commitGraph);
 }

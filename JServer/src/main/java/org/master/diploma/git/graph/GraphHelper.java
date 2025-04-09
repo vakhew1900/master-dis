@@ -1,6 +1,7 @@
 package org.master.diploma.git.graph;
 
 import org.master.diploma.git.support.Constants;
+import org.master.diploma.git.support.Creator;
 
 import java.util.*;
 
@@ -9,23 +10,19 @@ public class GraphHelper {
 
     private static int UN_INIT = -1;
 
-    public <T extends Vertex> DpElement findBiggestSubSequenceSubgraph(
+    public static <T extends Vertex> DpElement findBiggestSubSequenceSubgraph(
             Graph<T> first,
             Graph<T> second
     ) {
 
         // иницилизация массива dp
-        List<List<DpElement>> dp = new ArrayList<>(
-                Collections.nCopies(
-                        first.getVertices().size(),
-                        new ArrayList<>(
-                                Collections.nCopies(
-                                        second.getVertices().size(),
-                                        new DpElement(UN_INIT, new HashMap<>())
-                                )
-                        )
-                )
-        );
+
+        List<List<DpElement>> dp = Creator.createMatrix(
+                first.getVertices().size(),
+                second.getVertices().size(),
+                () -> new DpElement(UN_INIT, new HashMap<>())
+                );
+
 
         return findBiggestSubSequenceSubgraph(
                 dp,
@@ -53,19 +50,16 @@ public class GraphHelper {
                 .canRelate(second.getVertex(v))
         ) {
 
-            relatingValue = new DpElement(1, new HashMap<>());
+            relatingValue = new DpElement(1, new HashMap<>(Map.of(u,v)));
 
-            List<List<Integer>> weightMatrix = new ArrayList<>(
-                    Collections.nCopies(
-                            first.getVertices().size(),
-                            new ArrayList<>(
-                                    Collections.nCopies(
-                                            second.getVertices().size(),
-                                            0
-                                    )
-                            )
-                    )
-            );
+
+            List<List<Integer>> weightMatrix = Creator.createMatrix(
+                    first.getVertices().size(),
+                    second.getVertices().size(),
+                    () -> 0
+                    );
+
+
 
             for (var childU : first.getChildrenNumbers(u)) {
                 for (var childV : second.getChildrenNumbers(v)) {
@@ -84,9 +78,12 @@ public class GraphHelper {
 
             for (int row = 0; row < maximumChildWeightList.size(); row++) {
                 int col = maximumChildWeightList.get(row);
-                relatingValue.addDpElement(
-                      dp.get(row).get(col)
-                );
+
+                if (first.getChildrenNumbers(u).contains(row) && second.getChildrenNumbers(v).contains(row)) {
+                    relatingValue.addDpElement(
+                            dp.get(row).get(col)
+                    );
+                }
             }
 
         }
@@ -122,16 +119,15 @@ public class GraphHelper {
     private static List<Integer> getMaximumChildWeight(List<List<Integer>> matrix) {
 
         reductionMatrix(matrix);
-        List<List<Integer>> newMatrix = new ArrayList<>( // 0-индексация будет заменена на 1 индексацию
-                Collections.nCopies(
-                        matrix.size() + 1,
-                        new ArrayList<>(Collections.nCopies(matrix.get(0).size() + 1, 0))
-                )
+        List<List<Integer>> newMatrix = Creator.createMatrix(
+                matrix.size() + 1,
+                matrix.get(0).size() + 1,
+                ()->0
         );
 
         for (int i = 1; i < matrix.size(); i++) {
             for (int j = 1; j < matrix.get(i).size(); j++) {
-                newMatrix.get(i).set(j, matrix.get(i - 1).get(j - 1) + 1);
+                newMatrix.get(i).set(j, matrix.get(i - 1).get(j - 1));
             }
         }
 

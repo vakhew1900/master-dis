@@ -2,28 +2,39 @@ package org.master.diploma.git.graph.label;
 
 import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.label.GitLabel;
+import org.master.diploma.git.label.Label;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class LabelVertex extends Vertex {
+public abstract class LabelVertex<T extends Label> extends Vertex {
 
-    private List<GitLabel> labels = new ArrayList<>();
+    private List<T> labels = new ArrayList<>();
 
-    public List<GitLabel> getLabels() {
+    public LabelVertex(){
+
+    }
+
+    public LabelVertex(List<T> labels) {
+        this.labels = labels;
+    }
+
+
+
+    public List<T> getLabels() {
         return labels;
     }
 
-    public void addLabels(List<GitLabel> labels) {
+    public void addLabels(List<T> labels) {
         this.labels.addAll(labels);
     }
 
-    public void addLabel(GitLabel label) {
+    public void addLabel(T label) {
         labels.add(label);
     }
 
     public boolean contains(int labelId) {
-        for (GitLabel label : labels) {
+        for (T label : labels) {
             if (label.getId() == labelId) {
                 return true;
             }

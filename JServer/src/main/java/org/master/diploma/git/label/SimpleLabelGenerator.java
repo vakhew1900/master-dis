@@ -32,7 +32,7 @@ public class SimpleLabelGenerator extends LabelGenerator {
     }
 
     @Override
-    public void makeLabelFprGitGraph(CommitGraph commitGraph) {
+    public void makeLabelForGitGraph(CommitGraph commitGraph) {
 
         commitGraph.getVertices().forEach(
                 vertex -> {

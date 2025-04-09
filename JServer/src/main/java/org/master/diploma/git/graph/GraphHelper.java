@@ -2,28 +2,26 @@ package org.master.diploma.git.graph;
 
 import org.master.diploma.git.support.Constants;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class GraphHelper {
 
 
     private static int UN_INIT = -1;
 
-    public static <T extends Vertex> int findBiggestSubSequenceSubgraph(
+    public <T extends Vertex> DpElement findBiggestSubSequenceSubgraph(
             Graph<T> first,
             Graph<T> second
     ) {
 
         // иницилизация массива dp
-        List<List<Integer>> dp = new ArrayList<>(
+        List<List<DpElement>> dp = new ArrayList<>(
                 Collections.nCopies(
                         first.getVertices().size(),
                         new ArrayList<>(
                                 Collections.nCopies(
                                         second.getVertices().size(),
-                                        UN_INIT
+                                        new DpElement(UN_INIT, new HashMap<>())
                                 )
                         )
                 )
@@ -38,26 +36,26 @@ public class GraphHelper {
         );
     }
 
-    private static <T extends Vertex> int findBiggestSubSequenceSubgraph(
-            List<List<Integer>> dp,
+    private static <T extends Vertex> DpElement findBiggestSubSequenceSubgraph(
+            List<List<DpElement>> dp,
             int u,
             int v,
             Graph<T> first,
             Graph<T> second
     ) {
 
-        if (dp.get(u).get(v) != UN_INIT) {
+        if (dp.get(u).get(v).getWeight() != UN_INIT) {
             return dp.get(u).get(v);
         }
 
-        int relatingValue = 0;
+        DpElement relatingValue = new DpElement(0, new HashMap<>());
         if (first.getVertex(u)
                 .canRelate(second.getVertex(v))
         ) {
 
-            relatingValue = 1;
+            relatingValue = new DpElement(1, new HashMap<>());
 
-            List<List<Integer>> matrix = new ArrayList<>(
+            List<List<Integer>> weightMatrix = new ArrayList<>(
                     Collections.nCopies(
                             first.getVertices().size(),
                             new ArrayList<>(
@@ -71,46 +69,53 @@ public class GraphHelper {
 
             for (var childU : first.getChildrenNumbers(u)) {
                 for (var childV : second.getChildrenNumbers(v)) {
-                    int tmp = findBiggestSubSequenceSubgraph(
+                    DpElement tmp = findBiggestSubSequenceSubgraph(
                             dp,
                             childU,
                             childV,
                             first,
                             second
                     );
-                    matrix.get(childU).set(childV, tmp);
+                    weightMatrix.get(childU).set(childV, tmp.getWeight());
                 }
             }
 
-            var maximumChildWeightList = getMaximumChildWeight(matrix);
-            relatingValue += (int) maximumChildWeightList.stream().filter(x -> x > 0).count();
+            var maximumChildWeightList = getMaximumChildWeight(weightMatrix);
+
+            for (int row = 0; row < maximumChildWeightList.size(); row++) {
+                int col = maximumChildWeightList.get(row);
+                relatingValue.addDpElement(
+                      dp.get(row).get(col)
+                );
+            }
+
         }
 
-        int other = 0;
+        DpElement other = new DpElement(0, new HashMap<>());
 
         for (var childU : first.getChildrenNumbers(u)) {
-            int tmp = findBiggestSubSequenceSubgraph(
+            DpElement tmp = findBiggestSubSequenceSubgraph(
                     dp,
                     childU,
                     v,
                     first,
                     second
             );
-            other = Math.max(other, tmp);
+            other = DpElement.max(other, tmp);
         }
 
         for (var childV : first.getChildrenNumbers(v)) {
-            int tmp = findBiggestSubSequenceSubgraph(
+            DpElement tmp = findBiggestSubSequenceSubgraph(
                     dp,
                     u,
                     childV,
                     first,
                     second
             );
-            other = Math.max(other, tmp);
+            other = DpElement.max(other, tmp);
         }
 
-        dp.get(u).set(v, Math.max(relatingValue, other));
+        dp.get(u).set(v, DpElement.max(relatingValue, other));
         return dp.get(u).get(v);
     }
 
@@ -213,5 +218,38 @@ public class GraphHelper {
             }
         }
         return ans;
+    }
+
+
+    public static class DpElement {
+        private int weight;
+        private Map<Integer, Integer> matchingVertices = new HashMap<>();
+
+        public DpElement(int weight, Map<Integer, Integer> matchingVertices) {
+
+            this.weight = weight;
+            this.matchingVertices = matchingVertices;
+        }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        public Map<Integer, Integer> getMatchingVertices() {
+            return matchingVertices;
+        }
+
+        public static boolean isBigger(DpElement first, DpElement second) {
+            return first.weight > second.weight;
+        }
+
+        public static DpElement max(DpElement first, DpElement second) {
+           return (isBigger(first, second))? first : second;
+        }
+
+        public void addDpElement(DpElement other) {
+            this.weight += other.weight;
+            this.matchingVertices.putAll(other.getMatchingVertices());
+        }
     }
 }

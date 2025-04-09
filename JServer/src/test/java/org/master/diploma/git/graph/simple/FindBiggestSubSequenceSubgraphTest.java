@@ -32,7 +32,10 @@ public class FindBiggestSubSequenceSubgraphTest {
         Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
         Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
 
-        int expected = 7;
+        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+                3,
+                Map.of(0,0,1,1,2,2)
+        );
         GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
         Assertions.assertEquals(expected, result);
     }

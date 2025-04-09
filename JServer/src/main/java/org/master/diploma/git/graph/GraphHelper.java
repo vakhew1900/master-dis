@@ -247,5 +247,19 @@ public class GraphHelper {
             this.weight += other.weight;
             this.matchingVertices.putAll(other.getMatchingVertices());
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            DpElement dpElement = (DpElement) o;
+            return weight == dpElement.weight && Objects.equals(matchingVertices, dpElement.matchingVertices);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(weight, matchingVertices);
+        }
     }
 }

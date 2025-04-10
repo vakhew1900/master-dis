@@ -60,8 +60,12 @@ public abstract class LabelVertex<T extends Label> extends Vertex {
     public boolean canRelate(Vertex vertex) {
         boolean result = false;
 
+        if (!(vertex instanceof LabelVertex)) {
+            return  result;
+        }
+
         for (var label : getLabels()) {
-            for (var otherLabel : getLabels()) {
+            for (var otherLabel : ((LabelVertex)vertex).getLabels()) {
                 result = result || label.equals(otherLabel);
             }
         }

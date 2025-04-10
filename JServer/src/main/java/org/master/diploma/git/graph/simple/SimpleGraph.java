@@ -82,6 +82,10 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
 
         vertices.remove(deleteIndex);
         adjacencyMatrix.remove(number);
+        numberToIndex.clear();
+        for (int i = 0; i < vertices.size(); i++) {
+            numberToIndex.put(vertices.get(i).getNumber(), i);
+        }
     }
 
 

@@ -8,7 +8,7 @@ import java.util.*;
 public class GraphHelper {
 
 
-    private static int UN_INIT = -1;
+    private static int UN_INIT = 0;
 
     public static <T extends Vertex> DpElement findBiggestSubSequenceSubgraph(
             Graph<T> first,
@@ -17,10 +17,13 @@ public class GraphHelper {
 
         // иницилизация массива dp
 
+        int rowCount = first.getVertices().stream().max(Comparator.comparingInt(Vertex::getNumber)).get().getNumber() + 1;
+        int colCount = second.getVertices().stream().max(Comparator.comparingInt(Vertex::getNumber)).get().getNumber() + 1;
+
         List<List<DpElement>> dp = Creator.createMatrix(
-                first.getVertices().size(),
-                second.getVertices().size(),
-                () -> new DpElement(UN_INIT, new HashMap<>())
+                rowCount,
+                colCount,
+                () -> new DpElement(new HashMap<>())
                 );
 
 
@@ -45,17 +48,17 @@ public class GraphHelper {
             return dp.get(u).get(v);
         }
 
-        DpElement relatingValue = new DpElement(0, new HashMap<>());
+        DpElement relatingValue = new DpElement( new HashMap<>());
         if (first.getVertex(u)
                 .canRelate(second.getVertex(v))
         ) {
 
-            relatingValue = new DpElement(1, new HashMap<>(Map.of(u,v)));
+            relatingValue = new DpElement(new HashMap<>(Map.of(u,v)));
 
 
             List<List<Integer>> weightMatrix = Creator.createMatrix(
-                    first.getVertices().size(),
-                    second.getVertices().size(),
+                    dp.size(),
+                    dp.get(0).size(),
                     () -> 0
                     );
 
@@ -76,10 +79,10 @@ public class GraphHelper {
 
             var maximumChildWeightList = getMaximumChildWeight(weightMatrix);
 
-            for (int row = 0; row < maximumChildWeightList.size(); row++) {
+            for (int row = 0; row < dp.size(); row++) {
                 int col = maximumChildWeightList.get(row);
 
-                if (col >= 0 && first.getChildrenNumbers(u).contains(row) && second.getChildrenNumbers(v).contains(row)) {
+                if (col >= 0 && col < dp.get(row).size() && dp.get(row).get(col).getWeight() > 0) {
                     relatingValue.addDpElement(
                             dp.get(row).get(col)
                     );
@@ -88,7 +91,7 @@ public class GraphHelper {
 
         }
 
-        DpElement other = new DpElement(0, new HashMap<>());
+        DpElement other = new DpElement(new HashMap<>());
 
         for (var childU : first.getChildrenNumbers(u)) {
             DpElement tmp = findBiggestSubSequenceSubgraph(
@@ -118,14 +121,15 @@ public class GraphHelper {
 
     private static List<Integer> getMaximumChildWeight(List<List<Integer>> matrix) {
 
+        int size = Math.max(matrix.size(), matrix.get(0).size()) + 1;
         List<List<Integer>> newMatrix = Creator.createMatrix(
-                matrix.size() + 1,
-                matrix.get(0).size() + 1,
+                size,
+                size,
                 ()->0
         );
 
-        for (int i = 1; i < newMatrix.size(); i++) {
-            for (int j = 1; j < newMatrix.get(0).size(); j++) {
+        for (int i = 1; i <= matrix.size() ; i++) {
+            for (int j = 1; j <= matrix.get(0).size(); j++) {
                 newMatrix.get(i).set(j, matrix.get(i - 1).get(j - 1));
             }
         }
@@ -224,17 +228,15 @@ public class GraphHelper {
 
 
     public static class DpElement {
-        private int weight;
         private Map<Integer, Integer> matchingVertices = new HashMap<>();
 
-        public DpElement(int weight, Map<Integer, Integer> matchingVertices) {
+        public DpElement(Map<Integer, Integer> matchingVertices) {
 
-            this.weight = weight;
             this.matchingVertices = matchingVertices;
         }
 
         public int getWeight() {
-            return weight;
+            return matchingVertices.size();
         }
 
         public Map<Integer, Integer> getMatchingVertices() {
@@ -242,7 +244,7 @@ public class GraphHelper {
         }
 
         public static boolean isBigger(DpElement first, DpElement second) {
-            return first.weight > second.weight;
+            return first.getWeight() > second.getWeight();
         }
 
         public static DpElement max(DpElement first, DpElement second) {
@@ -250,7 +252,6 @@ public class GraphHelper {
         }
 
         public void addDpElement(DpElement other) {
-            this.weight += other.weight;
             this.matchingVertices.putAll(other.getMatchingVertices());
         }
 
@@ -260,12 +261,13 @@ public class GraphHelper {
                 return false;
             }
             DpElement dpElement = (DpElement) o;
-            return weight == dpElement.weight && Objects.equals(matchingVertices, dpElement.matchingVertices);
+            return Objects.equals(matchingVertices, dpElement.matchingVertices);
         }
+
 
         @Override
         public int hashCode() {
-            return Objects.hash(weight, matchingVertices);
+            return Objects.hash(matchingVertices);
         }
     }
 }

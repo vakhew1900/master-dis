@@ -9,22 +9,20 @@ import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.graph.label.SimpleLabelVertex;
 import org.master.diploma.git.label.SimpleLabel;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class FindBiggestSubSequenceSubgraphTest {
 
 
     @Test
-    public void simpleTest(){
+    public void simpleTest() {
         List<LabelVertex<SimpleLabel>> vertices = List.of(
                 new SimpleLabelVertex(0, new SimpleLabel(1)),
                 new SimpleLabelVertex(1, new SimpleLabel(2)),
                 new SimpleLabelVertex(2, new SimpleLabel(3))
         );
 
-        Map<Integer, Set<Integer>>  adjacentMatrix = Map.of(
+        Map<Integer, Set<Integer>> adjacentMatrix = Map.of(
                 0, Set.of(1),
                 1, Set.of(2)
         );
@@ -34,14 +32,41 @@ public class FindBiggestSubSequenceSubgraphTest {
 
         GraphHelper.DpElement expected = new GraphHelper.DpElement(
                 3,
-                Map.of(0,0,1,1,2,2)
+                Map.of(0, 0, 1, 1, 2, 2)
         );
         GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
         Assertions.assertEquals(expected, result);
     }
 
     @Test
-    public void equalGraphTest(){
+    public void deleteListTest() {
+        List<LabelVertex<SimpleLabel>> vertices = new ArrayList<>(List.of(
+                new SimpleLabelVertex(0, new SimpleLabel(1)),
+                new SimpleLabelVertex(1, new SimpleLabel(2)),
+                new SimpleLabelVertex(2, new SimpleLabel(3))
+        ));
+
+        Map<Integer, Set<Integer>> adjacentMatrix = new HashMap<>(Map.of(
+                0, Set.of(1),
+                1, Set.of(2)
+        )
+        );
+
+        Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
+        Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
+
+        second.removeVertex(2);
+
+        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+                2,
+                Map.of(0, 0, 1, 1)
+        );
+        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    public void equalGraphTest() {
         List<LabelVertex<SimpleLabel>> vertices = List.of(
                 new SimpleLabelVertex(0, new SimpleLabel(1)),
                 new SimpleLabelVertex(1, new SimpleLabel(2)),
@@ -52,7 +77,7 @@ public class FindBiggestSubSequenceSubgraphTest {
                 new SimpleLabelVertex(6, new SimpleLabel(7))
         );
 
-        Map<Integer, Set<Integer>>  adjacentMatrix = Map.of(
+        Map<Integer, Set<Integer>> adjacentMatrix = Map.of(
                 0, Set.of(1),
                 1, Set.of(2, 3),
                 2, Set.of(4, 5),

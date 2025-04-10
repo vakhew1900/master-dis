@@ -14,7 +14,7 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
 
     public SimpleGraph(List<T> vertices, Map<Integer, Set<Integer>> adjacencyMatrix) {
         this.adjacencyMatrix = new HashMap<>(adjacencyMatrix);
-        this.vertices = vertices;
+        this.vertices =  new ArrayList<>(vertices);
         this.numberToIndex = new HashMap<>();
 
         for (int i = 0; i < vertices.size(); i++) {

@@ -79,7 +79,7 @@ public class GraphHelper {
             for (int row = 0; row < maximumChildWeightList.size(); row++) {
                 int col = maximumChildWeightList.get(row);
 
-                if (first.getChildrenNumbers(u).contains(row) && second.getChildrenNumbers(v).contains(row)) {
+                if (col >= 0 && first.getChildrenNumbers(u).contains(row) && second.getChildrenNumbers(v).contains(row)) {
                     relatingValue.addDpElement(
                             dp.get(row).get(col)
                     );
@@ -101,7 +101,7 @@ public class GraphHelper {
             other = DpElement.max(other, tmp);
         }
 
-        for (var childV : first.getChildrenNumbers(v)) {
+        for (var childV : second.getChildrenNumbers(v)) {
             DpElement tmp = findBiggestSubSequenceSubgraph(
                     dp,
                     u,
@@ -118,18 +118,19 @@ public class GraphHelper {
 
     private static List<Integer> getMaximumChildWeight(List<List<Integer>> matrix) {
 
-        reductionMatrix(matrix);
         List<List<Integer>> newMatrix = Creator.createMatrix(
                 matrix.size() + 1,
                 matrix.get(0).size() + 1,
                 ()->0
         );
 
-        for (int i = 1; i < matrix.size(); i++) {
-            for (int j = 1; j < matrix.get(i).size(); j++) {
+        for (int i = 1; i < newMatrix.size(); i++) {
+            for (int j = 1; j < newMatrix.get(0).size(); j++) {
                 newMatrix.get(i).set(j, matrix.get(i - 1).get(j - 1));
             }
         }
+
+        reductionMatrix(newMatrix);
 
         List<Integer> temp = HungarianAlgorithm(newMatrix);
         List<Integer> result = new ArrayList<>();
@@ -197,6 +198,11 @@ public class GraphHelper {
                         minv.set(j, minv.get(j) - delta);
                     }
                 }
+
+                if (j1 == -1){
+                    break;
+                }
+
                 j0 = j1;
             } while (p.get(j0) != 0);
 

@@ -190,7 +190,7 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
     public int getRoot() {
         for (int i = 0; i < vertices.size(); i++) {
             if (this.getParents(i).isEmpty()) {
-                return i;
+                return vertices.get(i).getNumber();
             }
         }
 

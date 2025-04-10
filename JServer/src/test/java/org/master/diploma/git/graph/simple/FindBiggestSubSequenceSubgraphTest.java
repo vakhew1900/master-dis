@@ -115,15 +115,246 @@ public class FindBiggestSubSequenceSubgraphTest {
         GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
         GraphHelper.DpElement expected = new GraphHelper.DpElement(
                 Map.of(
-                        1,1,
-                        2,2,
-                        3,3,
-                        4,4,
-                        5,5,
-                        6,6,
-                        0,0
+                        1, 1,
+                        2, 2,
+                        3, 3,
+                        4, 4,
+                        5, 5,
+                        6, 6,
+                        0, 0
                 )
         );
         Assertions.assertEquals(expected, result);
     }
+
+    @Test
+    public void removeOneListTest() {
+        List<LabelVertex<SimpleLabel>> vertices = List.of(
+                new SimpleLabelVertex(0, new SimpleLabel(1)),
+                new SimpleLabelVertex(1, new SimpleLabel(2)),
+                new SimpleLabelVertex(2, new SimpleLabel(3)),
+                new SimpleLabelVertex(3, new SimpleLabel(4)),
+                new SimpleLabelVertex(4, new SimpleLabel(5)),
+                new SimpleLabelVertex(5, new SimpleLabel(6)),
+                new SimpleLabelVertex(6, new SimpleLabel(7))
+        );
+
+        Map<Integer, Set<Integer>> adjacentMatrix = Map.of(
+                0, Set.of(1),
+                1, Set.of(2, 3),
+                2, Set.of(4, 5),
+                3, Set.of(6)
+        );
+
+        Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
+        Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
+
+        second.removeVertex(6);
+
+        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+                Map.of(
+                        1, 1,
+                        2, 2,
+                        3, 3,
+                        4, 4,
+                        5, 5,
+                        0, 0
+                )
+        );
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    public void removeSeveralListTest() {
+        List<LabelVertex<SimpleLabel>> vertices = List.of(
+                new SimpleLabelVertex(0, new SimpleLabel(1)),
+                new SimpleLabelVertex(1, new SimpleLabel(2)),
+                new SimpleLabelVertex(2, new SimpleLabel(3)),
+                new SimpleLabelVertex(3, new SimpleLabel(4)),
+                new SimpleLabelVertex(4, new SimpleLabel(5)),
+                new SimpleLabelVertex(5, new SimpleLabel(6)),
+                new SimpleLabelVertex(6, new SimpleLabel(7))
+        );
+
+        Map<Integer, Set<Integer>> adjacentMatrix = Map.of(
+                0, Set.of(1),
+                1, Set.of(2, 3),
+                2, Set.of(4, 5),
+                3, Set.of(6)
+        );
+
+        Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
+        Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
+
+        second.removeVertex(6);
+        second.removeVertex(5);
+
+        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+                Map.of(
+                        1, 1,
+                        2, 2,
+                        3, 3,
+                        4, 4,
+                        0, 0
+                )
+        );
+        Assertions.assertEquals(expected, result);
+    }
+
+
+    @Test
+    public void removeOneTransitVertexTest() {
+        List<LabelVertex<SimpleLabel>> vertices = List.of(
+                new SimpleLabelVertex(0, new SimpleLabel(1)),
+                new SimpleLabelVertex(1, new SimpleLabel(2)),
+                new SimpleLabelVertex(2, new SimpleLabel(3)),
+                new SimpleLabelVertex(3, new SimpleLabel(4)),
+                new SimpleLabelVertex(4, new SimpleLabel(5)),
+                new SimpleLabelVertex(5, new SimpleLabel(6)),
+                new SimpleLabelVertex(6, new SimpleLabel(7))
+        );
+
+        Map<Integer, Set<Integer>> adjacentMatrix = Map.of(
+                0, Set.of(1),
+                1, Set.of(2, 3),
+                2, Set.of(4, 5),
+                3, Set.of(6)
+        );
+
+        Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
+        Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
+
+        second.removeVertex(2);
+
+        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+                Map.of(
+                        1, 1,
+                        6, 6,
+                        3, 3,
+                        4, 4,
+                        5, 5,
+                        0, 0
+                )
+        );
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    public void removeOneTransitVertexTest2() {
+        List<LabelVertex<SimpleLabel>> vertices = List.of(
+                new SimpleLabelVertex(0, new SimpleLabel(1)),
+                new SimpleLabelVertex(1, new SimpleLabel(2)),
+                new SimpleLabelVertex(2, new SimpleLabel(3)),
+                new SimpleLabelVertex(3, new SimpleLabel(4)),
+                new SimpleLabelVertex(4, new SimpleLabel(5)),
+                new SimpleLabelVertex(5, new SimpleLabel(6)),
+                new SimpleLabelVertex(6, new SimpleLabel(7))
+        );
+
+        Map<Integer, Set<Integer>> adjacentMatrix = Map.of(
+                0, Set.of(1),
+                1, Set.of(2, 3),
+                2, Set.of(4, 5),
+                3, Set.of(6)
+        );
+
+        Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
+        Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
+
+        second.removeVertex(1);
+
+        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+                Map.of(
+                        2, 2,
+                        6, 6,
+                        3, 3,
+                        4, 4,
+                        5, 5,
+                        0, 0
+                )
+        );
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    public void removeRootVertexTest() {
+        List<LabelVertex<SimpleLabel>> vertices = List.of(
+                new SimpleLabelVertex(0, new SimpleLabel(1)),
+                new SimpleLabelVertex(1, new SimpleLabel(2)),
+                new SimpleLabelVertex(2, new SimpleLabel(3)),
+                new SimpleLabelVertex(3, new SimpleLabel(4)),
+                new SimpleLabelVertex(4, new SimpleLabel(5)),
+                new SimpleLabelVertex(5, new SimpleLabel(6)),
+                new SimpleLabelVertex(6, new SimpleLabel(7))
+        );
+
+        Map<Integer, Set<Integer>> adjacentMatrix = Map.of(
+                0, Set.of(1),
+                1, Set.of(2, 3),
+                2, Set.of(4, 5),
+                3, Set.of(6)
+        );
+
+        Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
+        Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
+
+        second.removeVertex(1);
+        second.removeVertex(2);
+
+        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+                Map.of(
+                        6, 6,
+                        3, 3,
+                        4, 4,
+                        5, 5,
+                        0, 0
+                )
+        );
+        Assertions.assertEquals(expected, result);
+    }
+
+
+    @Test
+    public void removeSeveralTransitVertexTest() {
+        List<LabelVertex<SimpleLabel>> vertices = List.of(
+                new SimpleLabelVertex(0, new SimpleLabel(1)),
+                new SimpleLabelVertex(1, new SimpleLabel(2)),
+                new SimpleLabelVertex(2, new SimpleLabel(3)),
+                new SimpleLabelVertex(3, new SimpleLabel(4)),
+                new SimpleLabelVertex(4, new SimpleLabel(5)),
+                new SimpleLabelVertex(5, new SimpleLabel(6)),
+                new SimpleLabelVertex(6, new SimpleLabel(7))
+        );
+
+        Map<Integer, Set<Integer>> adjacentMatrix = Map.of(
+                0, Set.of(1),
+                1, Set.of(2, 3),
+                2, Set.of(4, 5),
+                3, Set.of(6)
+        );
+
+        Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
+        Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
+
+        second.removeVertex(0);
+
+        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+                Map.of(
+                        6, 6,
+                        3, 3,
+                        4, 4,
+                        5, 5,
+                        1, 1,
+                        2, 2
+                )
+        );
+        Assertions.assertEquals(expected, result);
+    }
+
 }

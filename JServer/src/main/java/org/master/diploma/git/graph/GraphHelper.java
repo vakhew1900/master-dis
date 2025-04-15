@@ -2,6 +2,7 @@ package org.master.diploma.git.graph;
 
 import org.master.diploma.git.support.Constants;
 import org.master.diploma.git.support.Creator;
+import org.master.diploma.git.support.TwoOrderedMap;
 
 import java.util.*;
 
@@ -24,7 +25,7 @@ public class GraphHelper {
                 rowCount,
                 colCount,
                 () -> new DpElement(new HashMap<>())
-                );
+        );
 
 
         return findBiggestSubSequenceSubgraph(
@@ -48,45 +49,71 @@ public class GraphHelper {
             return dp.get(u).get(v);
         }
 
-        DpElement relatingValue = new DpElement( new HashMap<>());
+        DpElement relatingValue = new DpElement(new HashMap<>());
         if (first.getVertex(u)
                 .canRelate(second.getVertex(v))
         ) {
 
-            relatingValue = new DpElement(new HashMap<>(Map.of(u,v)));
+            relatingValue = new DpElement(new HashMap<>(Map.of(u, v)));
 
+            if (!first.getChildrenNumbers(u).isEmpty() && !second.getChildren(v).isEmpty()) {
+                TwoOrderedMap<Integer, Integer> rows = new TwoOrderedMap<>();
+                TwoOrderedMap<Integer, Integer> cols = new TwoOrderedMap<>();
 
-            List<List<Integer>> weightMatrix = Creator.createMatrix(
-                    dp.size(),
-                    dp.get(0).size(),
-                    () -> 0
-                    );
-
-
-
-            for (var childU : first.getChildrenNumbers(u)) {
-                for (var childV : second.getChildrenNumbers(v)) {
-                    DpElement tmp = findBiggestSubSequenceSubgraph(
-                            dp,
-                            childU,
-                            childV,
-                            first,
-                            second
-                    );
-                    weightMatrix.get(childU).set(childV, tmp.getWeight());
+                for (var childU : first.getChildrenNumbers(u)) {
+                    rows.put(rows.size(), childU);
+                    for (var childV : second.getChildrenNumbers(v)) {
+                        if (!cols.containsValue(childV)) {
+                            cols.put(cols.size(), childV);
+                        }
+                    }
                 }
-            }
 
-            var maximumChildWeightList = getMaximumChildWeight(weightMatrix);
 
-            for (int row = 0; row < dp.size(); row++) {
-                int col = maximumChildWeightList.get(row);
+                List<List<Integer>> weightMatrix = Creator.createMatrix(
+                        rows.size(),
+                        cols.size(),
+                        () -> 0
+                );
 
-                if (col >= 0 && col < dp.get(row).size() && dp.get(row).get(col).getWeight() > 0) {
-                    relatingValue.addDpElement(
-                            dp.get(row).get(col)
-                    );
+
+                for (var childU : first.getChildrenNumbers(u)) {
+                    for (var childV : second.getChildrenNumbers(v)) {
+                        DpElement tmp = findBiggestSubSequenceSubgraph(
+                                dp,
+                                childU,
+                                childV,
+                                first,
+                                second
+                        );
+                        weightMatrix.get(rows.getKey(childU)).set(cols.getKey(childV), tmp.getWeight());
+                    }
                 }
+
+                var maximumChildWeightList = getMaximumChildWeight(weightMatrix);
+
+                Map<Integer, Integer> firstGraphChildToSecondGraphChild = new HashMap<>(); // нужно для более простого дебага.
+
+                for (int row = 0; row < weightMatrix.size(); row++) {
+                    int col = maximumChildWeightList.get(row);
+                    int i = rows.get(row);
+                    if (cols.size() > col) {
+                        int j = cols.get(col);
+                        firstGraphChildToSecondGraphChild.put(i, j);
+                    }
+                }
+
+                DpElement finalRelatingValue = relatingValue;
+                firstGraphChildToSecondGraphChild.forEach(
+                        (key, value) -> {
+                            if (dp.get(key).get(value).getWeight() > 0) {
+                                finalRelatingValue.addDpElement(
+                                        dp.get(key).get(value)
+                                );
+                            }
+                        }
+                );
+
             }
 
         }
@@ -125,10 +152,10 @@ public class GraphHelper {
         List<List<Integer>> newMatrix = Creator.createMatrix(
                 size,
                 size,
-                ()->0
+                () -> 0
         );
 
-        for (int i = 1; i <= matrix.size() ; i++) {
+        for (int i = 1; i <= matrix.size(); i++) {
             for (int j = 1; j <= matrix.get(0).size(); j++) {
                 newMatrix.get(i).set(j, matrix.get(i - 1).get(j - 1));
             }
@@ -203,7 +230,7 @@ public class GraphHelper {
                     }
                 }
 
-                if (j1 == -1){
+                if (j1 == -1) {
                     break;
                 }
 
@@ -248,7 +275,7 @@ public class GraphHelper {
         }
 
         public static DpElement max(DpElement first, DpElement second) {
-           return (isBigger(first, second))? first : second;
+            return (isBigger(first, second)) ? first : second;
         }
 
         public void addDpElement(DpElement other) {
@@ -264,10 +291,14 @@ public class GraphHelper {
             return Objects.equals(matchingVertices, dpElement.matchingVertices);
         }
 
-
         @Override
         public int hashCode() {
             return Objects.hash(matchingVertices);
+        }
+
+        @Override
+        public String toString() {
+            return "DpElement=[" + matchingVertices.toString() + "]";
         }
     }
 }

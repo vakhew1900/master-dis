@@ -5,6 +5,7 @@ import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.exception.IncorrectVertexNumberException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable {
 
@@ -14,7 +15,7 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
 
     public SimpleGraph(List<T> vertices, Map<Integer, Set<Integer>> adjacencyMatrix) {
         this.adjacencyMatrix = new HashMap<>(adjacencyMatrix);
-        this.vertices =  new ArrayList<>(vertices);
+        this.vertices = new ArrayList<>(vertices);
         this.numberToIndex = new HashMap<>();
 
         for (int i = 0; i < vertices.size(); i++) {
@@ -195,5 +196,38 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
         }
 
         throw new IncorrectVertexNumberException("Root number not found");
+    }
+
+    @Override
+    public Set<Map.Entry<Integer, Integer>> getTransitiveClosure() {
+        Set<Map.Entry<Integer, Integer>> transitiveClosure = new HashSet<>();
+        int rootNumber = getRoot();
+        createTransitiveClosure(rootNumber, transitiveClosure);
+        return transitiveClosure;
+    }
+
+    private void createTransitiveClosure(int cur, Set<Map.Entry<Integer, Integer>> transitiveClosure) {
+
+        Set<Integer> tmp = createTransitiveClosureRecursive(cur, transitiveClosure);
+    }
+
+    private Set<Integer> createTransitiveClosureRecursive(int cur, Set<Map.Entry<Integer, Integer>> transitiveClosure) {
+        Set<Integer> children = new HashSet<>();
+
+        for (var next : getChildrenNumbers(cur)) {
+            children.add(next);
+            children.addAll(createTransitiveClosureRecursive(next, transitiveClosure));
+        }
+
+        if (!children.isEmpty()) {
+            transitiveClosure.addAll(
+                    children
+                            .stream()
+                            .map(child -> new AbstractMap.SimpleEntry<>(cur, child))
+                            .collect(Collectors.toSet())
+            );
+        }
+
+        return children;
     }
 }

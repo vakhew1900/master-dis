@@ -6,12 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GraphResult {
+public class GraphCompareResult {
 
     boolean invert = false;
     private Map<Integer, Integer> matchingVertices = new HashMap<>();
 
     private Map<Integer, LabelError> labelErrors;
+
+    public GraphCompareResult() {
+
+    }
+
 
     public static class LabelError {
         public static final String EXTRA = "extra_labels";

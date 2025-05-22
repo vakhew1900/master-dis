@@ -40,7 +40,12 @@ public class PermutationHelper {
                     currentPermutation.remove(currentPermutation.size() - 1);
                     used.set(i, false);
                 }
+
             }
         }
+
+        currentPermutation.add(-1);
+        generatePermutationsRecursive(n, k, currentPermutation, used, result, verticesMatching);
+        currentPermutation.remove(currentPermutation.size() - 1);
     }
 }

@@ -20,14 +20,25 @@ public class PermutationHelperTest {
         verticesMatching.put(2, Set.of(1, 2, 3));
 
         List<List<Integer>> permutations = PermutationHelper.generatePermutations(n, k, verticesMatching);
+        System.out.println(permutations);
 
-        assertEquals(6, permutations.size());
+        int expectedSize = 13;
+        assertEquals(expectedSize, permutations.size());
+
         assertTrue(permutations.contains(Arrays.asList(1, 2)));
         assertTrue(permutations.contains(Arrays.asList(1, 3)));
         assertTrue(permutations.contains(Arrays.asList(2, 1)));
         assertTrue(permutations.contains(Arrays.asList(2, 3)));
         assertTrue(permutations.contains(Arrays.asList(3, 1)));
         assertTrue(permutations.contains(Arrays.asList(3, 2)));
+
+        assertTrue(permutations.contains(Arrays.asList(1, -1)));
+        assertTrue(permutations.contains(Arrays.asList(2, -1)));
+        assertTrue(permutations.contains(Arrays.asList(3, -1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, -1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 2)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 3)));
     }
 
     @Test
@@ -41,7 +52,8 @@ public class PermutationHelperTest {
 
         List<List<Integer>> permutations = PermutationHelper.generatePermutations(n, k, verticesMatching);
 
-        assertTrue(permutations.isEmpty());
+        int expectedSize = 1;
+        assertTrue(permutations.contains(Arrays.asList(-1, -1)));
     }
 
     @Test
@@ -55,9 +67,16 @@ public class PermutationHelperTest {
 
         List<List<Integer>> permutations = PermutationHelper.generatePermutations(n, k, verticesMatching);
 
-        assertEquals(2, permutations.size());
+        int expectedSize = 6;
+        assertEquals(expectedSize, permutations.size());
+
         assertTrue(permutations.contains(Arrays.asList(1, 3)));
         assertTrue(permutations.contains(Arrays.asList(2, 3)));
+
+        assertTrue(permutations.contains(Arrays.asList(1, -1)));
+        assertTrue(permutations.contains(Arrays.asList(2, -1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 3)));
+        assertTrue(permutations.contains(Arrays.asList(-1, -1)));
     }
 
     @Test
@@ -72,10 +91,24 @@ public class PermutationHelperTest {
 
         List<List<Integer>> permutations = PermutationHelper.generatePermutations(n, k, verticesMatching);
 
-        assertEquals(2, permutations.size());
-        assertTrue(permutations.contains(Arrays.asList(2, 3, 1)));
-        assertTrue(permutations.contains(Arrays.asList(2, 4, 1)));
+        int expectedSize = 15;
+        assertEquals(expectedSize, permutations.size());
 
+        assertTrue(permutations.contains(Arrays.asList(1, 3, -1)));
+        assertTrue(permutations.contains(Arrays.asList(1, 4, -1)));
+        assertTrue(permutations.contains(Arrays.asList(1, -1, -1)));
+        assertTrue(permutations.contains(Arrays.asList(2, 3, 1)));
+        assertTrue(permutations.contains(Arrays.asList(2, 3, -1)));
+        assertTrue(permutations.contains(Arrays.asList(2, 4, 1)));
+        assertTrue(permutations.contains(Arrays.asList(2, 4, -1)));
+        assertTrue(permutations.contains(Arrays.asList(2, -1, 1)));
+        assertTrue(permutations.contains(Arrays.asList(2, -1, -1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 3, 1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 3, -1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 4, 1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 4, -1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, -1, 1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, -1, -1)));
     }
 
     @Test
@@ -89,8 +122,27 @@ public class PermutationHelperTest {
         verticesMatching.put(3, Set.of(1, 2));
 
         List<List<Integer>> permutations = PermutationHelper.generatePermutations(n, k, verticesMatching);
-        assertTrue(permutations.contains(Arrays.asList(2, 3, 1)));
+
+        int expectedSize = 17;
+
+        assertEquals(expectedSize, permutations.size());
+        assertTrue(permutations.contains(Arrays.asList(1, 2, -1)));
         assertTrue(permutations.contains(Arrays.asList(1, 3, 2)));
+        assertTrue(permutations.contains(Arrays.asList(1, 3, -1)));
+        assertTrue(permutations.contains(Arrays.asList(1, -1, 2)));
+        assertTrue(permutations.contains(Arrays.asList(1, -1, -1)));
+        assertTrue(permutations.contains(Arrays.asList(2, 3, 1)));
+        assertTrue(permutations.contains(Arrays.asList(2, 3, -1)));
+        assertTrue(permutations.contains(Arrays.asList(2, -1, 1)));
+        assertTrue(permutations.contains(Arrays.asList(2, -1, -1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 2, 1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 2, -1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 3, 1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 3, 2)));
+        assertTrue(permutations.contains(Arrays.asList(-1, 3, -1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, -1, 1)));
+        assertTrue(permutations.contains(Arrays.asList(-1, -1, 2)));
+        assertTrue(permutations.contains(Arrays.asList(-1, -1, -1)));
     }
 
     @Test

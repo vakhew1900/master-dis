@@ -1,13 +1,14 @@
 package org.master.diploma.git.graph;
 
+import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
 import org.master.diploma.git.support.PermutationHelper;
 
 import java.util.*;
 
-public class BruteForceMethod {
+public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
-
-    public static <T extends Vertex> void execute(
+    @Override
+    public  <T extends Vertex> GraphCompareResult execute(
             Graph<T> first,
             Graph<T> second
     ) {
@@ -39,9 +40,10 @@ public class BruteForceMethod {
 
 
         for (var permutationVertices : allVerticesPermutation) {
-            
+
         }
 
+        return new GraphCompareResult(); //todo поменять
     }
 
 }

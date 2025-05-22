@@ -6,7 +6,7 @@ import org.master.diploma.git.support.TwoOrderedMap;
 
 import java.util.*;
 
-public class GraphHelper {
+public class DpMethodHelper {
 
 
     private static int UN_INIT = 0;

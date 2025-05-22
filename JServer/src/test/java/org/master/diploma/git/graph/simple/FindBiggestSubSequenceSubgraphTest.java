@@ -3,7 +3,7 @@ package org.master.diploma.git.graph.simple;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.master.diploma.git.graph.Graph;
-import org.master.diploma.git.graph.GraphHelper;
+import org.master.diploma.git.graph.DpMethodHelper;
 import org.master.diploma.git.graph.label.LabelGraph;
 import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.graph.label.SimpleLabelVertex;
@@ -30,10 +30,10 @@ public class FindBiggestSubSequenceSubgraphTest {
         Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
         Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
 
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(0, 0, 1, 1, 2, 2)
         );
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
         Assertions.assertEquals(expected, result);
     }
 
@@ -56,10 +56,10 @@ public class FindBiggestSubSequenceSubgraphTest {
 
         second.removeVertex(2);
 
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(0, 0, 1, 1)
         );
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
         Assertions.assertEquals(expected, result);
     }
 
@@ -83,10 +83,10 @@ public class FindBiggestSubSequenceSubgraphTest {
 
         second.removeVertex(1);
 
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(0, 0, 2, 2)
         );
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
         Assertions.assertEquals(expected, result);
     }
 
@@ -112,8 +112,8 @@ public class FindBiggestSubSequenceSubgraphTest {
         Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
         Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
 
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(
                         1, 1,
                         2, 2,
@@ -151,8 +151,8 @@ public class FindBiggestSubSequenceSubgraphTest {
 
         second.removeVertex(6);
 
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(
                         1, 1,
                         2, 2,
@@ -190,8 +190,8 @@ public class FindBiggestSubSequenceSubgraphTest {
         second.removeVertex(6);
         second.removeVertex(5);
 
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(
                         1, 1,
                         2, 2,
@@ -228,8 +228,8 @@ public class FindBiggestSubSequenceSubgraphTest {
 
         second.removeVertex(2);
 
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(
                         1, 1,
                         6, 6,
@@ -266,8 +266,8 @@ public class FindBiggestSubSequenceSubgraphTest {
 
         second.removeVertex(1);
 
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(
                         2, 2,
                         6, 6,
@@ -305,8 +305,8 @@ public class FindBiggestSubSequenceSubgraphTest {
         second.removeVertex(1);
         second.removeVertex(2);
 
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(
                         6, 6,
                         3, 3,
@@ -343,8 +343,8 @@ public class FindBiggestSubSequenceSubgraphTest {
 
         second.removeVertex(0);
 
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(
                         6, 6,
                         3, 3,
@@ -382,8 +382,8 @@ public class FindBiggestSubSequenceSubgraphTest {
 
         second.removeVertex(0);
 
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(
                         6, 6,
                         3, 3,
@@ -412,10 +412,10 @@ public class FindBiggestSubSequenceSubgraphTest {
         Graph<LabelVertex<SimpleLabel>> first = new LabelGraph<>(vertices, adjacentMatrix);
         Graph<LabelVertex<SimpleLabel>> second = ((LabelGraph) first).clone();
 
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(0, 0, 1, 1, 2, 2)
         );
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(first, second);
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(first, second);
         Assertions.assertEquals(expected, result);
     }
 
@@ -444,8 +444,8 @@ public class FindBiggestSubSequenceSubgraphTest {
 
         second.removeVertex(2);
 
-        GraphHelper.DpElement result = GraphHelper.findBiggestSubSequenceSubgraph(second, first);
-        GraphHelper.DpElement expected = new GraphHelper.DpElement(
+        DpMethodHelper.DpElement result = DpMethodHelper.findBiggestSubSequenceSubgraph(second, first);
+        DpMethodHelper.DpElement expected = new DpMethodHelper.DpElement(
                 Map.of(
                         1, 1,
                         6, 6,
@@ -458,4 +458,5 @@ public class FindBiggestSubSequenceSubgraphTest {
         Assertions.assertEquals(expected, result);
     }
 
+    
 }

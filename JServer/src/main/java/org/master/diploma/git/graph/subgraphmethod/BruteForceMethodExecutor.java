@@ -1,16 +1,19 @@
 package org.master.diploma.git.graph.subgraphmethod;
 
+import com.google.common.collect.Sets;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.support.PermutationHelper;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
     @Override
-    public  <T extends Vertex> GraphCompareResult execute(
+    public <T extends Vertex> GraphCompareResult execute(
             Graph<T> first,
             Graph<T> second
     ) {
@@ -38,14 +41,78 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
         int n = second.getVertices().size();
         int k = first.getVertices().size();
 
-        List<List<Integer>> allVerticesPermutation = PermutationHelper.generatePermutations(n, k, verticesMatching);
+        GraphCompareResult res = new GraphCompareResult();
+        for (int i = 1; i <= k; i++) {
+            List<List<Integer>> allVerticesPermutation = PermutationHelper.generatePermutations(n, k, verticesMatching);
 
+            for (var firstPermutation : allVerticesPermutation) {
+                for (var secondPermutation : allVerticesPermutation) {
+                    boolean canCompare = true;
 
-        for (var permutationVertices : allVerticesPermutation) {
+                    for (int j = 0; j < firstPermutation.size(); j++) {
+                        canCompare = canCompare && first
+                                .getVertex(firstPermutation.get(j))
+                                .canRelate(
+                                        second
+                                                .getVertex(secondPermutation.get(j))
+                                );
+                    }
 
+                    if (canCompare) {
+                        GraphCompareResult next = calculate(first, second, firstPermutation, secondPermutation);
+                        if (next.isBigger(res)) {
+                            res = next;
+                        }
+                    }
+                }
+            }
         }
 
-        return new GraphCompareResult(); //todo поменять
+        res.setInvert(invert);
+        return res; //todo поменять
+    }
+
+    private <T extends Vertex> GraphCompareResult calculate(
+            Graph<T> first,
+            Graph<T> second,
+            List<Integer> firstPermutation,
+            List<Integer> secondPermutation
+    ) {
+        Map<Integer, UUID> firstUUIDS = new HashMap<>();
+        Map<Integer, UUID> secondUUIDS = new HashMap<>();
+
+        for (int i = 0; i < firstPermutation.size(); i++) {
+            UUID uuid = UUID.randomUUID();
+            firstUUIDS.put(firstPermutation.get(i), uuid);
+            secondUUIDS.put(secondPermutation.get(i), uuid);
+        }
+
+        Set<Map.Entry<UUID, UUID>> firstSet = integerToUUID(firstUUIDS, first);
+        Set<Map.Entry<UUID, UUID>> secondSet = integerToUUID(secondUUIDS, second);
+
+        GraphCompareResult result = new GraphCompareResult();
+        if (Sets.difference(firstSet, secondSet).isEmpty()) {
+            result.setMatchingVertices(
+                    IntStream
+                            .range(0, firstPermutation.size())
+                            .boxed()
+                            .collect(Collectors.toMap(
+                                            firstPermutation::get,
+                                            secondPermutation::get
+                                    )
+                            )
+            );
+        }
+
+        return result;
+    }
+
+    private <T extends Vertex> Set<Map.Entry<UUID, UUID>> integerToUUID(Map<Integer, UUID> map, Graph<T> graph) {
+        return graph.getTransitiveClosure()
+                .stream()
+                .filter(entry -> map.containsKey(entry.getKey()) && map.containsKey(entry.getValue()))
+                .map(entry -> new AbstractMap.SimpleEntry<>(map.get(entry.getKey()), map.get(entry.getValue())))
+                .collect(Collectors.toSet());
     }
 
 }

@@ -1,15 +1,23 @@
-package org.master.diploma.git.graph;
+package org.master.diploma.git.graph.subgraphmethod;
 
+import org.master.diploma.git.graph.Graph;
+import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.support.Constants;
 import org.master.diploma.git.support.Creator;
 import org.master.diploma.git.support.TwoOrderedMap;
 
 import java.util.*;
 
-public class DpMethodHelper {
+public class DpMethodHelper  extends  SubgraphMethodExecutor{
 
 
     private static int UN_INIT = 0;
+
+    @Override
+    public <T extends Vertex> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
+        return findBiggestSubSequenceSubgraph(first, second).toGraphCompareResult();
+    }
 
     public static <T extends Vertex> DpElement findBiggestSubSequenceSubgraph(
             Graph<T> first,
@@ -253,13 +261,19 @@ public class DpMethodHelper {
         return ans;
     }
 
-
     public static class DpElement {
         private Map<Integer, Integer> matchingVertices = new HashMap<>();
 
         public DpElement(Map<Integer, Integer> matchingVertices) {
 
             this.matchingVertices = matchingVertices;
+        }
+
+        public GraphCompareResult toGraphCompareResult(){
+            var res = new  GraphCompareResult();
+            res.setMatchingVertices(matchingVertices);
+            //todo добавить еще проверки
+            return res;
         }
 
         public int getWeight() {

@@ -1,6 +1,8 @@
-package org.master.diploma.git.graph;
+package org.master.diploma.git.graph.subgraphmethod;
 
-import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
+import org.master.diploma.git.graph.Graph;
+import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.support.PermutationHelper;
 
 import java.util.*;

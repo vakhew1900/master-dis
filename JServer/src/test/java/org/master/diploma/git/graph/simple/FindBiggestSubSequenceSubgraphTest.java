@@ -3,7 +3,7 @@ package org.master.diploma.git.graph.simple;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.master.diploma.git.graph.Graph;
-import org.master.diploma.git.graph.DpMethodHelper;
+import org.master.diploma.git.graph.subgraphmethod.DpMethodHelper;
 import org.master.diploma.git.graph.label.LabelGraph;
 import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.graph.label.SimpleLabelVertex;

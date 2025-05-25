@@ -1,21 +1,25 @@
 package org.master.diploma.git.graph;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class GraphCompareResult {
 
     boolean invert = false;
     private Map<Integer, Integer> matchingVertices = new HashMap<>();
 
     private Map<Integer, LabelError> labelErrors;
-
-    public GraphCompareResult() {
-
-    }
 
 
     public static class LabelError {

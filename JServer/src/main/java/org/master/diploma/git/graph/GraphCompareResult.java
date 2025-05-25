@@ -33,4 +33,8 @@ public class GraphCompareResult {
         private List<Integer> missingLabels;
     }
 
+    public boolean isBigger (GraphCompareResult other) {
+        //todo тут можно дополнить
+        return matchingVertices.size() > other.matchingVertices.size();
+    }
 }

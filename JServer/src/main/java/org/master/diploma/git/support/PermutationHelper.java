@@ -13,7 +13,37 @@ public class PermutationHelper {
         List<Integer> currentPermutation = new ArrayList<>();
         List<Boolean> used = new ArrayList<>(Collections.nCopies(n + 1, false));
 
-        generatePermutationsRecursive(n, k, currentPermutation, used, result, verticesMatching);
+        generatePermutationsRecursive(
+                n,
+                k,
+                currentPermutation,
+                used,
+                result,
+                verticesMatching,
+                false
+        );
+
+        return result;
+    }
+
+    public static List<List<Integer>> generatePermutations(int n, int k) {
+        if (k < 0 || k > n) {
+            throw new IllegalArgumentException(String.format("Illegal n = %d and k = %d", n, k));
+        }
+
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> currentPermutation = new ArrayList<>();
+        List<Boolean> used = new ArrayList<>(Collections.nCopies(n + 1, false));
+
+        generatePermutationsRecursive(
+                n,
+                k,
+                currentPermutation,
+                used,
+                result,
+                new HashMap<>(),
+                true
+        );
 
         return result;
     }
@@ -24,7 +54,8 @@ public class PermutationHelper {
             List<Integer> currentPermutation,
             List<Boolean> used,
             List<List<Integer>> result,
-            Map<Integer, Set<Integer>> verticesMatching
+            Map<Integer, Set<Integer>> verticesMatching,
+            boolean notUsedVerticesMatching
     ) {
         if (currentPermutation.size() == k) {
             result.add(new ArrayList<>(currentPermutation));
@@ -33,10 +64,18 @@ public class PermutationHelper {
 
         for (int i = 1; i <= n; i++) {
             if (!used.get(i)) {
-                if (verticesMatching.get(currentPermutation.size() + 1).contains(i)) {
+                if (verticesMatching.get(currentPermutation.size() + 1).contains(i) || notUsedVerticesMatching) {
                     used.set(i, true);
                     currentPermutation.add(i);
-                    generatePermutationsRecursive(n, k, currentPermutation, used, result, verticesMatching);
+                    generatePermutationsRecursive(
+                            n,
+                            k,
+                            currentPermutation,
+                            used,
+                            result,
+                            verticesMatching,
+                            notUsedVerticesMatching
+                    );
                     currentPermutation.remove(currentPermutation.size() - 1);
                     used.set(i, false);
                 }
@@ -44,8 +83,5 @@ public class PermutationHelper {
             }
         }
 
-        currentPermutation.add(-1);
-        generatePermutationsRecursive(n, k, currentPermutation, used, result, verticesMatching);
-        currentPermutation.remove(currentPermutation.size() - 1);
     }
 }

@@ -5,11 +5,13 @@ import com.google.common.collect.Multiset;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.master.diploma.git.graph.Branch;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.label.Label;
+import org.master.diploma.git.support.BranchLCSHelper;
 import org.master.diploma.git.support.Multisets;
 
 import java.util.*;
@@ -17,21 +19,28 @@ import java.util.*;
 public class BranchMethodExecutor extends SubgraphMethodExecutor {
 
     @Override
-    public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
+    public <T extends LabelVertex<? extends Label>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
 
-        List<List<T>> firstAllBranches = getAllBranches(first);
-        List<List<T>> secondAllBranches = getAllBranches(second);
+        List<Branch<T>> firstAllBranches = getAllBranches(first);
+        List<Branch<T>> secondAllBranches = getAllBranches(second);
 
 
         List<BranchMatch<T>> branchMatches = getBranchMatches(firstAllBranches, secondAllBranches);
 
+        GraphCompareResult graphCompareResult = new GraphCompareResult();
 
-        return new GraphCompareResult();
+        branchMatches.forEach(
+                branchMatch -> {
+                    graphCompareResult.add(BranchLCSHelper.findBranchLCS(branchMatch));
+                }
+        );
+
+        return graphCompareResult;
     }
 
     private <T extends LabelVertex<?>> List<BranchMatch<T>> getBranchMatches(
-            List<List<T>> firstAllBranches,
-            List<List<T>> secondAllBranches
+            List<Branch<T>> firstAllBranches,
+            List<Branch<T>> secondAllBranches
     ) {
         List<BranchMatch<T>> branchMatches = new ArrayList<>();
 
@@ -45,14 +54,30 @@ public class BranchMethodExecutor extends SubgraphMethodExecutor {
         Collections.reverse(branchMatches);
 
 
+        List<BranchMatch<T>> result = new ArrayList<>();
+        Set<UUID> branchIds = new HashSet<>();
 
-        return branchMatches;
+        branchMatches.forEach(
+                branchMatch -> {
+                    if (
+                            !branchIds.contains(branchMatch.firstBranch.getUuid()) &&
+                                    !branchIds.contains(branchMatch.secondBranch.getUuid())
+                    ) {
+                        branchIds.add(branchMatch.firstBranch.getUuid());
+                        branchIds.add(branchMatch.secondBranch.getUuid());
+                        result.add(branchMatch);
+                    }
+                }
+        );
+
+
+        return result;
     }
 
 
-    private <T extends Vertex> List<List<T>> getAllBranches(Graph<T> graph) {
+    private <T extends Vertex> List<Branch<T>> getAllBranches(Graph<T> graph) {
 
-        List<List<T>> allBranches = new ArrayList<>();
+        List<Branch<T>> allBranches = new ArrayList<>();
         getAllBranches(
                 graph.getVertex(graph.getRoot()),
                 graph,
@@ -67,12 +92,17 @@ public class BranchMethodExecutor extends SubgraphMethodExecutor {
             T cur,
             Graph<T> graph,
             ArrayList<T> branch,
-            List<List<T>> allBranches
+            List<Branch<T>> allBranches
     ) {
 
         branch.add(cur);
         if (graph.getChildren(cur.getNumber()).isEmpty()) {
-            allBranches.add(new ArrayList<>(branch));
+            allBranches.add(
+                    new Branch<>(
+                            UUID.randomUUID(),
+                            new ArrayList<>(branch)
+                    )
+            );
             return;
         }
 
@@ -87,22 +117,24 @@ public class BranchMethodExecutor extends SubgraphMethodExecutor {
     @Getter
     @Setter
     @AllArgsConstructor
-    private static class BranchMatch<T extends LabelVertex<?>> {
+    public static class BranchMatch<T extends LabelVertex<?>> {
         private double percentageMatch;
-        private List<T> firstBranch;
-        private List<T> secondBranch;
+        private Branch<T> firstBranch;
+        private Branch<T> secondBranch;
 
-        public BranchMatch(List<T> firstBranch, List<T> secondBranch) {
+        public BranchMatch(Branch<T> firstBranch, Branch<T> secondBranch) {
             Multiset<Label> firstLabels = HashMultiset.create();
             Multiset<Label> secondLabels = HashMultiset.create();
 
             firstBranch
+                    .getVertices()
                     .stream()
                     .map(vertex -> vertex.getLabels())
                     .flatMap(List::stream)
                     .forEach(firstLabels::add);
 
             secondBranch
+                    .getVertices()
                     .stream()
                     .map(vertex -> vertex.getLabels())
                     .flatMap(List::stream)
@@ -120,8 +152,6 @@ public class BranchMethodExecutor extends SubgraphMethodExecutor {
         int minSize = Math.min(firstLabels.size(), secondLabels.size());
 
         // Предотвращаем деление на ноль, если оба Multiset пусты или один из них пуст.
-        double percentageMatch = (minSize == 0) ? 0.0 : (double) intersectionSize / minSize;
-
-        return percentageMatch;
+        return (minSize == 0) ? 0.0 : (double) intersectionSize / minSize;
     }
 }

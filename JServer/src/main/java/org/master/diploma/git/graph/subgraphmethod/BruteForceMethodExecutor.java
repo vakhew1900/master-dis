@@ -61,6 +61,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
                     if (canCompare) {
                         GraphCompareResult next = calculate(first, second, firstPermutation, secondPermutation);
+                        next.fillLabelError(first, second);
                         if (next.isBigger(res)) {
                             res = next;
                         }

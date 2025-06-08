@@ -17,7 +17,9 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
 
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
-        return findBiggestSubSequenceSubgraph(first, second).toGraphCompareResult();
+        var compareResult = findBiggestSubSequenceSubgraph(first, second).toGraphCompareResult();
+        compareResult.fillLabelError(first, second);
+        return compareResult;
     }
 
     public static <T extends LabelVertex<?>> DpElement findBiggestSubSequenceSubgraph(
@@ -273,7 +275,6 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
         public GraphCompareResult toGraphCompareResult() {
             var res = new GraphCompareResult();
             res.setMatchingVertices(matchingVertices);
-            //todo добавить еще проверки
             return res;
         }
 

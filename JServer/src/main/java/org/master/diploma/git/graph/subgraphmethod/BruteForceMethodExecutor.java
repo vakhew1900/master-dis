@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.Vertex;
+import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.support.PermutationHelper;
 
 import java.util.*;
@@ -13,7 +14,7 @@ import java.util.stream.IntStream;
 public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
     @Override
-    public <T extends Vertex> GraphCompareResult execute(
+    public <T extends LabelVertex<?>> GraphCompareResult execute(
             Graph<T> first,
             Graph<T> second
     ) {

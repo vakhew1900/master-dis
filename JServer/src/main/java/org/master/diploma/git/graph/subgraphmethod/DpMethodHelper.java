@@ -3,23 +3,24 @@ package org.master.diploma.git.graph.subgraphmethod;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.Vertex;
+import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.support.Constants;
 import org.master.diploma.git.support.Creator;
 import org.master.diploma.git.support.TwoOrderedMap;
 
 import java.util.*;
 
-public class DpMethodHelper  extends  SubgraphMethodExecutor{
+public class DpMethodHelper extends SubgraphMethodExecutor {
 
 
-    private static int UN_INIT = 0;
+    private static final int UN_INIT = 0;
 
     @Override
-    public <T extends Vertex> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
+    public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
         return findBiggestSubSequenceSubgraph(first, second).toGraphCompareResult();
     }
 
-    public static <T extends Vertex> DpElement findBiggestSubSequenceSubgraph(
+    public static <T extends LabelVertex<?>> DpElement findBiggestSubSequenceSubgraph(
             Graph<T> first,
             Graph<T> second
     ) {
@@ -269,8 +270,8 @@ public class DpMethodHelper  extends  SubgraphMethodExecutor{
             this.matchingVertices = matchingVertices;
         }
 
-        public GraphCompareResult toGraphCompareResult(){
-            var res = new  GraphCompareResult();
+        public GraphCompareResult toGraphCompareResult() {
+            var res = new GraphCompareResult();
             res.setMatchingVertices(matchingVertices);
             //todo добавить еще проверки
             return res;

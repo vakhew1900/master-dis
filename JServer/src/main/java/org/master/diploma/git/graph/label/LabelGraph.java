@@ -9,21 +9,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class LabelGraph<T extends LabelVertex> extends SimpleGraph<T>  implements Cloneable{
+public class LabelGraph<T extends LabelVertex> extends SimpleGraph<T> implements Cloneable {
+
+    public LabelGraph() {
+
+    }
+
     public LabelGraph(List<T> vertices, Map<Integer, Set<Integer>> adjacencyMatrix) {
         super(vertices, adjacencyMatrix);
     }
 
     protected LabelGraph<T> removeLabels(List<Integer> labelIdsParameter) {
         LabelGraph<T> subgraph = this.clone();
-        List<Integer>  labelIds = new ArrayList<>(labelIdsParameter);
+        List<Integer> labelIds = new ArrayList<>(labelIdsParameter);
 
 
         subgraph.getVertices().forEach( // удаление всех меток из вершин
                 vertex -> {
 
                     List<Integer> deletedLabelIndexes = new ArrayList<>();
-                    for(int i = 0; i < labelIds.size(); i++){ // удаляем все метки в вершинах
+                    for (int i = 0; i < labelIds.size(); i++) { // удаляем все метки в вершинах
                         int current = labelIds.get(i);
                         if (vertex.contains(current)) {
                             vertex.removeLabel(current);
@@ -48,14 +53,13 @@ public class LabelGraph<T extends LabelVertex> extends SimpleGraph<T>  implement
                 subgraph::removeVertex
         );
 
-        return  subgraph;
+        return subgraph;
     }
-
 
 
     @Override
     public LabelGraph<T> clone() {
-       SimpleGraph<T> graphClone = super.clone();
-       return new LabelGraph<T>(graphClone.getVertices(), ((SimpleGraph<T>) graphClone).getAdjacencyMatrix());
+        SimpleGraph<T> graphClone = super.clone();
+        return new LabelGraph<T>(graphClone.getVertices(), ((SimpleGraph<T>) graphClone).getAdjacencyMatrix());
     }
 }

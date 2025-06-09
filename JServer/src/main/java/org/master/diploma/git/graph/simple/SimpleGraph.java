@@ -13,6 +13,10 @@ public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable
     private Map<Integer, Integer> numberToIndex;
     private Map<Integer, Set<Integer>> adjacencyMatrix; // здесь уже не индексы вершин а номера
 
+    public SimpleGraph() {
+
+    }
+
     public SimpleGraph(List<T> vertices, Map<Integer, Set<Integer>> adjacencyMatrix) {
         this.adjacencyMatrix = new HashMap<>(adjacencyMatrix);
         this.vertices = new ArrayList<>(vertices);

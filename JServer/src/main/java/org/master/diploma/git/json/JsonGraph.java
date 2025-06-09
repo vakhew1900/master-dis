@@ -35,7 +35,7 @@ public class JsonGraph {
 
         vertices.forEach(
                 vertexNumber -> {
-                    var vertex = new SimpleLabelVertex();
+                    var vertex = new SimpleLabelVertex(vertexNumber);
                     graph.addVertex(vertex);
                 }
         );

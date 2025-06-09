@@ -15,6 +15,10 @@ public class SimpleLabelVertex extends LabelVertex<SimpleLabel> {
 
     private int number;
 
+    public SimpleLabelVertex(int number) {
+        this.number = number;
+    }
+
     public SimpleLabelVertex(int number, SimpleLabel simpleLabel) {
         super(new ArrayList<>(List.of(simpleLabel)));
         this.number = number;

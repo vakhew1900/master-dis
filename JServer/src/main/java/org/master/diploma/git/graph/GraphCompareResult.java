@@ -1,6 +1,7 @@
 package org.master.diploma.git.graph;
 
 import com.google.common.collect.Sets;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 import org.master.diploma.git.graph.label.LabelVertex;
@@ -11,19 +12,32 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class GraphCompareResult {
 
-    boolean invert = false;
-    private Map<Integer, Integer> matchingVertices = new HashMap<>();
+    public static final String MATCHING_VERTICES = "matching_vertices";
+    public static final String LABEL_ERRORS = "label_errors";
+    public static final Gson GSON = new Gson();
 
+    private transient boolean invert = false;
+    private transient int errorCount = 0;
+
+    @SerializedName(MATCHING_VERTICES)
+    private Map<Integer, Integer> matchingVertices;
+    @SerializedName(LABEL_ERRORS)
     private Map<Integer, LabelError> labelErrors;
-    int errorCount = 0;
+
+
+    public GraphCompareResult() {
+        this.matchingVertices = new HashMap<>();
+        this.labelErrors = new HashMap<>();
+    }
 
     @Getter
     @Setter
+    @EqualsAndHashCode
     public static class LabelError {
         public static final String EXTRA = "extra_labels";
         public static final String MISSING = "missing_labels";
@@ -92,5 +106,10 @@ public class GraphCompareResult {
                     labelErrors.put(index, labelError);
                 }
         );
+    }
+
+    @Override
+    public String toString() {
+        return GSON.toJson(this);
     }
 }

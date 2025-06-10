@@ -87,6 +87,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("delete_list.json");
         }
 
+        @Test
+        public void deleteTransientTest() throws IOException {
+            compareGraphTest("delete_transient.json");
+        }
+
         @Override
         protected String graphPath(String path) {
             return "/graph/basic/graph/" + path;

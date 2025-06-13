@@ -117,7 +117,10 @@ public abstract class MethodExecutorTest {
             compareGraphTest("one_leaf.json");
         }
 
-
+        @Test
+        public void severalLeafGraphTest() throws IOException {
+            compareGraphTest("several_leaf.json");
+        }
 
         @Override
         protected String graphPath(String path) {

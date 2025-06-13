@@ -102,4 +102,25 @@ public abstract class MethodExecutorTest {
             return "/graph/basic/result/" + path;
         }
     }
+
+    @Nested
+    public class MediumTest extends NestedTest {
+
+        @Test
+        public void equalGraphTest() throws IOException {
+            compareGraphTest("equal.json");
+        }
+
+
+        @Override
+        protected String graphPath(String path) {
+            return "/graph/medium/graph/" + path;
+        }
+
+        @Override
+        protected String resultPath(String path) {
+            return "/graph/medium/result/" + path;
+        }
+    }
+
 }

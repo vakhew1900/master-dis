@@ -64,7 +64,7 @@ public class PermutationHelper {
 
         for (int i = 1; i <= n; i++) {
             if (!used.get(i)) {
-                if (verticesMatching.get(currentPermutation.size() + 1).contains(i) || notUsedVerticesMatching) {
+                if (verticesMatching.get(currentPermutation.size() + 1) != null && verticesMatching.get(currentPermutation.size() + 1).contains(i) || notUsedVerticesMatching) {
                     used.set(i, true);
                     currentPermutation.add(i);
                     generatePermutationsRecursive(

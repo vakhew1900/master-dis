@@ -45,23 +45,36 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
         GraphCompareResult res = new GraphCompareResult();
         res.setInvert(invert);
         for (int i = 1; i <= k; i++) {
-            List<List<Integer>> allVerticesPermutation = PermutationHelper.generatePermutations(n, k, verticesMatching);
+            List<List<Integer>> allFirstVerticesPermutation = PermutationHelper.generatePermutations(k, i);
+            List<List<Integer>> allSecondVerticesPermutation = PermutationHelper.generatePermutations(n, i);
 
-            for (var firstPermutation : allVerticesPermutation) {
-                for (var secondPermutation : allVerticesPermutation) {
+            for (var firstPermutation : allFirstVerticesPermutation) {
+                for (var secondPermutation : allSecondVerticesPermutation) {
                     boolean canCompare = true;
 
                     for (int j = 0; j < firstPermutation.size(); j++) {
                         canCompare = canCompare && first
-                                .getVertex(firstPermutation.get(j))
+                                .getVertices().get(firstPermutation.get(j) - 1)
                                 .canRelate(
                                         second
-                                                .getVertex(secondPermutation.get(j))
+                                                .getVertices()
+                                                .get(secondPermutation.get(j) - 1)
                                 );
                     }
 
+                    Graph<T> finalFirst = first;
+                    Graph<T> finalSecond = second;
                     if (canCompare) {
-                        GraphCompareResult next = calculate(first, second, firstPermutation, secondPermutation);
+                        GraphCompareResult next = calculate(first, second,
+                                firstPermutation
+                                        .stream()
+                                        .map(pos -> finalFirst.getVertices().get(pos - 1).getNumber())
+                                        .collect(Collectors.toList()),
+                                secondPermutation
+                                        .stream()
+                                        .map(pos -> finalSecond.getVertices().get(pos - 1).getNumber())
+                                        .collect(Collectors.toList())
+                        );
                         next.setInvert(invert);
                         next.fillLabelError(first, second);
                         if (next.isBigger(res)) {

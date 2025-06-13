@@ -86,6 +86,10 @@ public abstract class MethodExecutorTest {
         public void deleteListTest() throws IOException {
             compareGraphTest("delete_list.json");
         }
+        @Test
+        public void notCommonLabelTest() throws IOException {
+            compareGraphTest("not_common_labels.json");
+        }
 
         @Test
         public void deleteTransientTest() throws IOException {

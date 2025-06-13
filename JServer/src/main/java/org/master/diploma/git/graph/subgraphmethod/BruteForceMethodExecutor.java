@@ -18,7 +18,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
             Graph<T> first,
             Graph<T> second
     ) {
-        boolean invert = first.getVertices().size() < second.getVertices().size();
+        boolean invert = first.getVertices().size() > second.getVertices().size();
 
         if (invert) {
             var tmp = first;
@@ -43,6 +43,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
         int k = first.getVertices().size();
 
         GraphCompareResult res = new GraphCompareResult();
+        res.setInvert(invert);
         for (int i = 1; i <= k; i++) {
             List<List<Integer>> allVerticesPermutation = PermutationHelper.generatePermutations(n, k, verticesMatching);
 
@@ -61,6 +62,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
                     if (canCompare) {
                         GraphCompareResult next = calculate(first, second, firstPermutation, secondPermutation);
+                        next.setInvert(invert);
                         next.fillLabelError(first, second);
                         if (next.isBigger(res)) {
                             res = next;
@@ -70,8 +72,8 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
             }
         }
 
-        res.setInvert(invert);
-        return res; //todo поменять
+        res.fillLabelError(first, second); //todo поменять
+        return res;
     }
 
     private <T extends Vertex> GraphCompareResult calculate(

@@ -19,7 +19,7 @@ import java.util.*;
 public class BranchMethodExecutor extends SubgraphMethodExecutor {
 
     @Override
-    public <T extends LabelVertex<? extends Label>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
+    public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
 
         List<Branch<T>> firstAllBranches = getAllBranches(first);
         List<Branch<T>> secondAllBranches = getAllBranches(second);
@@ -35,6 +35,7 @@ public class BranchMethodExecutor extends SubgraphMethodExecutor {
                 }
         );
 
+        graphCompareResult.addLabelErrors(first, second);
         return graphCompareResult;
     }
 

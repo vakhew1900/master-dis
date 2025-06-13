@@ -118,6 +118,18 @@ public class GraphCompareResult {
         );
     }
 
+    public <T extends LabelVertex<?>> void addLabelErrors(Graph<T> first, Graph<T> second) {
+        var graph = (invert)? second : first;
+        graph.getVertices().forEach(
+                vertex -> {
+                    if (!labelErrors.containsKey(vertex.getNumber())) {
+                        labelErrors.put(vertex.getNumber(), new LabelError());
+                    }
+                }
+        );
+    }
+
+
     @Override
     public String toString() {
         return GSON.toJson(this);

@@ -13,7 +13,7 @@ public class BranchLCSHelper {
 
 
     public static GraphCompareResult findBranchLCS(
-            BranchMethodExecutor.BranchMatch<? extends LabelVertex<? extends Label>> branchMatch
+            BranchMethodExecutor.BranchMatch<? extends LabelVertex<?>> branchMatch
     ) {
         return findBranchLCS(
                 branchMatch.getFirstBranch(),
@@ -33,8 +33,8 @@ public class BranchLCSHelper {
                 GraphCompareResult::new
         );
 
-        for (int i = 1; i < first.getVertices().size(); i++) {
-            for (int j = 1; j < second.getVertices().size(); j++) {
+        for (int i = 1; i <= first.getVertices().size(); i++) {
+            for (int j = 1; j <= second.getVertices().size(); j++) {
                 var firstVertex = first.getVertices().get(i - 1);
                 var secondVertex = second.getVertices().get(j - 1);
 

@@ -43,10 +43,10 @@ public class GraphCompareResult {
         public static final String MISSING = "missing_labels";
 
         @SerializedName(EXTRA)
-        private List<Integer> extraLabels;
+        private List<Integer> extraLabels = new ArrayList<>();
 
         @SerializedName(MISSING)
-        private List<Integer> missingLabels;
+        private List<Integer> missingLabels = new ArrayList<>();
 
         public static LabelError createLabelError(LabelVertex<?> firstVertex, LabelVertex<?> secondVertex) {
             Set<? extends Label> firstLabels = new HashSet<>(firstVertex.getLabels());
@@ -104,6 +104,16 @@ public class GraphCompareResult {
                     int index = (invert) ? secondNumber : firstNumber;
                     errorCount += labelError.extraLabels.size() + labelError.missingLabels.size();
                     labelErrors.put(index, labelError);
+                }
+        );
+
+        var graph = (invert)? second : first;
+
+        graph.getVertices().forEach(
+                vertex -> {
+                    if (!labelErrors.containsKey(vertex.getNumber())) {
+                        labelErrors.put(vertex.getNumber(), new LabelError());
+                    }
                 }
         );
     }

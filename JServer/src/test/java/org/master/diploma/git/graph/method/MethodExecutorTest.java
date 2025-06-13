@@ -112,6 +112,13 @@ public abstract class MethodExecutorTest {
         }
 
 
+        @Test
+        public void oneLeafGraphTest() throws IOException {
+            compareGraphTest("one_leaf.json");
+        }
+
+
+
         @Override
         protected String graphPath(String path) {
             return "/graph/medium/graph/" + path;

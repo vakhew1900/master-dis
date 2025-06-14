@@ -86,6 +86,7 @@ public abstract class MethodExecutorTest {
         public void deleteListTest() throws IOException {
             compareGraphTest("delete_list.json");
         }
+
         @Test
         public void notCommonLabelTest() throws IOException {
             compareGraphTest("not_common_labels.json");
@@ -157,4 +158,23 @@ public abstract class MethodExecutorTest {
         }
     }
 
+    @Nested
+    public class OneVertexTest extends NestedTest {
+
+        @Test
+        public void equalGraphTest() throws IOException {
+            compareGraphTest("equal.json");
+        }
+
+        @Override
+        protected String graphPath(String path) {
+            return "/graph/one_vertex/graph/" + path;
+        }
+
+        @Override
+        protected String resultPath(String path) {
+            return "/graph/one_vertex/result/" + path;
+        }
+
+    }
 }

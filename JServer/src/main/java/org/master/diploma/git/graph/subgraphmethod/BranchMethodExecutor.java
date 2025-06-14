@@ -5,6 +5,8 @@ import com.google.common.collect.Multiset;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.master.diploma.git.graph.Branch;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
@@ -18,6 +20,7 @@ import java.util.*;
 
 public class BranchMethodExecutor extends SubgraphMethodExecutor {
 
+    private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
 
@@ -104,7 +107,7 @@ public class BranchMethodExecutor extends SubgraphMethodExecutor {
                             new ArrayList<>(branch)
                     )
             );
-            return;
+
         }
 
         for (var child : graph.getChildren(cur.getNumber())) {

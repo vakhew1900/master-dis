@@ -4,7 +4,6 @@ import org.master.diploma.git.graph.Branch;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.graph.subgraphmethod.BranchMethodExecutor;
-import org.master.diploma.git.label.Label;
 
 import java.util.HashMap;
 import java.util.List;

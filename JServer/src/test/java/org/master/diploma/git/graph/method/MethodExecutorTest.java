@@ -126,6 +126,12 @@ public abstract class MethodExecutorTest {
             compareGraphTest("several_leaf.json");
         }
 
+        @Test
+        public void removeTransitiveVertexTest() throws IOException {
+            compareGraphTest("remove_transitive.json");
+        }
+
+
         @Override
         protected String graphPath(String path) {
             return "/graph/medium/graph/" + path;

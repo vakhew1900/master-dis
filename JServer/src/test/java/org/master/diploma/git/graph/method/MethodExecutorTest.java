@@ -166,6 +166,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("equal.json");
         }
 
+        @Test
+        public void emptyMatchingGraphTest() throws IOException {
+            compareGraphTest("empty_matching.json");
+        }
+
         @Override
         protected String graphPath(String path) {
             return "/graph/one_vertex/graph/" + path;

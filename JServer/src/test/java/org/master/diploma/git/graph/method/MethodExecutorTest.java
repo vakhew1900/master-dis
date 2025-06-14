@@ -186,6 +186,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("empty_label.json");
         }
 
+        @Test
+        public void differentVertexId() throws IOException {
+            compareGraphTest("different_vertex_id.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

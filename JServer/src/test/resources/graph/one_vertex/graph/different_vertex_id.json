@@ -1,0 +1,12 @@
+{
+  "first": {
+    "vertices": [0],
+    "edges": {},
+    "labels": {"0": [1]}
+  },
+  "second": {
+    "vertices": [1],
+    "edges": {},
+    "labels": {"1": [1]}
+  }
+}

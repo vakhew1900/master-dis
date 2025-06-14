@@ -133,7 +133,12 @@ public abstract class MethodExecutorTest {
 
         @Test
         public void removeTransitiveVertexTest2() throws IOException {
-            compareGraphTest("remove_transitive.json");
+            compareGraphTest("remove_transitive2.json");
+        }
+
+        @Test
+        public void removeTransitiveVertexTest3() throws IOException {
+            compareGraphTest("remove_transitive3.json");
         }
 
         @Test

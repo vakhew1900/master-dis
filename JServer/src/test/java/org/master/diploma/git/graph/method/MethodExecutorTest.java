@@ -171,6 +171,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("empty_matching.json");
         }
 
+        @Test
+        public void multiLabelEqualTest() throws IOException {
+            compareGraphTest("multi_label_equal.json");
+        }
+
         @Override
         protected String graphPath(String path) {
             return "/graph/one_vertex/graph/" + path;

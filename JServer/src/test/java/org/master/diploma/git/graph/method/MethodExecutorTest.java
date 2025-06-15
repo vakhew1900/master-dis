@@ -203,4 +203,23 @@ public abstract class MethodExecutorTest {
         }
 
     }
+
+    @Nested
+    public class BigGraphTest extends NestedTest {
+
+        @Test
+        public void equalGraphTest() throws IOException {
+            compareGraphTest("equal.json");
+        }
+
+        @Override
+        protected String graphPath(String path) {
+            return "/graph/big/graph/" + path;
+        }
+
+        @Override
+        protected String resultPath(String path) {
+            return "/graph/big/result/" + path;
+        }
+    }
 }

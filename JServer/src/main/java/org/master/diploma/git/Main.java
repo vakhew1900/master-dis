@@ -1,10 +1,5 @@
 package org.master.diploma.git;
 
-import org.apache.logging.log4j.core.util.IOUtils;
-import org.master.diploma.git.git.GitHelper;
-import org.master.diploma.git.git.model.Commit;
-import org.master.diploma.git.support.PermutationHelper;
-
 import java.util.*;
 
 public class Main {

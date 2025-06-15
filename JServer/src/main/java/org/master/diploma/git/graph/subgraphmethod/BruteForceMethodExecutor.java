@@ -1,11 +1,13 @@
 package org.master.diploma.git.graph.subgraphmethod;
 
 import com.google.common.collect.Sets;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.label.LabelVertex;
-import org.master.diploma.git.support.PermutationHelper;
+import org.master.diploma.git.support.CombinatoricHelper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,6 +15,7 @@ import java.util.stream.IntStream;
 
 public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
+    private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(
             Graph<T> first,
@@ -44,9 +47,10 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
         GraphCompareResult res = new GraphCompareResult();
         res.setInvert(invert);
+        int count = 0;
         for (int i = 1; i <= k; i++) {
-            List<List<Integer>> allFirstVerticesPermutation = PermutationHelper.generatePermutations(k, i);
-            List<List<Integer>> allSecondVerticesPermutation = PermutationHelper.generatePermutations(n, i);
+            List<List<Integer>> allFirstVerticesPermutation = CombinatoricHelper.generateCombinations(k, i);
+            List<List<Integer>> allSecondVerticesPermutation = CombinatoricHelper.generatePermutations(n, i);
 
             for (var firstPermutation : allFirstVerticesPermutation) {
                 for (var secondPermutation : allSecondVerticesPermutation) {
@@ -62,6 +66,9 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
                                 );
                     }
 
+                    count++;
+                    if (count % 1000000000 == 0)
+                        LOG.info(count);
                     Graph<T> finalFirst = first;
                     Graph<T> finalSecond = second;
                     if (canCompare) {

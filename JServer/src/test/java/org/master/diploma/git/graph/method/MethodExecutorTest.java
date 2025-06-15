@@ -212,6 +212,7 @@ public abstract class MethodExecutorTest {
             compareGraphTest("equal.json");
         }
 
+
         @Override
         protected String graphPath(String path) {
             return "/graph/big/graph/" + path;
@@ -220,6 +221,35 @@ public abstract class MethodExecutorTest {
         @Override
         protected String resultPath(String path) {
             return "/graph/big/result/" + path;
+        }
+    }
+
+    @Nested
+    public class BambooTest extends NestedTest {
+
+        @Test
+        public void equalGraphTest() throws IOException {
+            compareGraphTest("equal.json");
+        }
+
+        @Test
+        public void missingLabelTest() throws IOException {
+            compareGraphTest("missing_label.json");
+        }
+
+        @Test
+        public void missingVertexTest() throws IOException {
+            compareGraphTest("missing_vertex.json");
+        }
+
+        @Override
+        protected String graphPath(String path) {
+            return "/graph/bamboo/graph/" + path;
+        }
+
+        @Override
+        protected String resultPath(String path) {
+            return "/graph/bamboo/result/" + path;
         }
     }
 }

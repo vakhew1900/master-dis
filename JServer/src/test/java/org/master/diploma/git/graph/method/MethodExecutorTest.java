@@ -242,6 +242,16 @@ public abstract class MethodExecutorTest {
             compareGraphTest("missing_vertex.json");
         }
 
+        @Test
+        public void extraLabelTest() throws IOException {
+            compareGraphTest("extra_label.json");
+        }
+
+        @Test
+        public void extraVertexTest() throws IOException {
+            compareGraphTest("extra_vertex.json");
+        }
+
         @Override
         protected String graphPath(String path) {
             return "/graph/bamboo/graph/" + path;

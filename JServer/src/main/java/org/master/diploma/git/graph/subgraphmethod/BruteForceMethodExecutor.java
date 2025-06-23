@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.Vertex;
+import org.master.diploma.git.graph.exception.MaxVertexCountException;
 import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.support.CombinatoricHelper;
 
@@ -16,6 +17,9 @@ import java.util.stream.IntStream;
 public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
     private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
+    private static final int MAX_VERTEX_SIZE = 16;
+
+
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(
             Graph<T> first,
@@ -29,6 +33,18 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
             second = tmp;
         }
 
+        if (second.getVertices().size() > MAX_VERTEX_SIZE) {
+            throw new MaxVertexCountException(
+                    String.format(
+                            "Bruteforce method not support graph with vertices count more than %s. First graph - %d, second graph - %d",
+                            MAX_VERTEX_SIZE,
+                            first.getVertices().size(),
+                            second.getVertices().size()
+                    )
+            );
+        }
+
+        long operationCount =
 
         Map<Integer, Set<Integer>> verticesMatching = new HashMap<>();
         for (T u : first.getVertices()) {

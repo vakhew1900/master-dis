@@ -213,18 +213,23 @@ public abstract class MethodExecutorTest {
         }
 
         @Test
-        public void removeLeafs() throws IOException {
+        public void removeLeafsTest() throws IOException {
             compareGraphTest("remove_leaf.json");
         }
 
         @Test
-        public void removeTransient() throws IOException {
+        public void removeTransientTest() throws IOException {
             compareGraphTest("remove_transient.json");
         }
 
         @Test
-        public void removeTransient2() throws IOException {
+        public void removeTransient2Test() throws IOException {
             compareGraphTest("remove_transient2.json");
+        }
+
+        @Test
+        public void addBranchTest() throws IOException {
+            compareGraphTest("add_branch.json");
         }
 
 

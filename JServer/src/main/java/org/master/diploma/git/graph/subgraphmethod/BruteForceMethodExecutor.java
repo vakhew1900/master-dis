@@ -18,7 +18,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
     private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
     private static final int MAX_VERTEX_SIZE = 16;
-
+    private static final long OPERATION_COUNT = 20_000_000_000L;
 
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(
@@ -44,7 +44,11 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
             );
         }
 
-        long operationCount =
+        long operationCount = getOperationCount(first, second);
+
+        if (operationCount > OPERATION_COUNT) {
+            throw new MaxVertexCountException("Operation count is too big for bruteforce method");
+        }
 
         Map<Integer, Set<Integer>> verticesMatching = new HashMap<>();
         for (T u : first.getVertices()) {
@@ -153,6 +157,10 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
                 .filter(entry -> map.containsKey(entry.getKey()) && map.containsKey(entry.getValue()))
                 .map(entry -> new AbstractMap.SimpleEntry<>(map.get(entry.getKey()), map.get(entry.getValue())))
                 .collect(Collectors.toSet());
+    }
+
+    private long getOperationCount(Graph<?> first, Graph<?> second) {
+        return CombinatoricHelper.factorial(second.getVertices().size()) * (long) Math.pow(2, (first.getVertices().size()));
     }
 
 }

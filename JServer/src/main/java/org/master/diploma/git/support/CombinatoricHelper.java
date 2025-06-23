@@ -9,6 +9,16 @@ public class CombinatoricHelper {
 
     private static final Logger LOG = LogManager.getLogger(CombinatoricHelper.class);
 
+    public static long factorial(long cnt) {
+        int result = 1;
+
+        for (int i = 1; i <= cnt; i++) {
+            result *= i;
+        }
+
+        return result;
+    }
+
     public static List<List<Integer>> generatePermutations(int n, int k) {
         if (k < 0 || k > n) {
             throw new IllegalArgumentException(String.format("Illegal n = %d and k = %d", n, k));
@@ -42,7 +52,6 @@ public class CombinatoricHelper {
             result.add(new ArrayList<>(currentPermutation));
             return;
         }
-
 
 
         for (int i = 1; i <= n; i++) {

@@ -212,6 +212,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("equal.json");
         }
 
+        @Test
+        public void removeLeafs() throws IOException {
+            compareGraphTest("remove_leaf.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

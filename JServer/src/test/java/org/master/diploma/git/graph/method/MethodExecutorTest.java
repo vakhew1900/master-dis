@@ -232,6 +232,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("add_branch.json");
         }
 
+        @Test
+        public void removeBranchTest() throws IOException {
+            compareGraphTest("remove_branch.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

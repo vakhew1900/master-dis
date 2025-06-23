@@ -217,6 +217,16 @@ public abstract class MethodExecutorTest {
             compareGraphTest("remove_leaf.json");
         }
 
+        @Test
+        public void removeTransient() throws IOException {
+            compareGraphTest("remove_transient.json");
+        }
+
+        @Test
+        public void removeTransient2() throws IOException {
+            compareGraphTest("remove_transient2.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

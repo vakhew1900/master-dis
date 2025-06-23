@@ -1,0 +1,14 @@
+{
+  "matching_vertices": {
+    "0": 0,
+    "1": 1,
+    "3": 6
+  },
+  "label_errors": {
+    "0": { "extra_labels": [], "missing_labels": [] },
+    "1": { "extra_labels": [], "missing_labels": [] },
+    "2": { "extra_labels": [], "missing_labels": [] },
+    "3": { "extra_labels": [], "missing_labels": [] },
+    "4": { "extra_labels": [], "missing_labels": [] }
+  }
+}

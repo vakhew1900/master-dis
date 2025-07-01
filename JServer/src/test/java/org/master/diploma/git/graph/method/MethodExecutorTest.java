@@ -257,6 +257,10 @@ public abstract class MethodExecutorTest {
             compareGraphTest("move_branch_to_middle.json");
         }
 
+        @Test
+        public void complexTest() throws IOException {
+            compareGraphTest("complex.json");
+        }
 
 
         @Override

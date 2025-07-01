@@ -8,6 +8,7 @@ import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.label.Label;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Getter
@@ -22,7 +23,6 @@ public class GraphCompareResult {
     public static final Gson GSON = new Gson();
 
     private transient boolean invert = false;
-    private transient int errorCount = 0;
 
     @SerializedName(MATCHING_VERTICES)
     private Map<Integer, Integer> matchingVertices;
@@ -87,7 +87,7 @@ public class GraphCompareResult {
             return true;
         }
 
-        if (matchingVertices.size() == other.matchingVertices.size() && errorCount < other.errorCount) {
+        if (matchingVertices.size() == other.matchingVertices.size() && errorCount() < other.errorCount()) {
             return true;
         }
 
@@ -102,12 +102,11 @@ public class GraphCompareResult {
                     LabelError labelError = LabelError.createLabelError(firstVertex, secondVertex);
 
                     int index = (invert) ? secondNumber : firstNumber;
-                    errorCount += labelError.extraLabels.size() + labelError.missingLabels.size();
                     labelErrors.put(index, labelError);
                 }
         );
 
-        var graph = (invert)? second : first;
+        var graph = (invert) ? second : first;
 
         graph.getVertices().forEach(
                 vertex -> {
@@ -119,7 +118,7 @@ public class GraphCompareResult {
     }
 
     public <T extends LabelVertex<?>> void addLabelErrors(Graph<T> first, Graph<T> second) {
-        var graph = (invert)? second : first;
+        var graph = (invert) ? second : first;
         graph.getVertices().forEach(
                 vertex -> {
                     if (!labelErrors.containsKey(vertex.getNumber())) {
@@ -133,5 +132,19 @@ public class GraphCompareResult {
     @Override
     public String toString() {
         return GSON.toJson(this);
+    }
+
+    private int errorCount() {
+        AtomicInteger count = new AtomicInteger(0);
+        labelErrors
+                .values()
+                .forEach(
+                        labelError -> {
+                            count.addAndGet(labelError.extraLabels.size());
+                            count.addAndGet(labelError.missingLabels.size());
+                        }
+                );
+
+        return count.get();
     }
 }

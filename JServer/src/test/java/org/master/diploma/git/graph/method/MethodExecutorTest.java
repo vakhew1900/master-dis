@@ -262,6 +262,22 @@ public abstract class MethodExecutorTest {
             compareGraphTest("complex.json");
         }
 
+        @Test
+        public void complexTest2() throws IOException {
+            compareGraphTest("complex2.json");
+        }
+
+        @Test
+        public void complexTest3() throws IOException {
+            compareGraphTest("complex3.json");
+        }
+
+        @Test
+        public void complexTest4() throws IOException {
+            compareGraphTest("complex4.json");
+        }
+
+
 
         @Override
         protected String graphPath(String path) {

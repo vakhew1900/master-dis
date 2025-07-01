@@ -1,16 +1,20 @@
 package org.master.diploma.git.support;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.master.diploma.git.graph.Branch;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.graph.subgraphmethod.BranchMethodExecutor;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BranchLCSHelper {
 
-
+    private static final Logger LOG = LogManager.getLogger(BranchLCSHelper.class);
     public static GraphCompareResult findBranchLCS(
             BranchMethodExecutor.BranchMatch<? extends LabelVertex<?>> branchMatch
     ) {
@@ -31,6 +35,9 @@ public class BranchLCSHelper {
                 second.getVertices().size() + 1,
                 GraphCompareResult::new
         );
+
+        LOG.info("first:{}", first.getVertices().stream().map(Vertex::getNumber).collect(Collectors.toList()));
+        LOG.info("second:{}", second.getVertices().stream().map(Vertex::getNumber).collect(Collectors.toList()));
 
         for (int i = 1; i <= first.getVertices().size(); i++) {
             for (int j = 1; j <= second.getVertices().size(); j++) {

@@ -13,7 +13,8 @@ public final class Multisets {
 
         Multiset<T> intersection = HashMultiset.create();
 
-        for (var element : first) {
+
+        for (var element : first.elementSet() ) {
             int firstCount = first.count(element);
             int secondCount = second.count(element);
 

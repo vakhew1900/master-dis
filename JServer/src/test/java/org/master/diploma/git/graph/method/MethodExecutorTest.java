@@ -242,6 +242,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("different_structure.json");
         }
 
+        @Test
+        public void moveBranchTest() throws IOException {
+            compareGraphTest("move_branch.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

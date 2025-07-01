@@ -18,7 +18,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
     private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
     private static final int MAX_VERTEX_SIZE = 16;
-    private static final long OPERATION_COUNT = 20_000_000_000L;
+    private static final long OPERATION_COUNT = 100_000_000_000L;
 
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(
@@ -135,7 +135,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
         Set<Map.Entry<UUID, UUID>> secondSet = integerToUUID(secondUUIDS, second);
 
         GraphCompareResult result = new GraphCompareResult();
-        if (Sets.difference(firstSet, secondSet).isEmpty()) {
+        if (Sets.difference(firstSet, secondSet).isEmpty() && Sets.difference(secondSet, firstSet).isEmpty()) {
             result.setMatchingVertices(
                     IntStream
                             .range(0, firstPermutation.size())

@@ -1,5 +1,6 @@
 package org.master.diploma.git.graph.subgraphmethod;
 
+import lombok.EqualsAndHashCode;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.Vertex;
@@ -17,9 +18,7 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
 
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
-        var compareResult = findBiggestSubSequenceSubgraph(first, second).toGraphCompareResult();
-        compareResult.fillLabelError(first, second);
-        return compareResult;
+        return findBiggestSubSequenceSubgraph(first, second).toGraphCompareResult();
     }
 
     public static <T extends LabelVertex<?>> DpElement findBiggestSubSequenceSubgraph(
@@ -35,7 +34,7 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
         List<List<DpElement>> dp = Creator.createMatrix(
                 rowCount,
                 colCount,
-                () -> new DpElement(new HashMap<>())
+                DpElement::new
         );
 
 
@@ -48,7 +47,7 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
         );
     }
 
-    private static <T extends Vertex> DpElement findBiggestSubSequenceSubgraph(
+    private static <T extends LabelVertex<?>> DpElement findBiggestSubSequenceSubgraph(
             List<List<DpElement>> dp,
             int u,
             int v,
@@ -60,12 +59,13 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
             return dp.get(u).get(v);
         }
 
-        DpElement relatingValue = new DpElement(new HashMap<>());
+        DpElement relatingValue = new DpElement();
         if (first.getVertex(u)
                 .canRelate(second.getVertex(v))
         ) {
 
-            relatingValue = new DpElement(new HashMap<>(Map.of(u, v)));
+            relatingValue = new DpElement();
+            relatingValue.add(u, v);
 
             if (!first.getChildrenNumbers(u).isEmpty() && !second.getChildren(v).isEmpty()) {
                 TwoOrderedMap<Integer, Integer> rows = new TwoOrderedMap<>();
@@ -129,7 +129,7 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
 
         }
 
-        DpElement other = new DpElement(new HashMap<>());
+        DpElement other = new DpElement();
 
         for (var childU : first.getChildrenNumbers(u)) {
             DpElement tmp = findBiggestSubSequenceSubgraph(
@@ -139,6 +139,8 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
                     first,
                     second
             );
+            other.fillLabelError(first, second);
+            tmp.fillLabelError(first, second);
             other = DpElement.max(other, tmp);
         }
 
@@ -150,9 +152,13 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
                     first,
                     second
             );
+            other.fillLabelError(first, second);
+            tmp.fillLabelError(first, second);
             other = DpElement.max(other, tmp);
         }
 
+        relatingValue.fillLabelError(first, second);
+        other.fillLabelError(first, second);
         dp.get(u).set(v, DpElement.max(relatingValue, other));
         return dp.get(u).get(v);
     }
@@ -264,57 +270,34 @@ public class DpMethodHelper extends SubgraphMethodExecutor {
         return ans;
     }
 
-    public static class DpElement {
-        private Map<Integer, Integer> matchingVertices = new HashMap<>();
 
-        public DpElement(Map<Integer, Integer> matchingVertices) {
-
-            this.matchingVertices = matchingVertices;
-        }
-
-        public GraphCompareResult toGraphCompareResult() {
-            var res = new GraphCompareResult();
-            res.setMatchingVertices(matchingVertices);
-            return res;
-        }
+    @EqualsAndHashCode
+    public static class DpElement extends GraphCompareResult {
 
         public int getWeight() {
-            return matchingVertices.size();
+            return getMatchingVertices().size();
         }
 
-        public Map<Integer, Integer> getMatchingVertices() {
-            return matchingVertices;
-        }
-
-        public static boolean isBigger(DpElement first, DpElement second) {
-            return first.getWeight() > second.getWeight();
-        }
 
         public static DpElement max(DpElement first, DpElement second) {
-            return (isBigger(first, second)) ? first : second;
+            return (first.isBigger(second)) ? first : second;
         }
 
         public void addDpElement(DpElement other) {
-            this.matchingVertices.putAll(other.getMatchingVertices());
+            this.getMatchingVertices().putAll(other.getMatchingVertices());
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            DpElement dpElement = (DpElement) o;
-            return Objects.equals(matchingVertices, dpElement.matchingVertices);
+        public void add(int first, int second) {
+            getMatchingVertices().put(first, second);
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(matchingVertices);
-        }
+        public GraphCompareResult toGraphCompareResult() {
+            return GraphCompareResult
+                    .builder().
+                    matchingVertices(getMatchingVertices())
+                    .labelErrors(getLabelErrors())
+                    .build();
 
-        @Override
-        public String toString() {
-            return "DpElement=[" + matchingVertices.toString() + "]";
         }
     }
 }

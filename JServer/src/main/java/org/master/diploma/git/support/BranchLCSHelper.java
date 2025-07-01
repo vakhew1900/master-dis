@@ -60,6 +60,12 @@ public class BranchLCSHelper {
                                     GraphCompareResult.LabelError.createLabelError(firstVertex, secondVertex)
                             );
 
+
+                    var prev1 = dp.get(i).get(j - 1);
+                    var prev2 = dp.get(i - 1).get(j);
+                    next =(next.isBigger(prev1))? next : prev1;
+                    next =(next.isBigger(prev2))? next : prev2;
+
                     dp.get(i).set(j, next);
 
                 } else {

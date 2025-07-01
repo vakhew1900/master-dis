@@ -112,7 +112,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
             }
         }
 
-        res.fillLabelError(first, second); //todo поменять
+        res.fillLFinaLabelError(first, second); //todo поменять
         return res;
     }
 

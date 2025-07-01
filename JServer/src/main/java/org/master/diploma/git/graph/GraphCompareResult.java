@@ -106,19 +106,37 @@ public class GraphCompareResult {
                 }
         );
 
-        var graph = (invert) ? second : first;
+        addLabelErrors(first, second);
+    }
 
-        graph.getVertices().forEach(
-                vertex -> {
-                    if (!labelErrors.containsKey(vertex.getNumber())) {
-                        labelErrors.put(vertex.getNumber(), new LabelError());
+    public <T extends LabelVertex<?>> void fillLFinaLabelError(Graph<T> first, Graph<T> second) {
+
+        if (invert) {
+            matchingVertices = matchingVertices
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                                    Map.Entry::getValue,
+                                    Map.Entry::getKey
+                            )
+                    );
+
+            labelErrors.values().forEach(
+                    labelError -> {
+                        var tmp = labelError.extraLabels;
+                        labelError.extraLabels = labelError.missingLabels;
+                        labelError.missingLabels = tmp;
                     }
-                }
-        );
+            );
+        }
+
+        addLabelErrors(first, second);
+        invert = false;
     }
 
     public <T extends LabelVertex<?>> void addLabelErrors(Graph<T> first, Graph<T> second) {
         var graph = (invert) ? second : first;
+
         graph.getVertices().forEach(
                 vertex -> {
                     if (!labelErrors.containsKey(vertex.getNumber())) {

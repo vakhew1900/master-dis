@@ -287,6 +287,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("div_vertex_to_several2.json");
         }
 
+        @Test
+        public void squashTest() throws IOException {
+            compareGraphTest("squash.json");
+        }
+
         @Override
         protected String graphPath(String path) {
             return "/graph/big/graph/" + path;

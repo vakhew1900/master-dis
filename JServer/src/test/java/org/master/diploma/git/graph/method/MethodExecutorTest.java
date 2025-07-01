@@ -277,7 +277,10 @@ public abstract class MethodExecutorTest {
             compareGraphTest("complex4.json");
         }
 
-
+        @Test
+        public void divVertexToSeveralVerticesTest() throws IOException {
+            compareGraphTest("div_vertex_to_several.json");
+        }
 
         @Override
         protected String graphPath(String path) {

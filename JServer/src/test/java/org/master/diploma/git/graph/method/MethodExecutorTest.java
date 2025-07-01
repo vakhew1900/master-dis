@@ -282,6 +282,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("div_vertex_to_several.json");
         }
 
+        @Test
+        public void divVertexToSeveralVerticesTest2() throws IOException {
+            compareGraphTest("div_vertex_to_several2.json");
+        }
+
         @Override
         protected String graphPath(String path) {
             return "/graph/big/graph/" + path;

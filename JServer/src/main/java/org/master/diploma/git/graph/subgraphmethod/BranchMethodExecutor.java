@@ -153,7 +153,7 @@ public class BranchMethodExecutor extends SubgraphMethodExecutor {
     private static <T> double calculatePercentageMatch(Multiset<T> firstLabels, Multiset<T> secondLabels) {
         Multiset<T> intersection = Multisets.intersect(firstLabels, secondLabels);
         int intersectionSize = intersection.size();
-        int minSize = Math.min(firstLabels.size(), secondLabels.size());
+        int minSize = Math.max(firstLabels.size(), secondLabels.size());
 
         // Предотвращаем деление на ноль, если оба Multiset пусты или один из них пуст.
         return (minSize == 0) ? 0.0 : (double) intersectionSize / minSize;

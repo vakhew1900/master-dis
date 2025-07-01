@@ -233,6 +233,11 @@ public abstract class MethodExecutorTest {
         }
 
         @Test
+        public void addBranchTest2() throws IOException {
+            compareGraphTest("add_branch2.json");
+        }
+
+        @Test
         public void removeBranchTest() throws IOException {
             compareGraphTest("remove_branch.json");
         }

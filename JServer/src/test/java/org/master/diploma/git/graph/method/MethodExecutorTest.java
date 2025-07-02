@@ -309,6 +309,12 @@ public abstract class MethodExecutorTest {
             compareGraphTest("complex5.json");
         }
 
+        @Test
+        public void complex6Test() throws IOException {
+            compareGraphTest("complex6.json");
+        }
+
+
 
         @Override
         protected String graphPath(String path) {

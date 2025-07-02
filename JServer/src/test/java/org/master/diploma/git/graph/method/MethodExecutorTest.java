@@ -299,6 +299,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("div_transit.json");
         }
 
+        @Test
+        public void onlyRootMatchTest() throws IOException {
+            compareGraphTest("only_root_match.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

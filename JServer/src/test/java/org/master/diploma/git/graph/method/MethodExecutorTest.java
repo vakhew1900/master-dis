@@ -304,6 +304,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("only_root_match.json");
         }
 
+        @Test
+        public void complex5Test() throws IOException {
+            compareGraphTest("complex5.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

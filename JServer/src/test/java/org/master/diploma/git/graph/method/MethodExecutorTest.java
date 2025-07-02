@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.master.diploma.git.graph.Graph;
@@ -291,6 +292,13 @@ public abstract class MethodExecutorTest {
         public void squashTest() throws IOException {
             compareGraphTest("squash.json");
         }
+
+        @Test
+        @DisplayName("One vertex is divided into two, but not consecutive ones")
+        public void divTransitTest() throws IOException {
+            compareGraphTest("div_transit.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

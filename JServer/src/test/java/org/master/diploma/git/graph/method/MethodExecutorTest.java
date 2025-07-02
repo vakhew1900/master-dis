@@ -314,6 +314,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("complex6.json");
         }
 
+        @Test
+        public void squashTransitTest() throws IOException {
+            compareGraphTest("squash_transit.json");
+        }
+
 
 
         @Override

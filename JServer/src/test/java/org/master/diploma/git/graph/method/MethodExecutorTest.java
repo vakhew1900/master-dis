@@ -365,6 +365,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("complex_delete_vertex_test.json");
         }
 
+        @Test
+        public void squashTest() throws IOException {
+            compareGraphTest("squash.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

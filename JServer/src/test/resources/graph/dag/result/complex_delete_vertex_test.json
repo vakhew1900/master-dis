@@ -1,0 +1,46 @@
+{
+  "matching_vertices": {
+    "0": 0,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "8": 8,
+    "10": 10
+  },
+  "label_errors": {
+    "0": {
+      "extra_labels": [],
+      "missing_labels": []
+    },
+    "2": {
+      "extra_labels": [],
+      "missing_labels": []
+    },
+    "3": {
+      "extra_labels": [],
+      "missing_labels": []
+    },
+    "4": {
+      "extra_labels": [],
+      "missing_labels": []
+    },
+    "5": {
+      "extra_labels": [],
+      "missing_labels": []
+    },
+    "6": {
+      "extra_labels": [],
+      "missing_labels": []
+    },
+    "8": {
+      "extra_labels": [],
+      "missing_labels": []
+    },
+    "10": {
+      "extra_labels": [],
+      "missing_labels": []
+    }
+  }
+}

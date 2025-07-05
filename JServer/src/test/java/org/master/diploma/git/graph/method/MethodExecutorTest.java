@@ -351,13 +351,18 @@ public abstract class MethodExecutorTest {
         }
 
         @Test
-        public void deleteVertex2Test() throws IOException {
+        public void deleteMergeVertexTest() throws IOException {
             compareGraphTest("delete_merge_vertex.json");
         }
 
         @Test
-        public void deleteVertex3Test() throws IOException {
+        public void deleteParentVertexTest() throws IOException {
             compareGraphTest("delete_parent_vertex.json");
+        }
+
+        @Test
+        public void complexDeleteVertexTest() throws IOException {
+            compareGraphTest("complex_delete_vertex_test.json");
         }
 
 

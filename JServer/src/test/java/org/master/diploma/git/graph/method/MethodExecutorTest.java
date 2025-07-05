@@ -333,6 +333,26 @@ public abstract class MethodExecutorTest {
     }
 
     @Nested
+    public class DAGTest extends NestedTest {
+
+        @Test
+        public void equalGraphTest() throws IOException {
+            compareGraphTest("equal.json");
+        }
+
+
+        @Override
+        protected String graphPath(String path) {
+            return "/graph/dag/graph/" + path;
+        }
+
+        @Override
+        protected String resultPath(String path) {
+            return "/graph/dag/result/" + path;
+        }
+    }
+
+    @Nested
     public class BambooTest extends NestedTest {
 
         @Test

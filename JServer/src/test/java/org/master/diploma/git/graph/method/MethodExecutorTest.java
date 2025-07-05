@@ -345,6 +345,12 @@ public abstract class MethodExecutorTest {
             compareGraphTest("small_equal.json");
         }
 
+        @Test
+        public void deleteVertexTest() throws IOException {
+            compareGraphTest("delete_vertex.json");
+        }
+
+
         @Override
         protected String graphPath(String path) {
             return "/graph/dag/graph/" + path;

@@ -18,7 +18,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
     private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
     private static final int MAX_VERTEX_SIZE = 16;
-    private static final long OPERATION_COUNT = 100_000_000_000L;
+    private static final long OPERATION_COUNT = 150_000_000_000L;
 
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(

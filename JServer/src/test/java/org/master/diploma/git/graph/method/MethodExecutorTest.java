@@ -340,6 +340,10 @@ public abstract class MethodExecutorTest {
             compareGraphTest("equal.json");
         }
 
+        @Test
+        public void equalGraphTest2() throws IOException {
+            compareGraphTest("small_equal.json");
+        }
 
         @Override
         protected String graphPath(String path) {

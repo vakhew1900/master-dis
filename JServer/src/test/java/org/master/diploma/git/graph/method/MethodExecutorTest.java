@@ -350,6 +350,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("delete_vertex.json");
         }
 
+        @Test
+        public void deleteVertex2Test() throws IOException {
+            compareGraphTest("delete_vertex2.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

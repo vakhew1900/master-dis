@@ -367,7 +367,7 @@ public abstract class MethodExecutorTest {
 
         @Test
         public void squashTest() throws IOException {
-            compareGraphTest("squash.json");
+            compareGraphTest("squash.json"); //TODO DpMEthod тоже дает правильный ответ, немного отличный от текущего
         }
 
 

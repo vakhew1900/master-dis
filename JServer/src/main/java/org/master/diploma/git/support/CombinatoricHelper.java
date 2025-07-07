@@ -2,6 +2,7 @@ package org.master.diploma.git.support;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.master.diploma.git.graph.subgraphmethod.BruteForceMethodExecutor;
 
 import java.util.*;
 
@@ -112,6 +113,8 @@ public class CombinatoricHelper {
             result.add(new ArrayList<>(currentCombination));
             return;
         }
+
+        Timeout.getInstance().brokeTime(BruteForceMethodExecutor.TIME_OUT);
 
         for (int i = start; i <= n; i++) {
             currentCombination.add(i);

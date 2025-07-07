@@ -9,6 +9,7 @@ import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.exception.MaxVertexCountException;
 import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.support.CombinatoricHelper;
+import org.master.diploma.git.support.Timeout;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
     private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
     private static final int MAX_VERTEX_SIZE = 16;
     private static final long OPERATION_COUNT = 150_000_000_000L;
+    public static final long TIME_OUT = 5 * 60 * 1000;
 
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(
@@ -32,6 +34,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
             first = second;
             second = tmp;
         }
+
 
         if (second.getVertices().size() > MAX_VERTEX_SIZE) {
             throw new MaxVertexCountException(
@@ -65,12 +68,16 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
         int n = second.getVertices().size();
         int k = first.getVertices().size();
 
+        Timeout.getInstance().updateStartTime();
+
         GraphCompareResult res = new GraphCompareResult();
         res.setInvert(invert);
         int count = 0;
         for (int i = 1; i <= k; i++) {
             List<List<Integer>> allFirstVerticesPermutation = CombinatoricHelper.generateCombinations(k, i);
             List<List<Integer>> allSecondVerticesPermutation = CombinatoricHelper.generatePermutations(n, i);
+
+            Timeout.getInstance().brokeTime(TIME_OUT);
 
             for (var firstPermutation : allFirstVerticesPermutation) {
                 for (var secondPermutation : allSecondVerticesPermutation) {
@@ -162,5 +169,6 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
     private long getOperationCount(Graph<?> first, Graph<?> second) {
         return CombinatoricHelper.factorial(second.getVertices().size()) * (long) Math.pow(2, (first.getVertices().size()));
     }
+
 
 }

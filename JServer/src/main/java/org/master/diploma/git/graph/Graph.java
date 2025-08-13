@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class Graph<T extends Vertex> {
+public abstract class Graph<T extends Vertex> implements Cloneable {
 
     public abstract List<T> getVertices();
 
@@ -29,4 +29,6 @@ public abstract class Graph<T extends Vertex> {
     public abstract int getRoot();
 
     public abstract Set<Map.Entry<Integer, Integer>> getTransitiveClosure();
+
+    public abstract Graph<T> clone();
 }

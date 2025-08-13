@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class LabelGraph<T extends LabelVertex> extends SimpleGraph<T> implements Cloneable {
+public class LabelGraph<T extends LabelVertex> extends SimpleGraph<T> {
 
     public LabelGraph() {
 

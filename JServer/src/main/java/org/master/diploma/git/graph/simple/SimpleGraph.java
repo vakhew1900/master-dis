@@ -7,7 +7,7 @@ import org.master.diploma.git.graph.exception.IncorrectVertexNumberException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SimpleGraph<T extends Vertex> extends Graph<T> implements Cloneable {
+public class SimpleGraph<T extends Vertex> extends Graph<T>  {
 
     private List<T> vertices;
     private Map<Integer, Integer> numberToIndex;

@@ -95,6 +95,10 @@ public class SimpleGraph<T extends Vertex> extends Graph<T>  {
         }
     }
 
+    @Override
+    public void removeVertex(T vertex) {
+        removeVertex(vertex.getNumber());
+    }
 
     @Override
     public void addEdge(int parent, int children) {

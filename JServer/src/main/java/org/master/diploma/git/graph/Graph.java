@@ -13,6 +13,7 @@ public abstract class Graph<T extends Vertex> implements Cloneable {
     public abstract void addVertex(T vertex);
 
     public abstract void removeVertex(int number);
+    public abstract void removeVertex(T vertex);
 
     public abstract void addEdge(int parent, int children);
 

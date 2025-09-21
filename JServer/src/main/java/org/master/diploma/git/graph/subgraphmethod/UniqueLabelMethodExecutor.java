@@ -11,6 +11,7 @@ import org.master.diploma.git.graph.label.LabelVertex;
 import org.master.diploma.git.label.Label;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,14 +24,28 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
     private static final int LABEL_COUNT = 1;
 
     @Override
-    public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
-        checkGraph(first);
-        checkGraph(second);
+    public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> g1, Graph<T> g2) {
+        checkGraph(g1);
+        checkGraph(g2);
+
+        var first = g1.clone();
+        var second = g2.clone();
+
 
         Map<Integer, List<Integer>> firstAllParents = getAllParents(first);
         Map<Integer, List<Integer>> secondAllParents = getAllParents(second);
-        Set<Integer> unionsLabels = getUnionLabels(first, second);
+        Set<Integer> intersectionLabels = getIntersectionLabels(first, second);
 
+        Consumer<Graph<T>> removeDiffLabels = (graph) -> {
+            for (T v : graph.getVertices()) {
+                if (!intersectionLabels.contains(labelFromVertex(v))) {
+                    graph.removeVertex(v);
+                }
+            }
+        };
+
+        removeDiffLabels.accept(first);
+        removeDiffLabels.accept(second);
 
         VertexSet<T> currentVertexSet = findResult(
                 new GraphContainer<>(
@@ -88,7 +103,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
     ) {
 
         int currentVertexNumber = labelFromVertex(first.vertex);
-        int currentParentNumber = second.allParents.get(currentVertexNumber).size() - 1;
+        int currentParentNumber = second.allParents.getOrDefault(currentVertexNumber, Collections.emptyList()).size() - 1;
         var allParents = second.allParents.get(currentVertexNumber);
 
         Set<Integer> conflictVertex = new HashSet<>();
@@ -97,6 +112,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         ) {
             conflictVertex.add(allParents.get(currentParentNumber--));
         }
+
 
         VertexSet<T> curVertexSet = VertexSet
                 .<T>builder()
@@ -183,6 +199,16 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
                 }
         );
 
+        allChildren
+                .keySet()
+                .forEach(
+                        key -> {
+                            if (!result.containsKey(key)) {
+                                result.put(key, new ArrayList<>());
+                            }
+                        }
+                );
+
         return result;
     }
 
@@ -236,8 +262,8 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         );
     }
 
-    private <T extends LabelVertex<?>> Set<Integer> getUnionLabels(Graph<T> first, Graph<T> second) {
-        return Sets.union(
+    private <T extends LabelVertex<?>> Set<Integer> getIntersectionLabels(Graph<T> first, Graph<T> second) {
+        return Sets.intersection(
                 getLabels(first),
                 getLabels(second)
         );

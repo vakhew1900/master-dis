@@ -52,7 +52,6 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         Map<Integer, List<Integer>> secondAllParents = getAllParents(second);
 
 
-
         VertexSet<T> currentVertexSet = findResult(
                 new GraphContainer<>(
                         firstAllParents,
@@ -95,9 +94,9 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         Map<Integer, Integer> map = currentVertexSet
                 .vertices
                 .stream()
-                .
+                        .
                 collect(Collectors.toMap(
-                                vertex -> vertex.getNumber(),
+                                Vertex::getNumber,
                                 vertex -> secondLabelToVertex.get(labelFromVertex(vertex))
                         )
                 );

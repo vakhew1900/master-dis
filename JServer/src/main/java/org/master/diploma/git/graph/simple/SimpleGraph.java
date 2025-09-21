@@ -167,6 +167,11 @@ public class SimpleGraph<T extends Vertex> extends Graph<T>  {
         return vertices;
     }
 
+    @Override
+    public List<T> getChildren(T vertex) {
+        return getChildren(vertex.getNumber());
+    }
+
     private int getIndexByNumber(int number) {
         return numberToIndex.get(number);
     }

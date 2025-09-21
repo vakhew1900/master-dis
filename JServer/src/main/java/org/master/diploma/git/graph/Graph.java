@@ -25,6 +25,7 @@ public abstract class Graph<T extends Vertex> implements Cloneable {
     public abstract List<Integer> getChildrenNumbers(int vertexNumber);
 
     public abstract List<T> getChildren(int vertexNumber);
+    public abstract List<T> getChildren(T vertex);
 
     public abstract int getRoot();
 

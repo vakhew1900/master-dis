@@ -1,0 +1,329 @@
+package org.master.diploma.git.graph.subgraphmethod;
+
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import lombok.*;
+import org.master.diploma.git.graph.Graph;
+import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.Vertex;
+import org.master.diploma.git.graph.exception.GraphException;
+import org.master.diploma.git.graph.label.LabelVertex;
+import org.master.diploma.git.label.Label;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+
+public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
+
+
+    public static final Gson GSON = new Gson();
+
+    private static final int LABEL_COUNT = 1;
+
+    @Override
+    public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> first, Graph<T> second) {
+        checkGraph(first);
+        checkGraph(second);
+
+        Map<Integer, List<Integer>> firstAllParents = getAllParents(first);
+        Map<Integer, List<Integer>> secondAllParents = getAllParents(second);
+        Set<Integer> unionsLabels = getUnionLabels(first, second);
+
+
+        VertexSet<T> currentVertexSet = findResult(
+                new GraphContainer<>(
+                        firstAllParents,
+                        first,
+                        first.getVertex(first.getRoot()),
+                        new HashMap<>()
+                ),
+                new GraphContainer<>(
+                        secondAllParents,
+                        second,
+                        second.getVertex(second.getRoot())
+                )
+        )
+                .stream()
+                .max(Comparator.comparingInt(vertexSet -> vertexSet.vertices.size()))
+                .get();
+
+
+        Map<Integer, Integer> firstLabelToVertex = first
+                .getVertices()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                UniqueLabelMethodExecutor::labelFromVertex,
+                                Vertex::getNumber
+                        )
+                );
+
+        Map<Integer, Integer> secondLabelToVertex = second
+                .getVertices()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                UniqueLabelMethodExecutor::labelFromVertex,
+                                Vertex::getNumber
+                        )
+                );
+
+
+        Map<Integer, Integer> map = currentVertexSet
+                .vertices
+                .stream()
+                .collect(Collectors.toMap(
+                                vertex -> firstLabelToVertex.get(vertex.getNumber()),
+                                vertex -> secondLabelToVertex.get(vertex.getNumber())
+                        )
+                );
+        return GraphCompareResult.builder().matchingVertices(map).build();
+    }
+
+    private <T extends LabelVertex<?>> Set<VertexSet<T>> findResult(
+            GraphContainer<T> first,
+            GraphContainer<T> second
+    ) {
+
+        int currentVertexNumber = labelFromVertex(first.vertex);
+        int currentParentNumber = second.allParents.get(currentVertexNumber).size() - 1;
+        var allParents = second.allParents.get(currentVertexNumber);
+
+        Set<Integer> conflictVertex = new HashSet<>();
+        while (currentParentNumber >= 0
+                && !first.vertexSet.containsKey(allParents.get(currentParentNumber))
+        ) {
+            conflictVertex.add(allParents.get(currentParentNumber--));
+        }
+
+        VertexSet<T> curVertexSet = VertexSet
+                .<T>builder()
+                .conflictVertices(conflictVertex)
+                .vertices(Set.of(first.vertex))
+                .build();
+
+        if (currentParentNumber >= 0) {
+            curVertexSet = curVertexSet.merge(first.vertexSet.get(currentParentNumber));
+        }
+        Map<Integer, VertexSet<T>> curVertextSet = (Map<Integer, VertexSet<T>>)
+                ((HashMap<Integer, VertexSet<T>>) first
+                        .getVertexSet())
+                        .clone();
+
+        curVertextSet.put(labelFromVertex(first.vertex), curVertexSet);
+
+        List<Set<VertexSet<T>>> list = first.graph
+                .getChildren(first.vertex)
+                .stream()
+                .map(vertex -> findResult(
+                                new GraphContainer<>(
+                                        first.getAllParents(),
+                                        first.graph,
+                                        vertex,
+                                        curVertextSet
+                                ),
+                                second
+                        )
+                )
+                .toList();
+
+
+        Set<VertexSet<T>> vertexSets = list
+                .stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+
+
+        bruteforce(vertexSets, list, 0, curVertexSet);
+
+        return vertexSets;
+    }
+
+    private <T extends LabelVertex<?>> void bruteforce(
+            Set<VertexSet<T>> vertexSets,
+            List<Set<VertexSet<T>>> list,
+            int index,
+            VertexSet<T> curVertexSet
+    ) {
+
+        if (index == list.size()) {
+            vertexSets.add(curVertexSet);
+            return;
+        }
+
+        bruteforce(vertexSets, list, index + 1, curVertexSet);
+
+
+        for (var tmp : list.get(index)) {
+            if (!tmp.isEmptyIntersection(curVertexSet)) {
+                if (curVertexSet.canMerge(tmp)) {
+                    bruteforce(vertexSets, list, index + 1, curVertexSet.merge(tmp));
+                }
+            }
+        }
+    }
+
+    private <T extends LabelVertex<?>> Map<Integer, List<Integer>> getAllParents(Graph<T> graph) {
+        Map<Integer, Set<Integer>> allChildren = getAllChildren(graph);
+
+        Map<Integer, List<Integer>> result = new LinkedHashMap<>(); // Linked нужна для сохранения порядка
+
+        allChildren.forEach(
+                (key, set) -> {
+                    set.forEach(
+                            value -> {
+                                if (!result.containsKey(value)) {
+                                    result.put(value, new ArrayList<>());
+                                }
+                                result.get(value).add(key);
+                            }
+                    );
+                }
+        );
+
+        return result;
+    }
+
+    private <T extends LabelVertex<?>> Map<Integer, Set<Integer>> getAllChildren(Graph<T> graph) {
+
+        Map<Integer, Set<Integer>> result = new LinkedHashMap<>();
+        getAllChildren(graph.getVertex(graph.getRoot()), graph, result);
+
+        return result;
+    }
+
+    private <T extends LabelVertex<?>> void getAllChildren(T vertex, Graph<T> graph, Map<Integer, Set<Integer>> result) {
+        int actualLabel = labelFromVertex(vertex);
+        if (!result.containsKey(actualLabel)) {
+            result.put(actualLabel, new HashSet<>());
+        }
+
+        graph.getChildren(vertex.getNumber()).forEach(
+                child -> {
+                    result.get(actualLabel).add(labelFromVertex(vertex));
+                    getAllChildren(vertex, graph, result); //todo если в графе могут быть циклы то добавить used
+                }
+        );
+
+        return;
+    }
+
+
+    private <T extends LabelVertex<?>> void checkGraph(Graph<T> graph) {
+
+        int mn = LABEL_COUNT;
+        int mx = LABEL_COUNT;
+
+        for (var vertex : graph.getVertices()) {
+            mn = Math.min(mn, vertex.getLabels().size());
+            mx = Math.max(mx, vertex.getLabels().size());
+        }
+
+        if (mn < LABEL_COUNT || mx > LABEL_COUNT) {
+            throw new GraphException("vertex should has only one label");
+        }
+    }
+
+    private <T extends LabelVertex<?>> Set<Integer> getExtraLabels(Graph<T> first, Graph<T> second) {
+        Set<Integer> firstLabels = getLabels(first);
+        Set<Integer> secondLabels = getLabels(second);
+
+        return Sets.difference(
+                Sets.union(firstLabels, secondLabels),
+                Sets.intersection(firstLabels, secondLabels)
+        );
+    }
+
+    private <T extends LabelVertex<?>> Set<Integer> getUnionLabels(Graph<T> first, Graph<T> second) {
+        return Sets.union(
+                getLabels(first),
+                getLabels(second)
+        );
+    }
+
+    private static <T extends LabelVertex<?>> int labelFromVertex(T vertex) {
+        return vertex.getLabels().get(0).getId();
+    }
+
+
+    private <T extends LabelVertex<?>> Set<Integer> getLabels(Graph<T> graph) {
+        return graph
+                .getVertices()
+                .stream()
+                .map(vertex -> vertex.getLabels())
+                .flatMap(List::stream)
+                .map(Label::getId)
+                .collect(Collectors.toSet());
+    }
+
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    private static class GraphContainer<T extends LabelVertex<?>> {
+        private Map<Integer, List<Integer>> allParents;
+        private Graph<T> graph;
+        private T vertex;
+        private Map<Integer, VertexSet<T>> vertexSet;
+
+        public GraphContainer(Map<Integer, List<Integer>> allParents, Graph<T> graph, T vertex) {
+            this.allParents = allParents;
+            this.graph = graph;
+            this.vertex = vertex;
+        }
+    }
+
+
+    @Getter
+    @Setter
+    @EqualsAndHashCode
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    private static class VertexSet<T extends LabelVertex<?>> {
+        private Set<T> vertices;
+        private Set<Integer> conflictVertices;
+
+        public boolean canMerge(VertexSet<T> other) {
+            boolean result = true;
+
+            for (var vertex : vertices) {
+                result = result && !other.conflictVertices.contains(labelFromVertex(vertex));
+            }
+
+            for (var vertex : other.vertices) {
+                result = result && !this.conflictVertices.contains(labelFromVertex(vertex));
+            }
+
+            return result; //todo
+        }
+
+        public VertexSet<T> merge(VertexSet<T> other) {
+            if (canMerge(other)) {
+                return new VertexSet<>(
+                        Stream.concat(this.vertices.stream(), other.vertices.stream())
+                                .collect(Collectors.toSet()),
+                        Sets.union(
+                                conflictVertices,
+                                other.conflictVertices
+                        )
+                );
+            }
+
+            throw new RuntimeException(String.format("Cannot merge vertexSet %s and VertexSet %s", this, other));
+        }
+
+
+        public boolean isEmptyIntersection(VertexSet<T> other) {
+            return Sets.intersection(vertices, other.vertices).isEmpty();
+        }
+
+        @Override
+        public String toString() {
+            return GSON.toJson(this);
+        }
+    }
+
+}

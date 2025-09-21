@@ -94,7 +94,15 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
                                 vertex -> secondLabelToVertex.get(vertex.getNumber())
                         )
                 );
-        return GraphCompareResult.builder().matchingVertices(map).build();
+
+
+        GraphCompareResult result = GraphCompareResult
+                .builder()
+                .matchingVertices(map)
+                .labelErrors(new HashMap<>())
+                .build();
+        result.fillLabelError(g1, g2);
+        return result;
     }
 
     private <T extends LabelVertex<?>> Set<VertexSet<T>> findResult(

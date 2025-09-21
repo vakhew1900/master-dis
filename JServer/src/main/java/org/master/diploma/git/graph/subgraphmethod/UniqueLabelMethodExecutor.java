@@ -203,7 +203,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         graph.getChildren(vertex.getNumber()).forEach(
                 child -> {
                     result.get(actualLabel).add(labelFromVertex(vertex));
-                    getAllChildren(vertex, graph, result); //todo если в графе могут быть циклы то добавить used
+                    getAllChildren(child, graph, result); //todo если в графе могут быть циклы то добавить used
                 }
         );
 

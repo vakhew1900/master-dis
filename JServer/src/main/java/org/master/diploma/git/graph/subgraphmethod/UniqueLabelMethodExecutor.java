@@ -33,11 +33,16 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
         Set<Integer> intersectionLabels = getIntersectionLabels(first, second);
         Consumer<Graph<T>> removeDiffLabels = (graph) -> {
+            List<T> removedVertex = new ArrayList<>();
             for (T v : graph.getVertices()) {
                 if (!intersectionLabels.contains(labelFromVertex(v))) {
-                    graph.removeVertex(v);
+                    removedVertex.add(v);
                 }
             }
+
+            removedVertex.forEach(
+                    graph::removeVertex
+            );
         };
 
         removeDiffLabels.accept(first);
@@ -90,9 +95,10 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         Map<Integer, Integer> map = currentVertexSet
                 .vertices
                 .stream()
-                .collect(Collectors.toMap(
-                                vertex -> firstLabelToVertex.get(vertex.getNumber()),
-                                vertex -> secondLabelToVertex.get(vertex.getNumber())
+                .
+                collect(Collectors.toMap(
+                                vertex -> vertex.getNumber(),
+                                vertex -> secondLabelToVertex.get(labelFromVertex(vertex))
                         )
                 );
 

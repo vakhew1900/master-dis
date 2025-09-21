@@ -31,11 +31,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         var first = g1.clone();
         var second = g2.clone();
 
-
-        Map<Integer, List<Integer>> firstAllParents = getAllParents(first);
-        Map<Integer, List<Integer>> secondAllParents = getAllParents(second);
         Set<Integer> intersectionLabels = getIntersectionLabels(first, second);
-
         Consumer<Graph<T>> removeDiffLabels = (graph) -> {
             for (T v : graph.getVertices()) {
                 if (!intersectionLabels.contains(labelFromVertex(v))) {
@@ -46,6 +42,11 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
         removeDiffLabels.accept(first);
         removeDiffLabels.accept(second);
+
+        Map<Integer, List<Integer>> firstAllParents = getAllParents(first);
+        Map<Integer, List<Integer>> secondAllParents = getAllParents(second);
+
+
 
         VertexSet<T> currentVertexSet = findResult(
                 new GraphContainer<>(
@@ -129,14 +130,14 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
                 .build();
 
         if (currentParentNumber >= 0) {
-            curVertexSet = curVertexSet.merge(first.vertexSet.get(currentParentNumber));
+            curVertexSet = curVertexSet.merge(first.vertexSet.get(allParents.get(currentParentNumber)));
         }
-        Map<Integer, VertexSet<T>> curVertextSet = (Map<Integer, VertexSet<T>>)
+        Map<Integer, VertexSet<T>> curVertexSetMap = (Map<Integer, VertexSet<T>>)
                 ((HashMap<Integer, VertexSet<T>>) first
                         .getVertexSet())
                         .clone();
 
-        curVertextSet.put(labelFromVertex(first.vertex), curVertexSet);
+        curVertexSetMap.put(labelFromVertex(first.vertex), curVertexSet);
 
         List<Set<VertexSet<T>>> list = first.graph
                 .getChildren(first.vertex)
@@ -146,7 +147,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
                                         first.getAllParents(),
                                         first.graph,
                                         vertex,
-                                        curVertextSet
+                                        curVertexSetMap
                                 ),
                                 second
                         )
@@ -236,7 +237,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
         graph.getChildren(vertex.getNumber()).forEach(
                 child -> {
-                    result.get(actualLabel).add(labelFromVertex(vertex));
+                    result.get(actualLabel).add(labelFromVertex(child));
                     getAllChildren(child, graph, result); //todo если в графе могут быть циклы то добавить used
                 }
         );

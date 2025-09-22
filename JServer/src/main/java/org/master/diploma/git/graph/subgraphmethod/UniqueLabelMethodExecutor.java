@@ -244,6 +244,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
                 child -> {
                     result.get(actualLabel).add(labelFromVertex(child));
                     getAllChildren(child, graph, result); //todo если в графе могут быть циклы то добавить used
+                    result.get(actualLabel).addAll(result.get(labelFromVertex(child)));
                 }
         );
 

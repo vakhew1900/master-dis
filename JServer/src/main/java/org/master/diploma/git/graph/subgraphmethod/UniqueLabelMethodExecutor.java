@@ -13,7 +13,6 @@ import org.master.diploma.git.label.Label;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
@@ -130,7 +129,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
         VertexSet<T> curVertexSet = VertexSet
                 .<T>builder()
-                .conflictVertices(conflictVertex)
+                .conflictLabels(conflictVertex)
                 .vertices(Set.of(first.vertex))
                 .build();
 
@@ -188,9 +187,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
         for (var tmp : list.get(index)) {
             if (!tmp.isEmptyIntersection(curVertexSet)) {
-                if (curVertexSet.canMerge(tmp)) {
                     bruteforce(vertexSets, list, index + 1, curVertexSet.merge(tmp));
-                }
             }
         }
     }
@@ -325,36 +322,29 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
     @Builder
     private static class VertexSet<T extends LabelVertex<?>> {
         private Set<T> vertices;
-        private Set<Integer> conflictVertices;
-
-        public boolean canMerge(VertexSet<T> other) {
-            boolean result = true;
-
-            for (var vertex : vertices) {
-                result = result && !other.conflictVertices.contains(labelFromVertex(vertex));
-            }
-
-            for (var vertex : other.vertices) {
-                result = result && !this.conflictVertices.contains(labelFromVertex(vertex));
-            }
-
-            return result; //todo
-        }
+        private Set<Integer> conflictLabels;
 
         public VertexSet<T> merge(VertexSet<T> other) {
-            if (canMerge(other)) {
-                return new VertexSet<>(
-                        Stream.concat(this.vertices.stream(), other.vertices.stream())
-                                .collect(Collectors.toSet()),
-                        Sets.union(
-                                conflictVertices,
-                                other.conflictVertices
-                        )
-                );
-            }
+                Set<Integer> commonConflicts = Sets.union(this.conflictLabels, other.conflictLabels);
+                Set<Integer> used = new HashSet<>();
 
-            throw new RuntimeException(String.format("Cannot merge vertexSet %s and VertexSet %s", this, other));
+                var vertices = Sets.union(this.vertices, other.vertices)
+                        .stream()
+                        .filter(vertex ->  {
+                            if (commonConflicts.contains(labelFromVertex(vertex))){
+                                used.add(labelFromVertex(vertex));
+                                return false;
+                            }
+                            return true;
+                        })
+                        .collect(Collectors.toSet());
+
+                return new VertexSet<>(
+                        vertices,
+                        Sets.difference(commonConflicts, used)
+                );
         }
+
 
 
         public boolean isEmptyIntersection(VertexSet<T> other) {

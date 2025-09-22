@@ -262,6 +262,18 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         if (mn < LABEL_COUNT || mx > LABEL_COUNT) {
             throw new GraphException("vertex should has only one label");
         }
+
+        Set<Integer> firstLabels = graph
+                .getVertices()
+                .stream()
+                .map(v -> v.getLabels())
+                .flatMap(list -> list.stream())
+                .map(Label::getId)
+                .collect(Collectors.toSet());
+
+        if (firstLabels.size() < graph.getVertices().size()) {
+            throw new GraphException("Labels should be unique");
+        }
     }
 
     private <T extends LabelVertex<?>> Set<Integer> getExtraLabels(Graph<T> first, Graph<T> second) {

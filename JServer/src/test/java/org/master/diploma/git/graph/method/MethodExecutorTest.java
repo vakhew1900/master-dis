@@ -370,7 +370,6 @@ public abstract class MethodExecutorTest {
             compareGraphTest("squash.json"); //TODO DpMEthod тоже дает правильный ответ, немного отличный от текущего
         }
 
-
         @Override
         protected String graphPath(String path) {
             return "/graph/dag/graph/" + path;
@@ -380,6 +379,7 @@ public abstract class MethodExecutorTest {
         protected String resultPath(String path) {
             return "/graph/dag/result/" + path;
         }
+
     }
 
     @Nested
@@ -409,6 +409,12 @@ public abstract class MethodExecutorTest {
         public void extraVertexTest() throws IOException {
             compareGraphTest("extra_vertex.json");
         }
+
+        @Test
+        public void moveVertex() throws IOException {
+            compareGraphTest("move_vertex.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

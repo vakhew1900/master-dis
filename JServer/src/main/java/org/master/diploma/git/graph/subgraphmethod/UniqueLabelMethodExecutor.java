@@ -117,25 +117,61 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
         int currentVertexNumber = labelFromVertex(first.vertex);
         int currentParentNumber = second.allParents.getOrDefault(currentVertexNumber, Collections.emptyList()).size() - 1;
-        var allParents = second.allParents.get(currentVertexNumber);
+        List<Integer> allParents = second.allParents.get(currentVertexNumber);
 
-        Set<Integer> conflictVertex = new HashSet<>();
-        while (currentParentNumber >= 0
-                && !first.vertexSet.containsKey(allParents.get(currentParentNumber))
-        ) {
-            conflictVertex.add(allParents.get(currentParentNumber--));
+        Set<Integer> conflictVertices = new HashSet<>();
+        Set<T> usedVertices = new HashSet<>();
+        Set<VertexSet<T>> result = new HashSet<>();
+        while (currentParentNumber >= 0) {
+            if (first.vertexSet.containsKey(allParents.get(currentParentNumber))) {
+                VertexSet<T> parentVertexSet = first.vertexSet.get(allParents.get(currentParentNumber));
+                if (!Sets.difference(parentVertexSet.vertices, usedVertices).isEmpty()) {
+                    usedVertices.addAll(parentVertexSet.vertices);
+                    result.addAll(
+                            dfs(
+                                    first,
+                                    second,
+                                    conflictVertices,
+                                   parentVertexSet
+                            )
+                    );
+                }
+            } else {
+                conflictVertices.add(allParents.get(currentParentNumber));
+            }
+            currentParentNumber--;
         }
 
+        if (result.isEmpty()) {
+            result.addAll(
+                    dfs(
+                            first,
+                            second,
+                            conflictVertices,
+                            null
+                    )
+            );
+        }
 
+        return result;
+    }
+
+    private <T extends LabelVertex<?>> Set<VertexSet<T>> dfs(
+            GraphContainer<T> first,
+            GraphContainer<T> second,
+            Set<Integer> conflictVertices,
+            VertexSet<T> parentVertexSet
+            ) {
         VertexSet<T> curVertexSet = VertexSet
                 .<T>builder()
-                .conflictLabels(conflictVertex)
+                .conflictLabels(conflictVertices)
                 .vertices(Set.of(first.vertex))
                 .build();
 
-        if (currentParentNumber >= 0) {
-            curVertexSet = curVertexSet.merge(first.vertexSet.get(allParents.get(currentParentNumber)));
+        if (parentVertexSet != null) {
+            curVertexSet = curVertexSet.merge(parentVertexSet);
         }
+
         Map<Integer, VertexSet<T>> curVertexSetMap = (Map<Integer, VertexSet<T>>)
                 ((HashMap<Integer, VertexSet<T>>) first
                         .getVertexSet())
@@ -166,7 +202,6 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
 
         bruteforce(vertexSets, list, 0, curVertexSet);
-
         return vertexSets;
     }
 
@@ -191,7 +226,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
         for (var tmp : list.get(index)) {
             if (!tmp.isEmptyIntersection(curVertexSet)) {
-                    bruteforce(vertexSets, list, index + 1, curVertexSet.merge(tmp));
+                bruteforce(vertexSets, list, index + 1, curVertexSet.merge(tmp));
             }
         }
     }
@@ -341,26 +376,25 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         private Set<Integer> conflictLabels;
 
         public VertexSet<T> merge(VertexSet<T> other) {
-                Set<Integer> commonConflicts = Sets.union(this.conflictLabels, other.conflictLabels);
-                Set<Integer> used = new HashSet<>();
+            Set<Integer> commonConflicts = Sets.union(this.conflictLabels, other.conflictLabels);
+            Set<Integer> used = new HashSet<>();
 
-                var vertices = Sets.union(this.vertices, other.vertices)
-                        .stream()
-                        .filter(vertex ->  {
-                            if (commonConflicts.contains(labelFromVertex(vertex))){
-                                used.add(labelFromVertex(vertex));
-                                return false;
-                            }
-                            return true;
-                        })
-                        .collect(Collectors.toSet());
+            var vertices = Sets.union(this.vertices, other.vertices)
+                    .stream()
+                    .filter(vertex -> {
+                        if (commonConflicts.contains(labelFromVertex(vertex))) {
+                            used.add(labelFromVertex(vertex));
+                            return false;
+                        }
+                        return true;
+                    })
+                    .collect(Collectors.toSet());
 
-                return new VertexSet<>(
-                        vertices,
-                        commonConflicts
-                );
+            return new VertexSet<>(
+                    vertices,
+                    commonConflicts
+            );
         }
-
 
 
         public boolean isEmptyIntersection(VertexSet<T> other) {

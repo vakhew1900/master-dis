@@ -178,6 +178,10 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
     ) {
 
         if (index == list.size()) {
+            if (curVertexSet.vertices.size() == 10 && curVertexSet.vertices.stream().filter(x -> labelFromVertex(x) == 11).count() == 1) {
+                vertexSets.size();
+            }
+
             vertexSets.add(curVertexSet);
             return;
         }
@@ -353,7 +357,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
                 return new VertexSet<>(
                         vertices,
-                        Sets.difference(commonConflicts, used)
+                        commonConflicts
                 );
         }
 

@@ -411,10 +411,14 @@ public abstract class MethodExecutorTest {
         }
 
         @Test
-        public void moveVertex() throws IOException {
+        public void moveVertexTest() throws IOException {
             compareGraphTest("move_vertex.json");
         }
 
+        @Test
+        public void moveVertex2Test() throws IOException {
+            compareGraphTest("move_vertex2.json");
+        }
 
         @Override
         protected String graphPath(String path) {

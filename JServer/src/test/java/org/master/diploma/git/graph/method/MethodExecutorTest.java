@@ -51,18 +51,9 @@ public abstract class MethodExecutorTest {
             GraphCompareResult expectedGraphCompared = readGraphCompareResult(resultPath(path));
             JsonPairGraph jsonPairGraph = readGraph(graphPath(path));
 
-
-            //круг 1
             Graph<SimpleLabelVertex> first = jsonPairGraph.getFirst().toGraph();
             Graph<SimpleLabelVertex> second = jsonPairGraph.getSecond().toGraph();
             GraphCompareResult result = getSubgraphMethodExecutor().execute(first, second);
-            Assertions.assertEquals(expectedGraphCompared, result);
-
-            // круг 2
-            Graph<SimpleLabelVertex> g1 = jsonPairGraph.getSecond().toGraph();
-            Graph<SimpleLabelVertex> g2 = jsonPairGraph.getFirst().toGraph();
-
-            result = getSubgraphMethodExecutor().execute(first, second);
             Assertions.assertEquals(expectedGraphCompared, result);
         }
 

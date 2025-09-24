@@ -425,6 +425,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("move_vertex3.json");
         }
 
+        @Test
+        public void severalMoveVertexTest() throws IOException {
+            compareGraphTest("several_move_vertex.json");
+        }
+
         @Override
         protected String graphPath(String path) {
             return "/graph/bamboo/graph/" + path;

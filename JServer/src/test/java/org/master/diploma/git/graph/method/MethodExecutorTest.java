@@ -420,6 +420,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("move_vertex2.json");
         }
 
+        @Test
+        public void moveVertex3Test() throws IOException {
+            compareGraphTest("move_vertex3.json");
+        }
+
         @Override
         protected String graphPath(String path) {
             return "/graph/bamboo/graph/" + path;

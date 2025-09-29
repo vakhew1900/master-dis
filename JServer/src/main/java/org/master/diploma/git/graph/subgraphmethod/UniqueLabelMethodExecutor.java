@@ -117,27 +117,38 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
         int currentVertexNumber = labelFromVertex(first.vertex);
         int currentParentNumber = second.allParents.getOrDefault(currentVertexNumber, Collections.emptyList()).size() - 1;
-        List<Integer> allParents = second.allParents.get(currentVertexNumber);
+        List<Integer> allSecondParents = second.allParents.get(currentVertexNumber);
+        List<Integer> allFirstParents = first.allParents.get(currentVertexNumber);
 
         Set<Integer> conflictVertices = new HashSet<>();
         Set<T> usedVertices = new HashSet<>();
         Set<VertexSet<T>> result = new HashSet<>();
         while (currentParentNumber >= 0) {
-            if (first.vertexSet.containsKey(allParents.get(currentParentNumber))) {
-                VertexSet<T> parentVertexSet = first.vertexSet.get(allParents.get(currentParentNumber));
+            if (first.vertexSet.containsKey(allSecondParents.get(currentParentNumber))) {
+
+                Set<Integer> conflictFirstVertices = new HashSet<>();
+                int index = allFirstParents.size() - 1;
+                while (index >= 0 && !Objects.equals(allFirstParents.get(index), allSecondParents.get(currentParentNumber))) {
+                    conflictFirstVertices.add(allFirstParents.get(index--));
+                }
+
+                VertexSet<T> parentVertexSet = first.vertexSet.get(allSecondParents.get(currentParentNumber));
                 if (!Sets.difference(parentVertexSet.vertices, usedVertices).isEmpty()) {
                     usedVertices.addAll(parentVertexSet.vertices);
                     result.addAll(
                             dfs(
                                     first,
                                     second,
-                                    conflictVertices,
+                                    Sets.union(
+                                            conflictVertices,
+                                            conflictFirstVertices
+                                    ),
                                    parentVertexSet
                             )
                     );
                 }
             } else {
-                conflictVertices.add(allParents.get(currentParentNumber));
+                conflictVertices.add(allSecondParents.get(currentParentNumber));
             }
             currentParentNumber--;
         }
@@ -147,7 +158,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
                     dfs(
                             first,
                             second,
-                            conflictVertices,
+                            Sets.union(conflictVertices, new HashSet<>(allFirstParents)),
                             null
                     )
             );

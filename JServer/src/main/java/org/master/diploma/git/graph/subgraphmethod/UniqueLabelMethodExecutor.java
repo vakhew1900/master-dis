@@ -24,8 +24,8 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(Graph<T> g1, Graph<T> g2) {
-        checkGraph(g1);
-        checkGraph(g2);
+//        checkGraph(g1);
+//        checkGraph(g2);
 
         var first = g1.clone();
         var second = g2.clone();
@@ -46,6 +46,12 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
 
         removeDiffLabels.accept(first);
         removeDiffLabels.accept(second);
+
+        if (first.getVertices().isEmpty() || second.getVertices().isEmpty()) {
+            GraphCompareResult graphCompareResult = new GraphCompareResult();
+            graphCompareResult.addLabelErrors(g1, g2);
+            return  graphCompareResult;
+        }
 
         Map<Integer, List<Integer>> firstAllParents = getAllParents(first);
         Map<Integer, List<Integer>> secondAllParents = getAllParents(second);

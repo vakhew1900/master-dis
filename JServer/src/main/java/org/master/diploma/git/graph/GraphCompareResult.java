@@ -10,6 +10,7 @@ import org.master.diploma.git.label.Label;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -144,6 +145,19 @@ public class GraphCompareResult {
                     }
                 }
         );
+    }
+
+    public void removeMatchingVertex(Set<Integer> removedG1VertexNumbers, Set<Integer> removedG2VertexNumbers){
+
+        Set<Integer> removed =
+                Stream.concat(
+                        removedG1VertexNumbers.stream(),
+                        matchingVertices.keySet().stream().filter(key -> removedG2VertexNumbers.contains(matchingVertices.get(key)))
+                ).collect(Collectors.toSet());
+
+        for (var number : removed) {
+            matchingVertices.remove(number);
+        }
     }
 
 

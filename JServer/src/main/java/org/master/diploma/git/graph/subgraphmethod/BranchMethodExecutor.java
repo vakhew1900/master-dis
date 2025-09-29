@@ -2,6 +2,7 @@ package org.master.diploma.git.graph.subgraphmethod;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import org.master.diploma.git.support.BranchLCSHelper;
 import org.master.diploma.git.support.Multisets;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BranchMethodExecutor extends SubgraphMethodExecutor {
 
@@ -31,13 +33,37 @@ public class BranchMethodExecutor extends SubgraphMethodExecutor {
         List<BranchMatch<T>> branchMatches = getBranchMatches(firstAllBranches, secondAllBranches);
 
         GraphCompareResult graphCompareResult = new GraphCompareResult();
-
+        Set<Integer> removedG1Vertices = new HashSet<>();
+        Set<Integer> removedG2Vertices = new HashSet<>();
         branchMatches.forEach(
                 branchMatch -> {
-                    graphCompareResult.add(BranchLCSHelper.findBranchLCS(branchMatch));
+                    var result = BranchLCSHelper.findBranchLCS(branchMatch);
+                    int prev = graphCompareResult.getMatchingVertices().size();
+                    graphCompareResult.add(result);
+                    int next = graphCompareResult.getMatchingVertices().size();
+                    if (next != prev) {
+                        removedG1Vertices.addAll(
+                                Sets.difference(
+                                        branchMatch
+                                                .firstBranch
+                                                .getVertexNumbers()
+                                        ,
+                                        result.getMatchingVertices().keySet()
+                                )
+                        );
+                        removedG2Vertices.addAll(
+                                Sets.difference(
+                                        branchMatch
+                                                .secondBranch
+                                                .getVertexNumbers(),
+                                        new HashSet<>(result.getMatchingVertices().values())
+                                )
+                        );
+                    }
                 }
         );
 
+        graphCompareResult.removeMatchingVertex(removedG1Vertices, removedG2Vertices);
         graphCompareResult.addLabelErrors(first, second);
         return graphCompareResult;
     }

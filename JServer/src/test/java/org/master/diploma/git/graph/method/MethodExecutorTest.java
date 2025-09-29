@@ -255,6 +255,11 @@ public abstract class MethodExecutorTest {
         }
 
         @Test
+        public void moveBranch2Test() throws IOException {
+            compareGraphTest("move_branch2.json");
+        }
+
+        @Test
         public void moveBranchToMiddleTest() throws IOException {
             compareGraphTest("move_branch_to_middle.json");
         }

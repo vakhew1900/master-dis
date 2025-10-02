@@ -306,6 +306,12 @@ public abstract class MethodExecutorTest {
         }
 
         @Test
+        @DisplayName("One vertex is divided into two, but not consecutive ones 2")
+        public void divTransit2Test() throws IOException {
+            compareGraphTest("div_transit2.json");
+        }
+
+        @Test
         public void onlyRootMatchTest() throws IOException {
             compareGraphTest("only_root_match.json");
         }

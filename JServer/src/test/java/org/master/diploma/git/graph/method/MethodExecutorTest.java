@@ -316,6 +316,12 @@ public abstract class MethodExecutorTest {
         }
 
         @Test
+        public void complex7Test() throws IOException {
+            compareGraphTest("complex7.json");
+        }
+
+
+        @Test
         public void complex6Test() throws IOException {
             compareGraphTest("complex6.json");
         }

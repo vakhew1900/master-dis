@@ -295,6 +295,11 @@ public abstract class MethodExecutorTest {
         }
 
         @Test
+        public void divVertexToSeveralVerticesTest3() throws IOException {
+            compareGraphTest("div_vertex_to_several3.json");
+        }
+
+        @Test
         public void squashTest() throws IOException {
             compareGraphTest("squash.json");
         }

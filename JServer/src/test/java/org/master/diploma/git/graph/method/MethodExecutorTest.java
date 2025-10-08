@@ -403,6 +403,11 @@ public abstract class MethodExecutorTest {
             return "/graph/dag/result/" + path;
         }
 
+        @Test
+        public void removeBranchTest() throws IOException {
+            compareGraphTest("remove_branch.json");
+        }
+
     }
 
     @Nested

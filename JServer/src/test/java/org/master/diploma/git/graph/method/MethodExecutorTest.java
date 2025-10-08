@@ -347,6 +347,11 @@ public abstract class MethodExecutorTest {
             compareGraphTest("move_label.json");
         }
 
+        @Test
+        public void moveLabel2() throws IOException {
+            compareGraphTest("move_label2.json");
+        }
+
 
         @Override
         protected String graphPath(String path) {

@@ -19,7 +19,7 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
     private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
     private static final int MAX_VERTEX_SIZE = 16;
-    private static final long OPERATION_COUNT = 1_500_000_000_000L;
+    private static final long OPERATION_COUNT = 2_500_000_000_000L;
     public static final long TIME_OUT = 5 * 60 * 1000;
 
     @Override

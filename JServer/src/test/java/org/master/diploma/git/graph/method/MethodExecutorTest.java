@@ -420,6 +420,27 @@ public abstract class MethodExecutorTest {
     }
 
     @Nested
+    public class AdditionalTest extends  NestedTest {
+
+        @DisplayName("Two branches contains equals set of label")
+        @Test
+        public void twoBranchEqualLabelSet() throws  IOException {
+            compareGraphTest("two_equal_branch.json");
+        }
+
+
+        @Override
+        protected String graphPath(String path) {
+            return "/graph/additional/graph/" + path;
+        }
+
+        @Override
+        protected String resultPath(String path) {
+            return "/graph/additional/result/" + path;
+        }
+    }
+
+    @Nested
     public class BambooTest extends NestedTest {
 
         @Test

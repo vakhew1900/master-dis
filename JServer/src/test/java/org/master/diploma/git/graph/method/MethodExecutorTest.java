@@ -428,6 +428,10 @@ public abstract class MethodExecutorTest {
             compareGraphTest("two_equal_branch.json");
         }
 
+        @Test
+        public void reverseBranchTest() throws  IOException {
+            compareGraphTest("reverse_branch.json");
+        }
 
         @Override
         protected String graphPath(String path) {

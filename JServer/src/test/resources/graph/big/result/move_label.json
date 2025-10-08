@@ -9,9 +9,7 @@
     "6": 6,
     "7": 7,
     "8": 8,
-    "9": 9,
-    "10": 10,
-    "11": 11
+    "9": 9
   },
   "label_errors": {
     "0": {
@@ -51,14 +49,6 @@
       "missing_labels": []
     },
     "9": {
-      "extra_labels": [],
-      "missing_labels": []
-    },
-    "10": {
-      "extra_labels": [],
-      "missing_labels": []
-    },
-    "11": {
       "extra_labels": [],
       "missing_labels": []
     }

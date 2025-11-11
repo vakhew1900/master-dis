@@ -378,6 +378,11 @@ public abstract class MethodExecutorTest {
         }
 
         @Test
+        public void smallestEqualGraphTest() throws IOException {
+            compareGraphTest("smallest_equal.json");
+        }
+
+        @Test
         public void deleteVertexTest() throws IOException {
             compareGraphTest("delete_vertex.json");
         }

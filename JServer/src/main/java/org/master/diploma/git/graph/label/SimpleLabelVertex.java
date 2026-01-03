@@ -3,6 +3,7 @@ package org.master.diploma.git.graph.label;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.label.SimpleLabel;
 
 import java.util.ArrayList;
@@ -22,5 +23,13 @@ public class SimpleLabelVertex extends LabelVertex<SimpleLabel> {
     public SimpleLabelVertex(int number, SimpleLabel simpleLabel) {
         super(new ArrayList<>(List.of(simpleLabel)));
         this.number = number;
+    }
+
+    @Override
+    public Vertex clone() {
+        var vertex =  new SimpleLabelVertex();
+        vertex.number = number;
+        vertex.addLabels(getLabels());
+        return vertex;
     }
 }

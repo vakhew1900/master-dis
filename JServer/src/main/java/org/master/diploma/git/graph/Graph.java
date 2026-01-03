@@ -33,4 +33,6 @@ public abstract class Graph<T extends Vertex> implements Cloneable {
     public abstract Set<Map.Entry<Integer, Integer>> getTransitiveClosure();
 
     public abstract Graph<T> clone();
+
+    public abstract String toGraphviz();
 }

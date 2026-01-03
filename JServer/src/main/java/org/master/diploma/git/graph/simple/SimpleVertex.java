@@ -24,4 +24,11 @@ public class SimpleVertex extends Vertex {
     public boolean canRelate(Vertex vertex) {
         return true;
     }
+
+    @Override
+    public String toGraphViz() {
+          return getNumber() + " [label=\"" + getNumber() + "\"];\n";
+    }
+
+
 }

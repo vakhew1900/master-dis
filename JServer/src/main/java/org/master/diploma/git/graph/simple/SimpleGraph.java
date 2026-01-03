@@ -36,7 +36,10 @@ public class SimpleGraph<T extends Vertex> extends Graph<T>  {
 
     @Override
     public T getVertex(int number) {
-        return vertices.get(getIndexByNumber(number));
+        if (getIndexByNumber(number) != null) {
+            return vertices.get(getIndexByNumber(number));
+        };
+        return null;
     }
 
     @Override
@@ -54,6 +57,7 @@ public class SimpleGraph<T extends Vertex> extends Graph<T>  {
         if (getVertex(number) == null) {
             return;
         }
+
         List<Integer> children = getChildrenNumbers(number);
         List<Integer> parents = getParentNumbers(number);
 
@@ -176,7 +180,7 @@ public class SimpleGraph<T extends Vertex> extends Graph<T>  {
         return getChildren(vertex.getNumber());
     }
 
-    private int getIndexByNumber(int number) {
+    private Integer getIndexByNumber(int number) {
         return numberToIndex.get(number);
     }
 
@@ -189,6 +193,44 @@ public class SimpleGraph<T extends Vertex> extends Graph<T>  {
         List<T> tmpVertices = (List<T>) vertices.stream().map(T::clone).toList();
         Map<Integer, Set<Integer>> tmpAdjancyMatrix = cloneAdjancyMatrix();
         return new SimpleGraph<T>(tmpVertices, tmpAdjancyMatrix);
+    }
+
+    @Override
+    public String toGraphviz() {
+        StringBuilder sb = new StringBuilder();
+
+        // Начало орграфа
+        sb.append("digraph G {\n");
+        sb.append("  node [shape=circle];\n\n");
+
+        // Добавление всех вершин
+        for (T vertex : vertices) {
+            sb.append("  ")
+                    .append(vertex.toGraphViz());
+        }
+
+        sb.append("\n");
+
+        // Добавление всех рёбер
+        for (Map.Entry<Integer, Set<Integer>> entry : adjacencyMatrix.entrySet()) {
+            int sourceVertex = entry.getKey();
+            Set<Integer> neighbors = entry.getValue();
+
+            if (neighbors != null) {
+                for (int targetVertex : neighbors) {
+                    sb.append("  ")
+                            .append(sourceVertex)
+                            .append(" -> ")
+                            .append(targetVertex)
+                            .append(";\n");
+                }
+            }
+        }
+
+        // Конец орграфа
+        sb.append("}\n");
+
+        return sb.toString();
     }
 
     private Map<Integer, Set<Integer>> cloneAdjancyMatrix() {
@@ -245,4 +287,5 @@ public class SimpleGraph<T extends Vertex> extends Graph<T>  {
 
         return children;
     }
+
 }

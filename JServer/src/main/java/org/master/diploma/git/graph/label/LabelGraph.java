@@ -1,6 +1,5 @@
 package org.master.diploma.git.graph.label;
 
-import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.simple.SimpleGraph;
 

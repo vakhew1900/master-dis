@@ -20,4 +20,6 @@ public abstract class Vertex implements Cloneable {
     }
 
     public abstract boolean canRelate(Vertex vertex);
+
+    public abstract String toGraphViz();
 }

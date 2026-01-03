@@ -1,7 +1,6 @@
 package org.master.diploma.git.graph.label;
 
 import org.master.diploma.git.graph.Vertex;
-import org.master.diploma.git.label.GitLabel;
 import org.master.diploma.git.label.Label;
 
 import java.util.ArrayList;
@@ -70,5 +69,16 @@ public abstract class LabelVertex<T extends Label> extends Vertex {
             }
         }
         return result;
+    }
+
+    @Override
+    public String toGraphViz() {
+        return  new StringBuilder().append(getNumber())
+                .append(" [label=\"")
+                .append("number=" + getNumber())
+                .append(" labels =")
+                .append(getLabels().stream().map(Label::getId).toList())
+                .append("\"];\n")
+                .toString();
     }
 }

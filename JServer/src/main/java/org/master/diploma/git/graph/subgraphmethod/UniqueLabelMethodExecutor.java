@@ -75,16 +75,6 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
                 .get();
 
 
-        Map<Integer, Integer> firstLabelToVertex = first
-                .getVertices()
-                .stream()
-                .collect(
-                        Collectors.toMap(
-                                UniqueLabelMethodExecutor::labelFromVertex,
-                                Vertex::getNumber
-                        )
-                );
-
         Map<Integer, Integer> secondLabelToVertex = second
                 .getVertices()
                 .stream()
@@ -99,8 +89,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         Map<Integer, Integer> map = currentVertexSet
                 .vertices
                 .stream()
-                        .
-                collect(Collectors.toMap(
+                .collect(Collectors.toMap(
                                 Vertex::getNumber,
                                 vertex -> secondLabelToVertex.get(labelFromVertex(vertex))
                         )
@@ -112,6 +101,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
                 .matchingVertices(map)
                 .labelErrors(new HashMap<>())
                 .build();
+
         result.fillLabelError(g1, g2);
         return result;
     }
@@ -230,10 +220,6 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
     ) {
 
         if (index == list.size()) {
-            if (curVertexSet.vertices.size() == 10 && curVertexSet.vertices.stream().filter(x -> labelFromVertex(x) == 11).count() == 1) {
-                vertexSets.size();
-            }
-
             vertexSets.add(curVertexSet);
             return;
         }
@@ -332,15 +318,7 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
         }
     }
 
-    private <T extends LabelVertex<?>> Set<Integer> getExtraLabels(Graph<T> first, Graph<T> second) {
-        Set<Integer> firstLabels = getLabels(first);
-        Set<Integer> secondLabels = getLabels(second);
 
-        return Sets.difference(
-                Sets.union(firstLabels, secondLabels),
-                Sets.intersection(firstLabels, secondLabels)
-        );
-    }
 
     private <T extends LabelVertex<?>> Set<Integer> getIntersectionLabels(Graph<T> first, Graph<T> second) {
         return Sets.intersection(

@@ -19,8 +19,8 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
 
     private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
     private static final int MAX_VERTEX_SIZE = 16;
-    private static final long OPERATION_COUNT = 1_500_000_000_000_000L;
-    public static final long TIME_OUT = 40 * 60 * 1000;
+    private static final long OPERATION_COUNT = 100_000_000_000L;
+    public static final long TIME_OUT = 5 * 60 * 1000;
 
     @Override
     public <T extends LabelVertex<?>> GraphCompareResult execute(
@@ -80,10 +80,14 @@ public class BruteForceMethodExecutor extends SubgraphMethodExecutor {
             Timeout.getInstance().brokeTime(TIME_OUT);
 
             for (var firstPermutation : allFirstVerticesPermutation) {
+                Timeout.getInstance().brokeTime(BruteForceMethodExecutor.TIME_OUT);
                 for (var secondPermutation : allSecondVerticesPermutation) {
                     boolean canCompare = true;
+//                    Timeout.getInstance().brokeTime(BruteForceMethodExecutor.TIME_OUT);
 
                     for (int j = 0; j < firstPermutation.size(); j++) {
+//                        Timeout.getInstance().brokeTime(BruteForceMethodExecutor.TIME_OUT);
+
                         canCompare = canCompare && first
                                 .getVertices().get(firstPermutation.get(j) - 1)
                                 .canRelate(

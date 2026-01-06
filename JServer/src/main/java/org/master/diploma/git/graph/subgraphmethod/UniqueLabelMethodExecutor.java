@@ -81,7 +81,8 @@ public class UniqueLabelMethodExecutor extends SubgraphMethodExecutor {
                 .collect(
                         Collectors.toMap(
                                 UniqueLabelMethodExecutor::labelFromVertex,
-                                Vertex::getNumber
+                                Vertex::getNumber,
+                                (existing, replacement) -> existing
                         )
                 );
 

@@ -1,18 +1,18 @@
 package org.master.diploma.git.graph.method;
 
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.label.SimpleLabelVertex;
+import org.master.diploma.git.graph.subgraphmethod.BranchMethodExecutor;
 import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
 import org.master.diploma.git.json.JsonGraph;
 import org.master.diploma.git.metrics.Metrics;
@@ -20,13 +20,13 @@ import org.master.diploma.git.metrics.Metrics;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import static org.master.diploma.git.metrics.Metrics.findMetric;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class MethodExecutorTest {
 
+    private static final Logger LOG = LogManager.getLogger(BranchMethodExecutor.class);
     private static final Gson GSON = new Gson();
     abstract protected SubgraphMethodExecutor getSubgraphMethodExecutor();
 
@@ -65,51 +65,23 @@ public abstract class MethodExecutorTest {
             GraphCompareResult expectedGraphCompared = readGraphCompareResult(resultPath(path));
             JsonPairGraph jsonPairGraph = readGraph(graphPath(path));
 
+
             Graph<SimpleLabelVertex> first = jsonPairGraph.getFirst().toGraph();
             Graph<SimpleLabelVertex> second = jsonPairGraph.getSecond().toGraph();
-            GraphCompareResult result = getSubgraphMethodExecutor().execute(first, second);
+            GraphCompareResult result;
 
+            try {
+                result = getSubgraphMethodExecutor().execute(first, second);
+            } catch (Exception e) {
+                result = new GraphCompareResult();
+                LOG.warn(e.toString());
+            }
 
             metrics.add(findMetric(first, second, expectedGraphCompared, result));
 
             Assertions.assertEquals(expectedGraphCompared, result);
         }
 
-        private Metrics findMetric(
-                Graph<SimpleLabelVertex> first,
-                Graph<SimpleLabelVertex> second,
-                GraphCompareResult expectedGraphCompared,
-                GraphCompareResult result)
-        {
-            Set<Pair<Integer, Integer>> allPairs = new HashSet<>();
-
-            for(var firstVertex : first.getVertices()) {
-                for (var secondVertex : second.getVertices()) {
-                    allPairs.add(new ImmutablePair<>(firstVertex.getNumber(), secondVertex.getNumber()));
-                }
-            }
-
-            Set<Pair<Integer, Integer>> expectedPairs = expectedGraphCompared
-                    .getMatchingVertices()
-                    .entrySet()
-                    .stream()
-                    .map(entry -> new ImmutablePair<>(entry.getKey(), entry.getValue()))
-                    .collect(Collectors.toSet());
-
-            Set<Pair<Integer, Integer>> resultPairs = result
-                    .getMatchingVertices()
-                    .entrySet()
-                    .stream()
-                    .map(entry -> new ImmutablePair<>(entry.getKey(), entry.getValue()))
-                    .collect(Collectors.toSet());
-
-            var intersection = Sets.intersection(expectedPairs, resultPairs);
-            int tp = intersection.size();
-            int fp = Sets.difference(resultPairs, expectedPairs).size();
-            int fn = Sets.difference(expectedPairs, resultPairs).size();
-            int tn = Sets.difference(allPairs, intersection).size();
-            return new Metrics(tp, tn, fp, fn);
-        }
 
 
         private JsonPairGraph readGraph(String path) throws IOException {

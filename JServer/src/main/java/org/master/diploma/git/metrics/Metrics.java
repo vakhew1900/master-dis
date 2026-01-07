@@ -1,8 +1,19 @@
 package org.master.diploma.git.metrics;
 
+import com.google.common.collect.Sets;
 import de.vandermeer.asciitable.AsciiTable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.master.diploma.git.graph.Graph;
+import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.label.LabelVertex;
+import org.master.diploma.git.label.SimpleLabel;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -78,5 +89,42 @@ public class Metrics {
         return sb.toString();
     }
 
+
+
+    public static <T extends  Graph<W>, W extends LabelVertex<SimpleLabel>> Metrics findMetric(
+            T first,
+            T second,
+            GraphCompareResult expectedGraphCompared,
+            GraphCompareResult result)
+    {
+        Set<Pair<Integer, Integer>> allPairs = new HashSet<>();
+
+        for(var firstVertex : first.getVertices()) {
+            for (var secondVertex : second.getVertices()) {
+                allPairs.add(new ImmutablePair<>(firstVertex.getNumber(), secondVertex.getNumber()));
+            }
+        }
+
+        Set<Pair<Integer, Integer>> expectedPairs = expectedGraphCompared
+                .getMatchingVertices()
+                .entrySet()
+                .stream()
+                .map(entry -> new ImmutablePair<>(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toSet());
+
+        Set<Pair<Integer, Integer>> resultPairs = result
+                .getMatchingVertices()
+                .entrySet()
+                .stream()
+                .map(entry -> new ImmutablePair<>(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toSet());
+
+        var intersection = Sets.intersection(expectedPairs, resultPairs);
+        int tp = intersection.size();
+        int fp = Sets.difference(resultPairs, expectedPairs).size();
+        int fn = Sets.difference(expectedPairs, resultPairs).size();
+        int tn = Sets.difference(allPairs, intersection).size();
+        return new Metrics(tp, tn, fp, fn);
+    }
 }
 

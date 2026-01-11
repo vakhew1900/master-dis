@@ -35,4 +35,5 @@ public abstract class Graph<T extends Vertex> implements Cloneable {
     public abstract Graph<T> clone();
 
     public abstract String toGraphviz();
+    public abstract Graph<T> getSubGraph(Set<Integer> vertices);
 }

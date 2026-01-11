@@ -78,11 +78,23 @@ public abstract class MethodExecutorTest {
             }
 
             metrics.add(findMetric(first, second, expectedGraphCompared, result));
-
+            printGraphs(first, second, expectedGraphCompared, result);
             Assertions.assertEquals(expectedGraphCompared, result);
+
         }
 
+        private void printGraphs
+                (Graph<SimpleLabelVertex> first,
+                 Graph<SimpleLabelVertex> second,
+                 GraphCompareResult expectedGraphCompared,
+                 GraphCompareResult result)
+        {
 
+            System.out.println("first = " + first.toGraphviz());
+            System.out.println("second= " + second.toGraphviz() );
+            System.out.println("expected=" + first.getSubGraph(expectedGraphCompared.getMatchingVertices().keySet()).toGraphviz());
+            System.out.println("result=" + first.getSubGraph(result.getMatchingVertices().keySet()).toGraphviz());
+        }
 
         private JsonPairGraph readGraph(String path) throws IOException {
 

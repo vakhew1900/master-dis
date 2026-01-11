@@ -74,11 +74,12 @@ public abstract class LabelVertex<T extends Label> extends Vertex {
     @Override
     public String toGraphViz() {
         return  new StringBuilder().append(getNumber())
-                .append(" [label=\"")
-                .append("number=" + getNumber())
-                .append(" labels =")
+                .append(" [label=")
+                .append("<<font point-size=\"24\">number=" + getNumber() + "</font><br/>")
+                .append("<font point-size=\"14\"> labels =")
                 .append(getLabels().stream().map(Label::getId).toList())
-                .append("\"];\n")
+                .append("</font>>")
+                .append("]; \n")
                 .toString();
     }
 }

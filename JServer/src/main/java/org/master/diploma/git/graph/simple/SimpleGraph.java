@@ -1,5 +1,6 @@
 package org.master.diploma.git.graph.simple;
 
+import com.google.common.collect.Sets;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.exception.IncorrectVertexNumberException;
@@ -231,6 +232,19 @@ public class SimpleGraph<T extends Vertex> extends Graph<T>  {
         sb.append("}\n");
 
         return sb.toString();
+    }
+
+    @Override
+    public Graph<T> getSubGraph(Set<Integer> vertices) {
+        SimpleGraph<T> subgraph = this.clone();
+        Set<Integer> allVertices = this.vertices.stream().map(Vertex::getNumber).collect(Collectors.toSet());
+        var removed = Sets.difference(allVertices, vertices);
+
+        for (var vertex : removed) {
+            subgraph.removeVertex(vertex);
+        }
+
+        return subgraph;
     }
 
     private Map<Integer, Set<Integer>> cloneAdjancyMatrix() {

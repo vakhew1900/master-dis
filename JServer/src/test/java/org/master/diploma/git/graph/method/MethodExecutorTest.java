@@ -1,20 +1,15 @@
 package org.master.diploma.git.graph.method;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.master.diploma.git.graph.Graph;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.JsonPairGraph;
 import org.master.diploma.git.graph.label.SimpleLabelVertex;
 import org.master.diploma.git.graph.subgraphmethod.BranchMethodExecutor;
 import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
-import org.master.diploma.git.json.JsonGraph;
 import org.master.diploma.git.metrics.Metrics;
 
 import java.io.IOException;
@@ -41,20 +36,7 @@ public abstract class MethodExecutorTest {
         System.out.println(metrics.toCompactTable());
     }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    private static class JsonPairGraph {
 
-        public static final String FIRST = "first";
-        public static final String SECOND = "second";
-
-        @SerializedName(FIRST)
-        JsonGraph first;
-        @SerializedName(SECOND)
-        JsonGraph second;
-    }
     private abstract class NestedTest {
 
         protected abstract String graphPath(String path);

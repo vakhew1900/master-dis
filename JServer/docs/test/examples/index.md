@@ -53,3 +53,12 @@ The algorithm's output is presented as a matching of vertices between two graphs
 
 This section demonstrates visualizations of the method's performance on some test data.
 
+- [1 test sample.](./1/index.md)
+- [2 test sample.](./2/index.md)
+- [3 test sample.](./3/index.md)
+- [4 test sample.](./4/index.md)
+- [5 test sample.](./5/index.md)
+- [6 test sample.](./6/index.md)
+- [7 test sample.](./7/index.md)
+- [8 test sample.](./8/index.md)
+- [9 test sample.](./9/index.md)

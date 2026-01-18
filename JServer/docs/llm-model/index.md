@@ -1,3 +1,8 @@
+# Prompt used for the LLM-based MCTS search,
+
+This prompt is used to find the MCTS (Maximum Common Transitive Subgraph) with LLMs. The evaluation employed DeepSeek-v3.2.
+
+```
 You are a deterministic graph matching engine.
 
 You are given a JSON object containing two directed graphs: "first" and "second".
@@ -96,3 +101,4 @@ Do not use code blocks.
 The first character of the response must be '{'.
 
 Now process the following input JSON:
+```

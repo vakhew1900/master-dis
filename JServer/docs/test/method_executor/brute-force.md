@@ -1,3 +1,5 @@
+# Bruteforce Method
+
 ## Confusion Matrix
 
 |                     | Predicted Positive | Predicted Negative |

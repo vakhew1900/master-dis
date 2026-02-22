@@ -24,10 +24,15 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GitGraphDto {
 
-    @SerializedName("nodes")
+    public static class FIELDS {
+        public static final String NODES = "nodes";
+        public static final String LINKS = "links";
+    }
+
+    @SerializedName(FIELDS.NODES)
     private List<NodeDto> nodes;
 
-    @SerializedName("links")
+    @SerializedName(FIELDS.LINKS)
     private List<LinkDto> links;
 
     /**
@@ -64,28 +69,39 @@ public class GitGraphDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class NodeDto {
-        @SerializedName("id")
+        public static class FIELDS {
+            public static final String ID = "id";
+            public static final String NUMBER = "number";
+            public static final String HASH = "hash";
+            public static final String MESSAGE = "message";
+            public static final String COMMIT_DATE = "commitDate";
+            public static final String AUTHOR_DATE = "authorDate";
+            public static final String AUTHOR = "author";
+            public static final String DIFFS = "diffs";
+        }
+
+        @SerializedName(FIELDS.ID)
         private String id;
 
-        @SerializedName("number")
+        @SerializedName(FIELDS.NUMBER)
         private int number;
 
-        @SerializedName("hash")
+        @SerializedName(FIELDS.HASH)
         private String hash;
 
-        @SerializedName("message")
+        @SerializedName(FIELDS.MESSAGE)
         private String message;
 
-        @SerializedName("commitDate")
+        @SerializedName(FIELDS.COMMIT_DATE)
         private String commitDate;
 
-        @SerializedName("authorDate")
+        @SerializedName(FIELDS.AUTHOR_DATE)
         private String authorDate;
 
-        @SerializedName("author")
+        @SerializedName(FIELDS.AUTHOR)
         private AuthorDto author;
 
-        @SerializedName("diffs")
+        @SerializedName(FIELDS.DIFFS)
         private List<String> diffs;
 
         public static NodeDto from(Commit commit) {
@@ -106,10 +122,15 @@ public class GitGraphDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AuthorDto {
-        @SerializedName("name")
+        public static class FIELDS {
+            public static final String NAME = "name";
+            public static final String EMAIL = "email";
+        }
+
+        @SerializedName(FIELDS.NAME)
         private String name;
 
-        @SerializedName("email")
+        @SerializedName(FIELDS.EMAIL)
         private String email;
     }
 
@@ -117,10 +138,15 @@ public class GitGraphDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class LinkDto {
-        @SerializedName("source")
+        public static class FIELDS {
+            public static final String SOURCE = "source";
+            public static final String TARGET = "target";
+        }
+
+        @SerializedName(FIELDS.SOURCE)
         private String source;
 
-        @SerializedName("target")
+        @SerializedName(FIELDS.TARGET)
         private String target;
     }
 }

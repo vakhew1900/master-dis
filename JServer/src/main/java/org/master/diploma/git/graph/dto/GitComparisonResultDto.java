@@ -17,13 +17,19 @@ import org.master.diploma.git.graph.GraphCompareResult;
 @AllArgsConstructor
 public class GitComparisonResultDto {
 
-    @SerializedName("first_graph")
+    public static class FIELDS {
+        public static final String FIRST_GRAPH = "first_graph";
+        public static final String SECOND_GRAPH = "second_graph";
+        public static final String COMPARE_RESULT = "compare_result";
+    }
+
+    @SerializedName(FIELDS.FIRST_GRAPH)
     private GitGraphDto firstGraph;
 
-    @SerializedName("second_graph")
+    @SerializedName(FIELDS.SECOND_GRAPH)
     private GitGraphDto secondGraph;
 
-    @SerializedName("compare_result")
+    @SerializedName(FIELDS.COMPARE_RESULT)
     private GraphCompareResult compareResult;
 
     /**

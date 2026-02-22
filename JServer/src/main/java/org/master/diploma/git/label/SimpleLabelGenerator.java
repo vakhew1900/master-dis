@@ -125,8 +125,9 @@ public class SimpleLabelGenerator extends LabelGenerator {
             return labelNumbers.get(labelInfo);
         }
 
-        labelNumbers.put(labelInfo, numberCounter++);
-        return numberCounter;
+        int number = numberCounter++;
+        labelNumbers.put(labelInfo, number);
+        return number;
     }
 
 }

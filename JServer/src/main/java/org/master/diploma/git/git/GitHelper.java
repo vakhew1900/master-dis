@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.git.model.CommitGraph;
+import org.master.diploma.git.label.SimpleLabelGenerator;
 
 /**
  * Вспомогательный класс для работы с Git репозиториями через библиотеку JGit.
@@ -46,6 +47,8 @@ public final class GitHelper {
      */
     public static CommitGraph createCommitGraph(String path) {
         // 1. Получаем все "сырые" коммиты из JGit (RevCommit)
+
+
         List<RevCommit> revCommits = getAllRevCommits(path);
         
         // 2. Преобразуем их в наши внутренние объекты Commit (с diff-ами и номерами)
@@ -53,8 +56,12 @@ public final class GitHelper {
         
         // 3. Строим матрицу смежности, связывая номера родительских и дочерних коммитов
         Map<Integer, Set<Integer>> map = createAdjacencyMatrix(createHashToNumberMap(commits), revCommits);
-        
-        return new CommitGraph(commits, map);
+
+        var graph = new CommitGraph(commits, map);
+
+        SimpleLabelGenerator.getInstance().makeLabelForGitGraph(graph);
+
+        return graph;
     }
 
     /**

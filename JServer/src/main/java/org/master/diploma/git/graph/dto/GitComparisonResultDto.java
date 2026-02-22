@@ -40,8 +40,8 @@ public class GitComparisonResultDto {
      * @param graphCompareResult the result of the comparison between the two graphs
      */
     public GitComparisonResultDto(CommitGraph commitGraph1, CommitGraph commitGraph2, GraphCompareResult graphCompareResult) {
-        this.firstGraph = GitGraphDto.from(commitGraph1);
-        this.secondGraph = GitGraphDto.from(commitGraph2);
+        this.firstGraph = GitGraphDto.from(commitGraph1, graphCompareResult, true);
+        this.secondGraph = GitGraphDto.from(commitGraph2, graphCompareResult, false);
         this.compareResult = graphCompareResult;
     }
 }

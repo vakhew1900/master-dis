@@ -7,9 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.git.model.CommitGraph;
+import org.master.diploma.git.graph.GraphCompareResult;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,15 +37,36 @@ public class GitGraphDto {
     @SerializedName(FIELDS.LINKS)
     private List<LinkDto> links;
 
+    private static final int UNDEFINED_VERTEX_NUMBER = -1;
+
     /**
-     * Converts a CommitGraph entity to a GitGraphDto.
+     * Converts a CommitGraph entity to a GitGraphDto with comparison information.
      *
      * @param commitGraph the graph to convert
+     * @param result      the comparison result
+     * @param isFirst     true if converting the first graph, false for the second
      * @return the resulting DTO
      */
-    public static GitGraphDto from(CommitGraph commitGraph) {
+    public static GitGraphDto from(CommitGraph commitGraph, GraphCompareResult result, boolean isFirst) {
+        final Map<Integer, Integer> matchingVertices = result.getMatchingVertices(); // G1 -> G2 mapping
+        final Map<Integer, GraphCompareResult.LabelError> labelErrors = result.getLabelErrors(); // G1 -> LabelError mapping
+
+        // Create G2 -> G1 mapping only if processing the second graph
+        final Map<Integer, Integer> g2ToG1 = isFirst ? Collections.emptyMap() :
+                matchingVertices.entrySet().stream()
+                        .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (a, b) -> a));
+
         List<NodeDto> nodes = commitGraph.getVertices().stream()
-                .map(vertex -> NodeDto.from(vertex.asCommit()))
+                .map(vertex -> {
+                    String severity = getNodeSeverity(
+                            vertex.getNumber(),
+                            isFirst,
+                            matchingVertices,
+                            g2ToG1,
+                            labelErrors
+                    );
+                    return NodeDto.from(vertex.asCommit(), severity);
+                })
                 .collect(Collectors.toList());
 
         List<LinkDto> links = new ArrayList<>();
@@ -64,11 +87,56 @@ public class GitGraphDto {
         return new GitGraphDto(nodes, links);
     }
 
+    /**
+     * Determines the severity status of a node based on the comparison result.
+     *
+     * @param currentGraphVertexNumber The vertex number in the graph currently being processed.
+     * @param isFirst                  True if processing the first graph, false for the second.
+     * @param matchingVertices         Map of G1 vertex numbers to G2 vertex numbers.
+     * @param g2ToG1                   Map of G2 vertex numbers to G1 vertex numbers.
+     * @param labelErrors              Map of G1 vertex numbers to their LabelError.
+     * @return A string representing the severity (EXTRA, MODIFIED, IDENTICAL).
+     */
+    private static String getNodeSeverity(
+            int currentGraphVertexNumber,
+            boolean isFirst,
+            Map<Integer, Integer> matchingVertices,
+            Map<Integer, Integer> g2ToG1,
+            Map<Integer, GraphCompareResult.LabelError> labelErrors
+    ) {
+        final int correspondingG1VertexNumber;
+        final boolean isMatched;
+
+        if (isFirst) {
+            correspondingG1VertexNumber = currentGraphVertexNumber;
+            isMatched = matchingVertices.containsKey(currentGraphVertexNumber);
+        } else {
+            correspondingG1VertexNumber = g2ToG1.getOrDefault(currentGraphVertexNumber, UNDEFINED_VERTEX_NUMBER);
+            isMatched = (correspondingG1VertexNumber != UNDEFINED_VERTEX_NUMBER);
+        }
+
+        if (!isMatched) {
+            return NodeDto.SEVERITY_EXTRA;
+        } else {
+            // If matched, check for label errors based on the G1 vertex number
+            GraphCompareResult.LabelError error = labelErrors.get(correspondingG1VertexNumber);
+            if (error != null && (!error.getExtraLabels().isEmpty() || !error.getMissingLabels().isEmpty())) {
+                return NodeDto.SEVERITY_MODIFIED;
+            } else {
+                return NodeDto.SEVERITY_IDENTICAL;
+            }
+        }
+    }
+
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class NodeDto {
+        public static final String SEVERITY_EXTRA = "EXTRA";
+        public static final String SEVERITY_MODIFIED = "MODIFIED";
+        public static final String SEVERITY_IDENTICAL = "IDENTICAL";
+
         public static class FIELDS {
             public static final String ID = "id";
             public static final String NUMBER = "number";
@@ -78,6 +146,7 @@ public class GitGraphDto {
             public static final String AUTHOR_DATE = "authorDate";
             public static final String AUTHOR = "author";
             public static final String DIFFS = "diffs";
+            public static final String SEVERITY = "severity";
         }
 
         @SerializedName(FIELDS.ID)
@@ -104,7 +173,10 @@ public class GitGraphDto {
         @SerializedName(FIELDS.DIFFS)
         private List<String> diffs;
 
-        public static NodeDto from(Commit commit) {
+        @SerializedName(FIELDS.SEVERITY)
+        private String severity;
+
+        public static NodeDto from(Commit commit, String severity) {
             return NodeDto.builder()
                     .id(commit.getHash())
                     .number(commit.getNumber())
@@ -114,6 +186,7 @@ public class GitGraphDto {
                     .authorDate(DateTimeFormatter.ISO_INSTANT.format(commit.getAuthorDate()))
                     .author(new AuthorDto(commit.getAuthor(), commit.getEmail()))
                     .diffs(commit.getDiffs())
+                    .severity(severity)
                     .build();
         }
     }

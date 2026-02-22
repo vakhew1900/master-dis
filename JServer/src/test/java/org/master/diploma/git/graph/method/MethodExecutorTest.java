@@ -18,6 +18,15 @@ import java.nio.file.Path;
 
 import static org.master.diploma.git.metrics.Metrics.findMetric;
 
+/**
+ * Abstract base class for testing different SubgraphMethodExecutor implementations.
+ * It provides common testing infrastructure, including loading test graphs from JSON,
+ * executing the comparison methods, and asserting the results against expected outcomes.
+ * <p>
+ * Абстрактный базовый класс для тестирования различных реализаций SubgraphMethodExecutor.
+ * Он предоставляет общую тестовую инфраструктуру, включая загрузку тестовых графов из JSON,
+ * выполнение методов сравнения и проверку результатов по отношению к ожидаемым.
+ */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class MethodExecutorTest {
 

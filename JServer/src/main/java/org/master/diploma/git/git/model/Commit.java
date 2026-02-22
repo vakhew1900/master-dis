@@ -1,5 +1,6 @@
 package org.master.diploma.git.git.model;
 
+import lombok.Data;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.master.diploma.git.graph.label.LabelVertex;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Data
 public class Commit extends LabelVertex<GitLabel> implements Cloneable {
 
     private String hash;
@@ -44,66 +46,6 @@ public class Commit extends LabelVertex<GitLabel> implements Cloneable {
         this.diffEntries = diffEntry;
         this.diffs = diffs;
         this.number = number;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Instant getCommitDate() {
-        return commitDate;
-    }
-
-    public void setCommitDate(Instant commitDate) {
-        this.commitDate = commitDate;
-    }
-
-    public Instant getAuthorDate() {
-        return authorDate;
-    }
-
-    public void setAuthorDate(Instant authorDate) {
-        this.authorDate = authorDate;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<String> getDiffs() {
-        return diffs;
-    }
-
-    public List<DiffEntry> getDiffEntries() {
-        return diffEntries;
-    }
-
-    public void setDiffEntries(List<DiffEntry> diffEntries) {
-        this.diffEntries = diffEntries;
     }
 
     @Override

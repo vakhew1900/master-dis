@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.dto.converter.ReferenceGraphConverter;
+import org.master.diploma.git.graph.dto.converter.StudentGraphConverter;
 
 /**
  * Data Transfer Object (DTO) representing the comprehensive result of comparing two Git commit graphs.
@@ -61,13 +63,13 @@ public class GitComparisonResultDto {
      * <p>
      * Создает GitComparisonResultDto, преобразуя CommitGraph и результат сравнения.
      *
-     * @param first       the first graph to transform / первый граф для преобразования
-     * @param second       the second graph to transform / второй граф для преобразования
+     * @param commitGraph1       the first graph to transform / первый граф для преобразования
+     * @param commitGraph2       the second graph to transform / второй граф для преобразования
      * @param graphCompareResult the result of the comparison between the two graphs / результат сравнения между двумя графами
      */
-    public GitComparisonResultDto(CommitGraph first, CommitGraph second, GraphCompareResult graphCompareResult) {
-        this.firstGraph = GitGraphDto.from(first, graphCompareResult, true);
-        this.secondGraph = GitGraphDto.from(second, graphCompareResult, false);
+    public GitComparisonResultDto(CommitGraph commitGraph1, CommitGraph commitGraph2, GraphCompareResult graphCompareResult) {
+        this.firstGraph = new StudentGraphConverter(graphCompareResult).convert(commitGraph1);
+        this.secondGraph = new ReferenceGraphConverter(graphCompareResult).convert(commitGraph2);
         this.compareResult = graphCompareResult;
     }
 }

@@ -2,8 +2,8 @@ package org.master.diploma.git.graph.dto.converter;
 
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.graph.GraphCompareResult;
-import org.master.diploma.git.graph.dto.GitGraphDto.DiffDto;
-import org.master.diploma.git.graph.dto.GitGraphDto.NodeDto;
+import org.master.diploma.git.graph.dto.DiffDto;
+import org.master.diploma.git.graph.dto.NodeDto;
 import org.master.diploma.git.label.GitLabel;
 
 import java.util.ArrayList;

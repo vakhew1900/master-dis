@@ -8,13 +8,10 @@ import lombok.NoArgsConstructor;
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.label.GitLabel;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -94,7 +91,9 @@ public class GitGraphDto {
                             g2ToG1,
                             labelErrors
                     );
-                    return NodeDto.from(vertex.asCommit(), severity);
+
+                    List<DiffDto> diffs = buildDiffDtos(vertex.asCommit(), result, isFirst, g2ToG1);
+                    return NodeDto.from(vertex.asCommit(), severity, diffs);
                 })
                 .collect(Collectors.toList());
 
@@ -114,6 +113,62 @@ public class GitGraphDto {
         }
 
         return new GitGraphDto(nodes, links);
+    }
+
+    /**
+     * Builds a list of DiffDto objects for a commit, highlighting extra and missed labels 
+     * based on the data in GraphCompareResult.
+     *
+     * @param commit     the commit from the current graph being processed
+     * @param result     the comparison result containing pre-calculated errors
+     * @param isFirst     true if processing the first graph, false for the second
+     * @param g2ToG1     mapping from second graph vertex numbers to first graph vertex numbers
+     * @return a list of DiffDto objects
+     */
+    private static List<DiffDto> buildDiffDtos(Commit commit, GraphCompareResult result, boolean isFirst, Map<Integer, Integer> g2ToG1) {
+        List<DiffDto> resultDiffs = new ArrayList<>();
+        List<GitLabel> currentLabels = commit.getLabels();
+
+        final int number;
+        if (isFirst) {
+            number = commit.getNumber();
+        } else {
+            number = g2ToG1.getOrDefault(commit.getNumber(), -1);
+        }
+
+        if (number == -1) {
+            // Unmatched node in second graph (student added an extra node)
+            for (GitLabel l : currentLabels) {
+                resultDiffs.add(new DiffDto(l.getLabelInfo().getValue(), DiffDto.STATE_MISSED));
+            }
+            return resultDiffs;
+        }
+
+        if (isFirst && !result.getMatchingVertices().containsKey(number)) {
+            // Unmatched node in first graph (student missed an entire node)
+            for (GitLabel label : currentLabels) {
+                resultDiffs.add(new DiffDto(label.getLabelInfo().getValue(), DiffDto.STATE_EXTRACT));
+            }
+            return resultDiffs;
+        }
+
+        GraphCompareResult.LabelError error = result.getLabelErrors().get(number);
+        Set<Integer> targetErrorIds = Collections.emptySet();
+        if (error != null) {
+            targetErrorIds = new HashSet<>(isFirst ? error.getExtraLabels() : error.getMissingLabels());
+        }
+
+        String errorState = isFirst ? DiffDto.STATE_EXTRACT : DiffDto.STATE_MISSED;
+
+        for (GitLabel label : currentLabels) {
+            if (targetErrorIds.contains(label.getId())) {
+                resultDiffs.add(new DiffDto(label.getLabelInfo().getValue(), errorState));
+            } else {
+                resultDiffs.add(new DiffDto(label.getLabelInfo().getValue(), DiffDto.STATE_CORRECT));
+            }
+        }
+
+        return resultDiffs;
     }
 
     /**
@@ -158,6 +213,23 @@ public class GitGraphDto {
                 return NodeDto.SEVERITY_IDENTICAL;
             }
         }
+    }
+
+    /**
+     * DTO for representing label differences.
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DiffDto {
+        public static final String STATE_EXTRACT = "EXTRACT";
+        public static final String STATE_MISSED = "MISSED";
+        public static final String STATE_CORRECT = "CORRECT";
+
+        @SerializedName("value")
+        private String value;
+        @SerializedName("state")
+        private String state;
     }
 
     /**
@@ -258,7 +330,7 @@ public class GitGraphDto {
          * Список измененных файлов или статистика diff.
          */
         @SerializedName(FIELDS.DIFFS)
-        private List<String> diffs;
+        private List<DiffDto> diffs;
 
         /**
          * Comparison severity status of the node (EXTRA, MODIFIED, IDENTICAL).
@@ -275,9 +347,10 @@ public class GitGraphDto {
          *
          * @param commit   The commit object. / Объект коммита.
          * @param severity The comparison severity status. / Статус серьезности сравнения.
+         * @param diffs    The diffs/labels for the node. / Различия/метки для узла.
          * @return A new NodeDto instance. / Новый экземпляр NodeDto.
          */
-        public static NodeDto from(Commit commit, String severity) {
+        public static NodeDto from(Commit commit, String severity, List<DiffDto> diffs) {
             return NodeDto.builder()
                     .id(commit.getHash())
                     .number(commit.getNumber())
@@ -286,7 +359,7 @@ public class GitGraphDto {
                     .commitDate(DateTimeFormatter.ISO_INSTANT.format(commit.getCommitDate()))
                     .authorDate(DateTimeFormatter.ISO_INSTANT.format(commit.getAuthorDate()))
                     .author(new AuthorDto(commit.getAuthor(), commit.getEmail()))
-                    .diffs(commit.getDiffs())
+                    .diffs(diffs)
                     .severity(severity)
                     .build();
         }

@@ -61,13 +61,13 @@ public class GitComparisonResultDto {
      * <p>
      * Создает GitComparisonResultDto, преобразуя CommitGraph и результат сравнения.
      *
-     * @param commitGraph1       the first graph to transform / первый граф для преобразования
-     * @param commitGraph2       the second graph to transform / второй граф для преобразования
+     * @param first       the first graph to transform / первый граф для преобразования
+     * @param second       the second graph to transform / второй граф для преобразования
      * @param graphCompareResult the result of the comparison between the two graphs / результат сравнения между двумя графами
      */
-    public GitComparisonResultDto(CommitGraph commitGraph1, CommitGraph commitGraph2, GraphCompareResult graphCompareResult) {
-        this.firstGraph = GitGraphDto.from(commitGraph1, graphCompareResult, true);
-        this.secondGraph = GitGraphDto.from(commitGraph2, graphCompareResult, false);
+    public GitComparisonResultDto(CommitGraph first, CommitGraph second, GraphCompareResult graphCompareResult) {
+        this.firstGraph = GitGraphDto.from(first, graphCompareResult, true);
+        this.secondGraph = GitGraphDto.from(second, graphCompareResult, false);
         this.compareResult = graphCompareResult;
     }
 }

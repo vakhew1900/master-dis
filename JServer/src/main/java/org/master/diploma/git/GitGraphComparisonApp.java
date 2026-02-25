@@ -28,7 +28,7 @@ public class GitGraphComparisonApp {
         this.labelGenerator = labelGenerator;
     }
 
-    public void run(String studentRepoPath, String referenceRepoPath, String outputPath) throws IOException {
+    public void run(String studentRepoPath, String referenceRepoPath) throws IOException {
         System.out.println("Processing student repository: " + studentRepoPath);
         CommitGraph studentGraph = GitHelper.createCommitGraph(studentRepoPath);
         
@@ -36,15 +36,17 @@ public class GitGraphComparisonApp {
         CommitGraph referenceGraph = GitHelper.createCommitGraph(referenceRepoPath);
 
         System.out.println("Generating labels using " + labelGenerator.getClass().getSimpleName() + "...");
+        labelGenerator.makeLabelForGitGraph(studentGraph);
+        labelGenerator.makeLabelForGitGraph(referenceGraph);
 
         System.out.println("Comparing graphs using " + methodExecutor.getClass().getSimpleName() + "...");
         GraphCompareResult compareResult = methodExecutor.execute(studentGraph, referenceGraph);
 
         System.out.println("Generating report...");
         GitComparisonResultDto resultDto = new GitComparisonResultDto(studentGraph, referenceGraph, compareResult);
-        reportGenerator.generateAndOpenReport(resultDto, outputPath);
+        reportGenerator.generateAndOpenReport(resultDto);
         
-        System.out.println("Done! Report saved to: " + outputPath);
+        System.out.println("Done!");
     }
 
     public static void main(String[] args) {
@@ -59,12 +61,12 @@ public class GitGraphComparisonApp {
 
         // Default implementation choices
         SubgraphMethodExecutor executor = new BranchMethodExecutor();
-        ReportGenerator reportGenerator = new HtmlReportGenerator();
+        ReportGenerator reportGenerator = new HtmlReportGenerator(outputPath);
         LabelGenerator labelGenerator = SimpleLabelGenerator.getInstance();
 
         GitGraphComparisonApp app = new GitGraphComparisonApp(executor, reportGenerator, labelGenerator);
         try {
-            app.run(studentPath, referencePath, outputPath);
+            app.run(studentPath, referencePath);
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();

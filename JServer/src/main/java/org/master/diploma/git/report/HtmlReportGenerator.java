@@ -21,20 +21,21 @@ public class HtmlReportGenerator implements ReportGenerator {
     private static final Logger logger = LogManager.getLogger(HtmlReportGenerator.class);
     private static final String TEMPLATE_PATH = "/report_template.html";
     private final Gson gson;
+    private final String outputPath;
 
-    public HtmlReportGenerator() {
+    public HtmlReportGenerator(String outputPath) {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
+        this.outputPath = outputPath;
     }
 
     /**
      * Generates an HTML report from the comparison result.
      *
      * @param result     The comparison result DTO.
-     * @param outputPath The path where to save the generated HTML file.
      * @throws IOException If an error occurs during file operations.
      */
     @Override
-    public void generateReport(GitComparisonResultDto result, String outputPath) throws IOException {
+    public void generateReport(GitComparisonResultDto result) throws IOException {
         String json = gson.toJson(result);
         String template = readTemplate();
 
@@ -49,12 +50,11 @@ public class HtmlReportGenerator implements ReportGenerator {
      * Generates the report and attempts to open it in the default browser.
      *
      * @param result     The comparison result DTO.
-     * @param outputPath The path where to save the generated HTML file.
      */
     @Override
-    public void generateAndOpenReport(GitComparisonResultDto result, String outputPath) {
+    public void generateAndOpenReport(GitComparisonResultDto result) {
         try {
-            generateReport(result, outputPath);
+            generateReport(result);
             File htmlFile = new File(outputPath);
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().browse(htmlFile.toURI());

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Git Graph Comparison Report</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .graphs-wrapper {
+            display: flex;
+            gap: 20px;
+            height: 600px;
+        }
+        .graph-container {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .graph-header {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .network {
+            flex: 1;
+        }
+        .details-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 150px;
+        }
+        .severity-IDENTICAL { background-color: #e6ffed; border-color: #28a745; }
+        .severity-MODIFIED { background-color: #fff9db; border-color: #fcc419; }
+        .severity-EXTRA { background-color: #ffeef0; border-color: #d73a49; }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .color-box {
+            width: 15px;
+            height: 15px;
+            border: 1px solid;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Git Comparison Report</h1>
+        
+        <div class="legend">
+            <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Identical</div>
+            <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Modified</div>
+            <div class="legend-item"><div class="color-box severity-EXTRA"></div> Extra / Unmatched</div>
+        </div>
+
+        <div class="graphs-wrapper">
+            <div class="graph-container">
+                <div class="graph-header">Student Graph <span id="student-count"></span></div>
+                <div id="student-network" class="network"></div>
+            </div>
+            <div class="graph-container">
+                <div class="graph-header">Reference Graph <span id="reference-count"></span></div>
+                <div id="reference-network" class="network"></div>
+            </div>
+        </div>
+
+        <div id="details" class="details-panel">
+            <h3>Commit Details</h3>
+            <p>Select a node to see details</p>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // Placeholder for injected JSON data
+        const comparisonData = {{DATA}};
+
+        const severityColors = {
+            'IDENTICAL': { background: '#e6ffed', border: '#28a745', highlight: { background: '#c6f6d5', border: '#28a745' } },
+            'MODIFIED': { background: '#fff9db', border: '#fcc419', highlight: { background: '#fff3bf', border: '#fcc419' } },
+            'EXTRA': { background: '#ffeef0', border: '#d73a49', highlight: { background: '#ffdce0', border: '#d73a49' } }
+        };
+
+        function createNetworkData(graphDto) {
+            const nodes = graphDto.nodes.map(node => ({
+                id: node.id,
+                label: `[${node.number}]
+${node.id.substring(0, 7)}`,
+                title: node.message,
+                color: severityColors[node.severity] || { background: '#ffffff', border: '#ced4da' },
+                font: { size: 12 },
+                shape: 'box',
+                borderWidth: 2,
+                margin: 10,
+                // store original node data
+                _data: node
+            }));
+
+            const edges = graphDto.links.map(link => ({
+                from: link.source,
+                to: link.target,
+                arrows: 'to',
+                color: '#adb5bd'
+            }));
+
+            return { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+        }
+
+        const options = {
+            layout: {
+                hierarchical: {
+                    direction: 'UD',
+                    sortMethod: 'directed',
+                    levelSeparation: 100,
+                    nodeSpacing: 150
+                }
+            },
+            physics: false,
+            interaction: {
+                hover: true,
+                navigationButtons: true
+            }
+        };
+
+        const studentData = createNetworkData(comparisonData.first_graph);
+        const referenceData = createNetworkData(comparisonData.second_graph);
+
+        document.getElementById('student-count').textContent = `(${comparisonData.first_graph.nodes.length} nodes)`;
+        document.getElementById('reference-count').textContent = `(${comparisonData.second_graph.nodes.length} nodes)`;
+
+        const studentNetwork = new vis.Network(document.getElementById('student-network'), studentData, options);
+        const referenceNetwork = new vis.Network(document.getElementById('reference-network'), referenceData, options);
+
+        function showDetails(nodeId, graphType) {
+            const graph = graphType === 'student' ? comparisonData.first_graph : comparisonData.second_graph;
+            const node = graph.nodes.find(n => n.id === nodeId);
+            if (!node) return;
+
+            const detailsHtml = `
+                <h3>[${node.number}] ${node.hash}</h3>
+                <p><strong>Severity:</strong> <span class="legend-item"><div class="color-box severity-${node.severity}"></div> ${node.severity}</span></p>
+                <p><strong>Message:</strong> ${node.message}</p>
+                <p><strong>Author:</strong> ${node.author ? node.author.name + ' <' + node.author.email + '>' : 'N/A'}</p>
+                <p><strong>Date:</strong> ${node.commitDate}</p>
+                ${node.diffs && node.diffs.length > 0 ? '<h4>Diffs:</h4><ul>' + node.diffs.map(d => `<li>${d.newPath || d.oldPath}</li>`).join('') + '</ul>' : ''}
+            `;
+            document.getElementById('details').innerHTML = detailsHtml;
+        }
+
+        studentNetwork.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                showDetails(params.nodes[0], 'student');
+                // Optional: try to find corresponding node in reference
+                const matchedNode = comparisonData.compare_result.matchedVertices1To2[params.nodes[0]];
+                if (matchedNode) {
+                    referenceNetwork.selectNodes([matchedNode]);
+                } else {
+                    referenceNetwork.unselectAll();
+                }
+            }
+        });
+
+        referenceNetwork.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                showDetails(params.nodes[0], 'reference');
+                // Optional: try to find corresponding node in student
+                const matchedNode = Object.keys(comparisonData.compare_result.matchedVertices1To2).find(key => comparisonData.compare_result.matchedVertices1To2[key] === params.nodes[0]);
+                if (matchedNode) {
+                    studentNetwork.selectNodes([matchedNode]);
+                } else {
+                    studentNetwork.unselectAll();
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

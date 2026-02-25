@@ -72,7 +72,7 @@ public class HtmlReportGenerator implements ReportGenerator {
                 throw new FileNotFoundException("Template not found: " + TEMPLATE_PATH);
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                return reader.lines().collect(Collectors.joining(""));
+                return reader.lines().collect(Collectors.joining("\n"));
             }
         }
     }

@@ -54,6 +54,12 @@ public class GitComparisonResultDto {
     private GitGraphDto secondGraph;
 
     /**
+     * DTO containing mapping of matched commit hashes between the two graphs.
+     */
+    @SerializedName(FIELDS.COMPARE_RESULT)
+    private CompareResultDto compareResult;
+
+    /**
      * Constructs a GitComparisonResultDto by transforming CommitGraphs and the comparison result.
      * <p>
      * Создает GitComparisonResultDto, преобразуя CommitGraph и результат сравнения.
@@ -65,6 +71,7 @@ public class GitComparisonResultDto {
     public GitComparisonResultDto(CommitGraph commitGraph1, CommitGraph commitGraph2, GraphCompareResult graphCompareResult) {
         this.firstGraph = new StudentGraphConverter(graphCompareResult).convert(commitGraph1);
         this.secondGraph = new ReferenceGraphConverter(graphCompareResult).convert(commitGraph2);
+        this.compareResult = CompareResultDto.from(commitGraph1, commitGraph2, graphCompareResult);
     }
 
 

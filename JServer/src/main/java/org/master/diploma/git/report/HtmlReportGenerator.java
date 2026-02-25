@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 /**
  * Generator for HTML reports to visualize Git graph comparison results.
  */
-public class HtmlReportGenerator {
+public class HtmlReportGenerator implements ReportGenerator {
 
     private static final Logger logger = LogManager.getLogger(HtmlReportGenerator.class);
     private static final String TEMPLATE_PATH = "/report_template.html";
@@ -33,6 +33,7 @@ public class HtmlReportGenerator {
      * @param outputPath The path where to save the generated HTML file.
      * @throws IOException If an error occurs during file operations.
      */
+    @Override
     public void generateReport(GitComparisonResultDto result, String outputPath) throws IOException {
         String json = gson.toJson(result);
         String template = readTemplate();
@@ -50,6 +51,7 @@ public class HtmlReportGenerator {
      * @param result     The comparison result DTO.
      * @param outputPath The path where to save the generated HTML file.
      */
+    @Override
     public void generateAndOpenReport(GitComparisonResultDto result, String outputPath) {
         try {
             generateReport(result, outputPath);

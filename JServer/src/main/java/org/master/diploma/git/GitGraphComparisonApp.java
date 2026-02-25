@@ -50,14 +50,15 @@ public class GitGraphComparisonApp {
     }
 
     public static void main(String[] args) {
-        if (args.length < 3) {
-            System.err.println("Usage: java GitGraphComparisonApp <student_repo_path> <reference_repo_path> <output_html_path>");
+        if (args.length < 2) {
+            System.err.println("Usage: java GitGraphComparisonApp <student_repo_path> <reference_repo_path> [output_html_path]");
+            System.err.println("If output_html_path is not specified, 'report.html' will be generated in the current directory.");
             System.exit(1);
         }
 
         String studentPath = args[0];
         String referencePath = args[1];
-        String outputPath = args[2];
+        String outputPath = args.length >= 3 ? args[2] : "report.html";
 
         // Default implementation choices
         SubgraphMethodExecutor executor = new BranchMethodExecutor();

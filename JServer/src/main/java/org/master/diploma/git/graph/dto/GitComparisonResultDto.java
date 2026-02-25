@@ -1,5 +1,6 @@
 package org.master.diploma.git.graph.dto;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,8 @@ import org.master.diploma.git.graph.dto.converter.StudentGraphConverter;
 @AllArgsConstructor
 public class GitComparisonResultDto {
 
+
+    private static final Gson GSON = new Gson();
     /**
      * Defines constants for the field names used in JSON serialization.
      * <p>
@@ -51,14 +54,6 @@ public class GitComparisonResultDto {
     private GitGraphDto secondGraph;
 
     /**
-     * The raw result of the graph comparison, detailing matching vertices and label errors.
-     * <p>
-     * Необработанный результат сравнения графов, детализирующий сопоставленные вершины и ошибки меток.
-     */
-    @SerializedName(FIELDS.COMPARE_RESULT)
-    private GraphCompareResult compareResult;
-
-    /**
      * Constructs a GitComparisonResultDto by transforming CommitGraphs and the comparison result.
      * <p>
      * Создает GitComparisonResultDto, преобразуя CommitGraph и результат сравнения.
@@ -70,6 +65,11 @@ public class GitComparisonResultDto {
     public GitComparisonResultDto(CommitGraph commitGraph1, CommitGraph commitGraph2, GraphCompareResult graphCompareResult) {
         this.firstGraph = new StudentGraphConverter(graphCompareResult).convert(commitGraph1);
         this.secondGraph = new ReferenceGraphConverter(graphCompareResult).convert(commitGraph2);
-        this.compareResult = graphCompareResult;
+    }
+
+
+    @Override
+    public String toString() {
+       return GSON.toJson(this);
     }
 }

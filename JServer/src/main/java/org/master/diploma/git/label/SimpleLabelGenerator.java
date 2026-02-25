@@ -42,6 +42,7 @@ public class SimpleLabelGenerator extends LabelGenerator {
      * Карта для поддержания согласованной нумерации идентичной информации о метках в разных коммитах.
      */
     private Map<GitLabelInfo, Integer> labelNumbers = new HashMap<>();
+    private Map<Integer, GitLabel> gitLabels = new HashMap();
 
     private SimpleLabelGenerator() {
 
@@ -126,7 +127,9 @@ public class SimpleLabelGenerator extends LabelGenerator {
                 int id = idCounter++;
                 GitLabelInfo labelInfo = new GitLabelInfo(changes, diffEntry);
                 int number = findNumber(labelInfo);
-                labels.add(new GitLabel(id, number, labelInfo));
+                var gitLabel = new GitLabel(id, number, labelInfo);
+                gitLabels.put(id, gitLabel);
+                labels.add(gitLabel);
             }
         }
         return labels;

@@ -1,9 +1,11 @@
 package org.master.diploma.git.label;
 
+import lombok.EqualsAndHashCode;
 import org.eclipse.jgit.diff.DiffEntry;
 
 import java.util.Objects;
 
+@EqualsAndHashCode
 public class GitLabelInfo {
 
     private String value;
@@ -36,17 +38,5 @@ public class GitLabelInfo {
 
     public DiffEntry.ChangeType getChangeType() {
         return changeType;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        GitLabelInfo labelInfo = (GitLabelInfo) o;
-        return Objects.equals(value, labelInfo.value) && Objects.equals(oldFileName, labelInfo.oldFileName) && Objects.equals(newFileName, labelInfo.newFileName) && changeType == labelInfo.changeType;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value, oldFileName, newFileName, changeType);
     }
 }

@@ -1,5 +1,8 @@
 package org.master.diploma.git.label;
 
+
+import java.util.Objects;
+
 public class GitLabel extends Label {
 
     private int id;
@@ -26,6 +29,11 @@ public class GitLabel extends Label {
             return this.number == ((GitLabel) obj).getNumber();
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.number);
     }
 
     public GitLabelInfo getLabelInfo() {

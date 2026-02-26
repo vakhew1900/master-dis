@@ -20,6 +20,8 @@ public class HtmlReportGenerator implements ReportGenerator {
 
     private static final Logger logger = LogManager.getLogger(HtmlReportGenerator.class);
     private static final String TEMPLATE_PATH = "/report_template.html";
+    private static final String STYLE_PATH = "/report_style.css";
+    private static final String SCRIPT_PATH = "/report_script.js";
     private final Gson gson;
     private final String outputPath;
 
@@ -37,9 +39,14 @@ public class HtmlReportGenerator implements ReportGenerator {
     @Override
     public void generateReport(GitComparisonResultDto result) throws IOException {
         String json = gson.toJson(result);
-        String template = readTemplate();
+        String template = readResource(TEMPLATE_PATH);
+        String css = readResource(STYLE_PATH);
+        String js = readResource(SCRIPT_PATH);
 
-        String html = template.replace("{{DATA}}", json);
+        String html = template
+                .replace("{{CSS}}", css)
+                .replace("{{JS}}", js)
+                .replace("{{DATA}}", json);
 
         Path path = Path.of(outputPath);
         Files.writeString(path, html, StandardCharsets.UTF_8);
@@ -66,10 +73,10 @@ public class HtmlReportGenerator implements ReportGenerator {
         }
     }
 
-    private String readTemplate() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream(TEMPLATE_PATH)) {
+    private String readResource(String path) throws IOException {
+        try (InputStream is = getClass().getResourceAsStream(path)) {
             if (is == null) {
-                throw new FileNotFoundException("Template not found: " + TEMPLATE_PATH);
+                throw new FileNotFoundException("Resource not found: " + path);
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 return reader.lines().collect(Collectors.joining("\n"));

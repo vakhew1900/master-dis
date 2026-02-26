@@ -45,6 +45,7 @@ body {
 .severity-IDENTICAL { background-color: #e6ffed; border-color: #28a745; }
 .severity-MODIFIED { background-color: #fff9db; border-color: #fcc419; }
 .severity-EXTRA { background-color: #ffeef0; border-color: #d73a49; }
+.severity-MOVABLE { background-color: #e6f7ff; border-color: #1890ff; }
 
 .legend {
     display: flex;

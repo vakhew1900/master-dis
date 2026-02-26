@@ -1,3 +1,12 @@
+// Constants for element IDs
+const IDS = {
+    DETAILS_PANEL: 'details',
+    STUDENT_NETWORK: 'student-network',
+    REFERENCE_NETWORK: 'reference-network',
+    STUDENT_COUNT: 'student-count',
+    REFERENCE_COUNT: 'reference-count'
+};
+
 // Placeholder for injected JSON data
 const comparisonData = {{DATA}};
 
@@ -57,14 +66,14 @@ async function init() {
         const referenceData = createNetworkData(comparisonData.second_graph);
 
         if (comparisonData.first_graph && comparisonData.first_graph.nodes) {
-            document.getElementById('student-count').textContent = `(${comparisonData.first_graph.nodes.length} nodes)`;
+            document.getElementById(IDS.STUDENT_COUNT).textContent = `(${comparisonData.first_graph.nodes.length} nodes)`;
         }
         if (comparisonData.second_graph && comparisonData.second_graph.nodes) {
-            document.getElementById('reference-count').textContent = `(${comparisonData.second_graph.nodes.length} nodes)`;
+            document.getElementById(IDS.REFERENCE_COUNT).textContent = `(${comparisonData.second_graph.nodes.length} nodes)`;
         }
 
-        studentNetwork = new vis.Network(document.getElementById('student-network'), studentData, options);
-        referenceNetwork = new vis.Network(document.getElementById('reference-network'), referenceData, options);
+        studentNetwork = new vis.Network(document.getElementById(IDS.STUDENT_NETWORK), studentData, options);
+        referenceNetwork = new vis.Network(document.getElementById(IDS.REFERENCE_NETWORK), referenceData, options);
 
         // Отключаем физику после стабилизации для производительности
         studentNetwork.on("stabilizationIterationsDone", () => studentNetwork.setOptions({ physics: false }));
@@ -74,7 +83,7 @@ async function init() {
         
     } catch (e) {
         console.error("Critical Init Error:", e);
-        document.getElementById('details').innerHTML = `<h3 style="color:red">Render Error</h3><pre>${e.stack}</pre>`;
+        document.getElementById(IDS.DETAILS_PANEL).innerHTML = `<h3 style="color:red">Render Error</h3><pre>${e.stack}</pre>`;
     }
 }
 
@@ -83,8 +92,7 @@ function createNetworkData(graphDto) {
     
     const nodes = graphDto.nodes.map(node => ({
         id: node.id,
-        label: `[${node.number}]
-${node.id.substring(0, 7)}`,
+        label: `[${node.number}]\n${node.id.substring(0, 7)}`,
         title: node.message,
         color: severityColors[node.severity] || { background: '#ffffff', border: '#ced4da' },
         font: { size: 12 },
@@ -107,7 +115,7 @@ function setupInteractions(sNet, rNet) {
     sNet.on("click", function (params) {
         if (params.nodes.length > 0) {
             const nodeId = params.nodes[0];
-            showDetails(nodeId, 'student');
+            showCombinedDetails(nodeId, 'student');
             if (comparisonData.compare_result && comparisonData.compare_result.matched_hashes_1_to_2) {
                 const matched = comparisonData.compare_result.matched_hashes_1_to_2[nodeId];
                 if (matched) rNet.selectNodes([matched]);
@@ -119,7 +127,7 @@ function setupInteractions(sNet, rNet) {
     rNet.on("click", function (params) {
         if (params.nodes.length > 0) {
             const nodeId = params.nodes[0];
-            showDetails(nodeId, 'reference');
+            showCombinedDetails(nodeId, 'reference');
             if (comparisonData.compare_result && comparisonData.compare_result.matched_hashes_1_to_2) {
                 const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
                 const matched = Object.keys(mapping).find(key => mapping[key] === nodeId);
@@ -130,20 +138,62 @@ function setupInteractions(sNet, rNet) {
     });
 }
 
-function showDetails(nodeId, graphType) {
-    const graph = graphType === 'student' ? comparisonData.first_graph : comparisonData.second_graph;
-    const node = graph.nodes.find(n => n.id === nodeId);
-    if (!node) return;
+function showCombinedDetails(nodeId, clickedGraphType) {
+    let studentNode, referenceNode;
+    const mapping = comparisonData.compare_result ? comparisonData.compare_result.matched_hashes_1_to_2 : {};
 
-    const detailsHtml = `
-        <h3>[${node.number}] ${node.hash}</h3>
+    if (clickedGraphType === 'student') {
+        studentNode = comparisonData.first_graph.nodes.find(n => n.id === nodeId);
+        const matchedHash = mapping[nodeId];
+        if (matchedHash) {
+            referenceNode = comparisonData.second_graph.nodes.find(n => n.id === matchedHash);
+        }
+    } else {
+        referenceNode = comparisonData.second_graph.nodes.find(n => n.id === nodeId);
+        const matchedHash = Object.keys(mapping).find(key => mapping[key] === nodeId);
+        if (matchedHash) {
+            studentNode = comparisonData.first_graph.nodes.find(n => n.id === matchedHash);
+        }
+    }
+
+    const html = `
+        <div class="details-grid">
+            <div class="details-column">
+                <h4>Student Commit</h4>
+                ${studentNode ? renderNodeInfo(studentNode) : '<p>No matching commit found</p>'}
+            </div>
+            <div class="details-column">
+                <h4>Reference Commit</h4>
+                ${referenceNode ? renderNodeInfo(referenceNode) : '<p>No matching commit found</p>'}
+            </div>
+        </div>
+    `;
+    document.getElementById(IDS.DETAILS_PANEL).innerHTML = html;
+}
+
+function renderNodeInfo(node) {
+    return `
+        <h3>[${node.number}] ${node.hash.substring(0, 12)}...</h3>
         <p><strong>Severity:</strong> <span class="legend-item"><div class="color-box severity-${node.severity}"></div> ${node.severity}</span></p>
         <p><strong>Message:</strong> ${node.message}</p>
-        <p><strong>Author:</strong> ${node.author ? node.author.name + ' <' + node.author.email + '>' : 'N/A'}</p>
+        <p><strong>Author:</strong> ${node.author ? node.author.name : 'N/A'}</p>
         <p><strong>Date:</strong> ${node.commitDate}</p>
-        ${node.diffs && node.diffs.length > 0 ? '<h4>Diffs:</h4><ul style="max-height: 200px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 4px;">' + node.diffs.map(d => `<li style="font-family: monospace; border-bottom: 1px solid #eee; margin-bottom: 5px; list-style: none;">${d.value.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</li>`).join('') + '</ul>' : ''}
+        ${node.diffs && node.diffs.length > 0 ? '<h5>Diffs:</h5>' + renderDiffs(node.diffs) : ''}
     `;
-    document.getElementById('details').innerHTML = detailsHtml;
+}
+
+function renderDiffs(diffs) {
+    return `
+        <ul class="diff-list">
+            ${diffs.map(d => {
+                const value = d.value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                let className = 'diff-line';
+                if (value.startsWith('+')) className += ' diff-line-added';
+                else className += ' diff-line-removed';
+                return `<li class="${className}">${value}</li>`;
+            }).join('')}
+        </ul>
+    `;
 }
 
 // Запуск

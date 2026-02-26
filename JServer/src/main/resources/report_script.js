@@ -38,7 +38,7 @@ let studentNetwork = null;
 let referenceNetwork = null;
 
 async function init() {
-    console.log("Initializing Darcula report...");
+    console.log("Initializing Enhanced Git Comparison Report...");
     
     await new Promise(resolve => setTimeout(resolve, 200));
 
@@ -51,50 +51,58 @@ async function init() {
         const options = {
             layout: {
                 hierarchical: {
-                    direction: 'UD',
+                    enabled: true,
+                    direction: 'DU', // Bottom-up direction
                     sortMethod: 'directed',
-                    levelSeparation: 120,
-                    nodeSpacing: 180,
+                    levelSeparation: 150,
+                    nodeSpacing: 200,
                     edgeMinimization: true,
                     parentCentralization: true
                 }
             },
             nodes: {
                 shape: 'dot',
-                size: 20,
+                size: 24,
                 font: {
                     color: '#a9b7c6',
                     size: 14,
-                    face: 'Segoe UI'
+                    face: 'Inter, Segoe UI',
+                    multi: true,
+                    bold: { color: '#ffffff' }
                 },
                 borderWidth: 2,
-                shadow: true
+                shadow: {
+                    enabled: true,
+                    color: 'rgba(0,0,0,0.3)',
+                    size: 10,
+                    x: 5,
+                    y: 5
+                }
             },
             edges: {
-                arrows: 'to',
-                color: { color: '#555555', highlight: '#888888' },
+                arrows: {
+                    to: { enabled: true, scaleFactor: 1.2 }
+                },
+                color: { color: '#444444', highlight: '#888888', hover: '#666666' },
                 width: 2,
+                selectionWidth: 3,
+                hoverWidth: 3,
                 smooth: {
+                    enabled: true,
                     type: 'cubicBezier',
                     forceDirection: 'vertical',
-                    roundness: 0.4
+                    roundness: 0.5
                 }
             },
             physics: {
-                enabled: true,
-                hierarchicalRepulsion: {
-                    nodeDistance: 200
-                },
-                stabilization: {
-                    enabled: true,
-                    iterations: 1000
-                }
+                enabled: false // Hierarchical layout works better without physics once stabilized
             },
             interaction: {
                 hover: true,
-                navigationButtons: true,
+                navigationButtons: false, // Buttons removed per request
                 keyboard: true,
-                tooltipDelay: 200
+                tooltipDelay: 200,
+                hideEdgesOnDrag: true
             }
         };
 
@@ -107,14 +115,11 @@ async function init() {
         studentNetwork = new vis.Network(document.getElementById(IDS.STUDENT_NETWORK), studentData, options);
         referenceNetwork = new vis.Network(document.getElementById(IDS.REFERENCE_NETWORK), referenceData, options);
 
-        studentNetwork.on("stabilizationIterationsDone", () => studentNetwork.setOptions({ physics: false }));
-        referenceNetwork.on("stabilizationIterationsDone", () => referenceNetwork.setOptions({ physics: false }));
-
         setupInteractions(studentNetwork, referenceNetwork);
         
     } catch (e) {
         console.error("Critical Init Error:", e);
-        document.getElementById(IDS.DETAILS_PANEL).innerHTML = `<h3 style="color:red">Render Error</h3><pre>${e.stack}</pre>`;
+        document.getElementById(IDS.DETAILS_PANEL).innerHTML = `<h3 style="color:#d73a49">Render Error</h3><pre style="color:#a9b7c6">${e.stack}</pre>`;
     }
 }
 
@@ -123,7 +128,7 @@ function createNetworkData(graphDto) {
     
     const nodes = graphDto.nodes.map(node => ({
         id: node.id,
-        label: `[${node.number}]\n${node.id.substring(0, 7)}`,
+        label: `<b>[${node.number}]</b>\n${node.id.substring(0, 7)}`,
         title: node.message,
         color: severityColors[node.severity] || { background: '#3c3f41', border: '#4b4b4b' }
     }));
@@ -189,11 +194,11 @@ function showCombinedDetails(nodeId, clickedGraphType) {
         <div class="details-grid">
             <div class="details-column">
                 <h4>Student Commit</h4>
-                ${studentNode ? renderNodeInfo(studentNode) : '<p style="opacity:0.5">No matching commit found</p>'}
+                ${studentNode ? renderNodeInfo(studentNode) : '<p style="opacity:0.3">No matching commit found</p>'}
             </div>
             <div class="details-column">
                 <h4>Reference Commit</h4>
-                ${referenceNode ? renderNodeInfo(referenceNode) : '<p style="opacity:0.5">No matching commit found</p>'}
+                ${referenceNode ? renderNodeInfo(referenceNode) : '<p style="opacity:0.3">No matching commit found</p>'}
             </div>
         </div>
     `;
@@ -202,12 +207,14 @@ function showCombinedDetails(nodeId, clickedGraphType) {
 
 function renderNodeInfo(node) {
     return `
-        <h3 style="color:#bbbbbb">[${node.number}] ${node.hash.substring(0, 12)}...</h3>
-        <p><strong>Severity:</strong> <span class="legend-item"><div class="color-box severity-${node.severity}"></div> ${node.severity}</span></p>
-        <p><strong>Message:</strong> <span style="color: #6a8759">"${node.message}"</span></p>
-        <p><strong>Author:</strong> ${node.author ? node.author.name : 'N/A'}</p>
-        <p><strong>Date:</strong> <span style="color: #cc7832">${node.commitDate}</span></p>
-        ${node.diffs && node.diffs.length > 0 ? '<h5>Changes (Diffs):</h5>' + renderDiffs(node.diffs) : ''}
+        <h3 style="color:#ffffff; margin-top: 0;">[${node.number}] ${node.hash.substring(0, 12)}...</h3>
+        <div style="margin-bottom: 15px;">
+            <p style="margin: 5px 0;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex;"><div class="color-box severity-${node.severity}"></div> ${node.severity}</span></p>
+            <p style="margin: 5px 0;"><strong>Message:</strong> <span style="color: #6a8759; font-style: italic;">"${node.message}"</span></p>
+            <p style="margin: 5px 0;"><strong>Author:</strong> ${node.author ? node.author.name : 'N/A'}</p>
+            <p style="margin: 5px 0;"><strong>Date:</strong> <span style="color: #cc7832">${node.commitDate}</span></p>
+        </div>
+        ${node.diffs && node.diffs.length > 0 ? '<h5>Changes:</h5>' + renderDiffs(node.diffs) : ''}
     `;
 }
 

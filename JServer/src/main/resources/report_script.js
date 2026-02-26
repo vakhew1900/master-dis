@@ -226,7 +226,11 @@ function renderDiffs(diffs) {
                 let className = 'diff-line';
                 if (value.startsWith('+')) className += ' diff-line-added';
                 else className += ' diff-line-removed';
-                return `<li class="${className}">${value}</li>`;
+                
+                // Add state class (CORRECT, MISSED, EXTRACT)
+                if (d.state) className += ' state-' + d.state;
+                
+                return `<li class="${className}" title="Status: ${d.state}">${value}</li>`;
             }).join('')}
         </ul>
     `;

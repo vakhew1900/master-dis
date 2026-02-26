@@ -212,6 +212,16 @@ body {
 .diff-line-added { background-color: var(--diff-added-bg); }
 .diff-line-removed { background-color: var(--diff-removed-bg); }
 
+/* Diff States */
+.state-MISSED {
+    opacity: 0.35;
+    filter: grayscale(0.5);
+}
+
+.state-EXTRACT {
+    border-left: 4px solid #cc7832; /* Darcula Orange Accent */
+}
+
 /* Footer Styling */
 .main-footer {
     background-color: var(--panel-bg);

@@ -22,6 +22,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NodeDto {
+    /** Severity status indicating the node is matched but moved. <p> Статус серьезности, указывающий, что узел сопоставлен, но перемещен. */
+    public static final String SEVERITY_MOVABLE = "MOVABLE";
     /** Severity status indicating the node is extra/unmatched in one of the graphs. <p> Статус серьезности, указывающий, что узел является лишним/несопоставленным в одном из графов. */
     public static final String SEVERITY_EXTRA = "EXTRA";
     /** Severity status indicating the node is matched but has differences in labels. <p> Статус серьезности, указывающий, что узел сопоставлен, но имеет различия в метках. */

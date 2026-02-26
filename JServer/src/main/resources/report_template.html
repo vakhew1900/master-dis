@@ -52,6 +52,7 @@
         .severity-IDENTICAL { background-color: #e6ffed; border-color: #28a745; }
         .severity-MODIFIED { background-color: #fff9db; border-color: #fcc419; }
         .severity-EXTRA { background-color: #ffeef0; border-color: #d73a49; }
+        .severity-MOVABLE { background-color: #e6f7ff; border-color: #1890ff; }
         
         .legend {
             display: flex;
@@ -80,6 +81,7 @@
             <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Identical</div>
             <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Modified</div>
             <div class="legend-item"><div class="color-box severity-EXTRA"></div> Extra / Unmatched</div>
+            <div class="legend-item"><div class="color-box severity-MOVABLE"></div> Movable</div>
         </div>
 
         <div class="graphs-wrapper">
@@ -106,7 +108,8 @@
         const severityColors = {
             'IDENTICAL': { background: '#e6ffed', border: '#28a745', highlight: { background: '#c6f6d5', border: '#28a745' } },
             'MODIFIED': { background: '#fff9db', border: '#fcc419', highlight: { background: '#fff3bf', border: '#fcc419' } },
-            'EXTRA': { background: '#ffeef0', border: '#d73a49', highlight: { background: '#ffdce0', border: '#d73a49' } }
+            'EXTRA': { background: '#ffeef0', border: '#d73a49', highlight: { background: '#ffdce0', border: '#d73a49' } },
+            'MOVABLE': { background: '#e6f7ff', border: '#1890ff', highlight: { background: '#bae7ff', border: '#1890ff' } }
         };
 
         let studentNetwork = null;

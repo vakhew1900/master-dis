@@ -72,6 +72,9 @@ public class GitComparisonResultDto {
         this.firstGraph = new StudentGraphConverter(graphCompareResult).convert(commitGraph1);
         this.secondGraph = new ReferenceGraphConverter(graphCompareResult).convert(commitGraph2);
         this.compareResult = CompareResultDto.from(commitGraph1, commitGraph2, graphCompareResult);
+
+        // Apply post-processing to identify MOVABLE nodes
+        new GitComparisonPostProcessor().postProcess(this, commitGraph1, commitGraph2);
     }
 
 

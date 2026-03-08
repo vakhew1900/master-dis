@@ -40,15 +40,6 @@ public class TwoGraphComparisonResultDto implements GitComparisonResultDto {
     @SerializedName(FIELDS.COMPARE_RESULT)
     private CompareResultDto compareResult;
 
-    public TwoGraphComparisonResultDto(CommitGraph commitGraph1, CommitGraph commitGraph2, GraphCompareResult graphCompareResult) {
-        this.firstGraph = new StudentGraphConverter(graphCompareResult).convert(commitGraph1);
-        this.secondGraph = new ReferenceGraphConverter(graphCompareResult).convert(commitGraph2);
-        this.compareResult = CompareResultDto.from(commitGraph1, commitGraph2, graphCompareResult);
-
-        // Apply specific post-processing for two-graph view
-        new TwoGraphComparisonPostProcessor().postProcess(this, commitGraph1, commitGraph2);
-    }
-
     @Override
     public String toString() {
        return GSON.toJson(this);

@@ -3,7 +3,9 @@ package org.master.diploma.git;
 import org.master.diploma.git.git.GitHelper;
 import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.dto.GitComparisonResultDto;
 import org.master.diploma.git.graph.dto.two_graph.TwoGraphComparisonResultDto;
+import org.master.diploma.git.graph.dto.two_graph.TwoGraphResultBuilder;
 import org.master.diploma.git.graph.subgraphmethod.BranchMethodExecutor;
 import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
 import org.master.diploma.git.label.LabelGenerator;
@@ -43,7 +45,8 @@ public class GitGraphComparisonApp {
         GraphCompareResult compareResult = methodExecutor.execute(studentGraph, referenceGraph);
 
         System.out.println("Generating report...");
-        TwoGraphComparisonResultDto resultDto = new TwoGraphComparisonResultDto(studentGraph, referenceGraph, compareResult);
+        GitComparisonResultDto resultDto =
+                new TwoGraphResultBuilder().build(studentGraph, referenceGraph, compareResult);
         reportGenerator.generateAndOpenReport(resultDto);
         
         System.out.println("Done!");

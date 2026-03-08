@@ -26,26 +26,29 @@
 
     <div class="container">
         <div class="legend">
-            <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Identical</div>
-            <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Modified</div>
-            <div class="legend-item"><div class="color-box severity-EXTRA"></div> Extra / Unmatched</div>
-            <div class="legend-item"><div class="color-box severity-MOVABLE"></div> Movable</div>
+            <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Идентичен</div>
+            <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Изменен</div>
+            <div class="legend-item"><div class="color-box severity-EXTRA"></div> Лишний / Не совпал</div>
+            <div class="legend-item"><div class="color-box severity-MOVABLE"></div> Перемещен</div>
         </div>
 
         <div class="graphs-wrapper">
             <div class="graph-container">
-                <div class="graph-header">Student Graph <span id="student-count"></span></div>
+                <div class="graph-header">Текущий граф <span id="student-count"></span></div>
                 <div id="student-network" class="network"></div>
             </div>
             <div class="graph-container">
-                <div class="graph-header">Reference Graph <span id="reference-count"></span></div>
+                <div class="graph-header">Ожидаемый результат <span id="reference-count"></span></div>
                 <div id="reference-network" class="network"></div>
             </div>
         </div>
 
         <div id="details" class="details-panel">
-            <div style="text-align: center; opacity: 0.5; padding: 40px;">
-                <p>Select a node to see detailed commit comparison</p>
+            <div class="empty-state">
+                <div class="empty-state-icon">🔍</div>
+                <h3>Сравнение коммитов</h3>
+                <p>Выберите узел на любом из графов, чтобы увидеть детальное сравнение содержимого коммитов и метаданных.</p>
+                <div class="empty-state-hint">Узлы подсвечиваются автоматически в обоих графах при наличии соответствия.</div>
             </div>
         </div>
     </div>

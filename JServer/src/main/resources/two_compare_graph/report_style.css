@@ -133,6 +133,39 @@ body {
     margin-bottom: 40px;
 }
 
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-main);
+    opacity: 0.8;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+.empty-state h3 {
+    margin: 10px 0;
+    color: var(--text-header);
+    font-weight: 600;
+}
+
+.empty-state p {
+    max-width: 500px;
+    margin: 0 auto 15px auto;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.empty-state-hint {
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+}
+
 .details-grid {
     display: flex;
     gap: 30px;
@@ -155,6 +188,68 @@ body {
     text-transform: uppercase;
     font-size: 14px;
     letter-spacing: 1px;
+}
+
+/* Collapsible Metadata */
+.commit-metadata-toggle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 10px 0;
+    transition: background 0.2s;
+}
+
+.commit-metadata-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.commit-metadata-toggle::after {
+    content: '▼';
+    font-size: 10px;
+    transition: transform 0.3s;
+}
+
+.commit-metadata-toggle.active::after {
+    transform: rotate(180deg);
+}
+
+.commit-metadata-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+}
+
+.commit-metadata-content.show {
+    max-height: 300px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.metadata-row {
+    margin: 5px 0;
+    font-size: 13px;
+    display: flex;
+}
+
+.metadata-label {
+    font-weight: 600;
+    min-width: 100px;
+    color: #888;
+}
+
+.metadata-value {
+    color: var(--text-main);
 }
 
 /* Severity Legend */

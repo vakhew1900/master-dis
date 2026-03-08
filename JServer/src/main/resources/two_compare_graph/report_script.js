@@ -109,8 +109,8 @@ async function init() {
         const studentData = createNetworkData(comparisonData.first_graph);
         const referenceData = createNetworkData(comparisonData.second_graph);
 
-        document.getElementById(IDS.STUDENT_COUNT).textContent = `(${comparisonData.first_graph.nodes.length} nodes)`;
-        document.getElementById(IDS.REFERENCE_COUNT).textContent = `(${comparisonData.second_graph.nodes.length} nodes)`;
+        document.getElementById(IDS.STUDENT_COUNT).textContent = `(${comparisonData.first_graph.nodes.length} узлов)`;
+        document.getElementById(IDS.REFERENCE_COUNT).textContent = `(${comparisonData.second_graph.nodes.length} узлов)`;
 
         studentNetwork = new vis.Network(document.getElementById(IDS.STUDENT_NETWORK), studentData, options);
         referenceNetwork = new vis.Network(document.getElementById(IDS.REFERENCE_NETWORK), referenceData, options);
@@ -193,12 +193,12 @@ function showCombinedDetails(nodeId, clickedGraphType) {
     const html = `
         <div class="details-grid">
             <div class="details-column">
-                <h4>Student Commit</h4>
-                ${studentNode ? renderNodeInfo(studentNode) : '<p style="opacity:0.3">No matching commit found</p>'}
+                <h4>Коммит студента</h4>
+                ${studentNode ? renderNodeInfo(studentNode) : '<p style="opacity:0.3">Соответствующий коммит не найден</p>'}
             </div>
             <div class="details-column">
-                <h4>Reference Commit</h4>
-                ${referenceNode ? renderNodeInfo(referenceNode) : '<p style="opacity:0.3">No matching commit found</p>'}
+                <h4>Ожидаемый коммит</h4>
+                ${referenceNode ? renderNodeInfo(referenceNode) : '<p style="opacity:0.3">Соответствующий коммит не найден</p>'}
             </div>
         </div>
     `;
@@ -206,16 +206,47 @@ function showCombinedDetails(nodeId, clickedGraphType) {
 }
 
 function renderNodeInfo(node) {
+    const severityMap = {
+        'IDENTICAL': 'Идентичен',
+        'MODIFIED': 'Изменен',
+        'EXTRA': 'Лишний',
+        'MOVABLE': 'Перемещен'
+    };
+    
+    const severityText = severityMap[node.severity] || node.severity;
+
     return `
         <h3 style="color:#ffffff; margin-top: 0;">[${node.number}] ${node.hash.substring(0, 12)}...</h3>
-        <div style="margin-bottom: 15px;">
-            <p style="margin: 5px 0;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex;"><div class="color-box severity-${node.severity}"></div> ${node.severity}</span></p>
-            <p style="margin: 5px 0;"><strong>Message:</strong> <span style="color: #6a8759; font-style: italic;">"${node.message}"</span></p>
-            <p style="margin: 5px 0;"><strong>Author:</strong> ${node.author ? node.author.name : 'N/A'}</p>
-            <p style="margin: 5px 0;"><strong>Date:</strong> <span style="color: #cc7832">${node.commitDate}</span></p>
+        <div style="margin-bottom: 10px;">
+            <p style="margin: 5px 0;"><strong>Статус:</strong> <span class="legend-item" style="display:inline-flex; vertical-align: middle; gap: 5px;"><div class="color-box severity-${node.severity}" style="width:12px; height:12px;"></div> ${severityText}</span></p>
         </div>
-        ${node.diffs && node.diffs.length > 0 ? '<h5>Changes:</h5>' + renderDiffs(node.diffs) : ''}
+        
+        <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">
+            Информация о коммите
+        </button>
+        <div class="commit-metadata-content">
+            <div class="metadata-row">
+                <div class="metadata-label">Сообщение:</div>
+                <div class="metadata-value" style="color: #6a8759; font-style: italic;">"${node.message}"</div>
+            </div>
+            <div class="metadata-row">
+                <div class="metadata-label">Автор:</div>
+                <div class="metadata-value">${node.author ? node.author.name : 'N/A'}</div>
+            </div>
+            <div class="metadata-row">
+                <div class="metadata-label">Дата:</div>
+                <div class="metadata-value" style="color: #cc7832">${node.commitDate}</div>
+            </div>
+        </div>
+
+        ${node.diffs && node.diffs.length > 0 ? '<h5 style="margin: 15px 0 5px 0;">Изменения (diff):</h5>' + renderDiffs(node.diffs) : ''}
     `;
+}
+
+function toggleMetadata(button) {
+    button.classList.toggle('active');
+    const content = button.nextElementSibling;
+    content.classList.toggle('show');
 }
 
 function renderDiffs(diffs) {

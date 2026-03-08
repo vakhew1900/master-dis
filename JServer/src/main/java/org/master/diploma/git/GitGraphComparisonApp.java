@@ -4,6 +4,7 @@ import org.master.diploma.git.git.GitHelper;
 import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.dto.GitComparisonResultDto;
+import org.master.diploma.git.graph.dto.two_graph.TwoGraphResultBuilder;
 import org.master.diploma.git.graph.subgraphmethod.BranchMethodExecutor;
 import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
 import org.master.diploma.git.label.LabelGenerator;
@@ -13,6 +14,9 @@ import org.master.diploma.git.report.ReportConfigurations;
 import org.master.diploma.git.report.ReportGenerator;
 
 import java.io.IOException;
+
+import static org.master.diploma.git.report.ReportConfigurations.mergedGraphContext;
+import static org.master.diploma.git.report.ReportConfigurations.twoGraphContext;
 
 /**
  * Console application to compare two Git repositories and generate a report.
@@ -46,18 +50,17 @@ public class GitGraphComparisonApp {
         System.out.println("Generating reports...");
         
         // Report 1: Two Graph Comparison
-        GitComparisonResultDto twoGraphDto =
-                new org.master.diploma.git.graph.dto.two_graph.TwoGraphResultBuilder().build(studentGraph, referenceGraph, compareResult);
+        GitComparisonResultDto twoGraphDto = new TwoGraphResultBuilder().build(studentGraph, referenceGraph, compareResult);
         String twoGraphPath = baseOutputPath.replace(".html", "_two.html");
         if (twoGraphPath.equals(baseOutputPath)) twoGraphPath += "_two.html";
-        reportGenerator.generateAndOpenReport(twoGraphDto, org.master.diploma.git.report.ReportConfigurations.twoGraphContext(twoGraphPath));
+        reportGenerator.generateAndOpenReport(twoGraphDto,twoGraphContext(twoGraphPath));
 
         // Report 2: Merged Graph Comparison
         GitComparisonResultDto mergedGraphDto =
                 new org.master.diploma.git.graph.dto.merged_graph.MergedGraphResultBuilder().build(studentGraph, referenceGraph, compareResult);
         String mergedGraphPath = baseOutputPath.replace(".html", "_merged.html");
         if (mergedGraphPath.equals(baseOutputPath)) mergedGraphPath += "_merged.html";
-        reportGenerator.generateAndOpenReport(mergedGraphDto, org.master.diploma.git.report.ReportConfigurations.mergedGraphContext(mergedGraphPath));
+        reportGenerator.generateAndOpenReport(mergedGraphDto,mergedGraphContext(mergedGraphPath));
         
         System.out.println("Done!");
     }

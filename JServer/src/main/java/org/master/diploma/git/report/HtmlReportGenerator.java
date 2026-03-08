@@ -40,7 +40,6 @@ public class HtmlReportGenerator implements ReportGenerator {
                 .replace("{{DATA}}", json);
 
         Path path = Path.of(context.getOutputPath());
-        Files.createDirectories(path.getParent());
         Files.writeString(path, html, StandardCharsets.UTF_8);
         logger.info("Report generated successfully at: " + path.toAbsolutePath());
     }

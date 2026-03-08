@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Git Merged Graph Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+{{COMMON_CSS}}
+{{CSS}}
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">GIT MERGED GRAPH REPORT</div>
+            <nav class="nav-bar">
+                <a href="#" class="nav-link">Главная</a>
+                <a href="#" class="nav-link active">Объединенный граф</a>
+                <a href="#" class="nav-link">Отчеты</a>
+                <a href="#" class="nav-link">Список заданий</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container main-content-layout">
+        <div class="left-panel">
+            <div class="legend" style="justify-content: flex-start; gap: 20px; padding: 10px 15px;">
+                <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Идентичен</div>
+                <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Изменен</div>
+                <div class="legend-item"><div class="color-box severity-EXTRA"></div> Лишний (Student)</div>
+                <div class="legend-item"><div class="color-box severity-EXTRA" style="filter: brightness(0.7)"></div> Пропущен (Ref)</div>
+            </div>
+            
+            <div class="graph-container">
+                <div class="graph-header">Объединенная история <span id="node-count"></span></div>
+                <div id="network" class="network"></div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="legend" style="margin-bottom: 15px; font-size: 12px; padding: 8px 15px;">
+                <div class="legend-item" style="color: #888; font-weight: 600; text-transform: uppercase; font-size: 10px;">Diff:</div>
+                <div class="legend-item"><span style="color: #5da063; font-weight: bold;">✓</span> Correct</div>
+                <div class="legend-item"><span style="color: #b26b6b; font-weight: bold;">✗</span> Missed</div>
+                <div class="legend-item"><span style="color: #cc7832; font-weight: bold;">!</span> Extra</div>
+            </div>
+
+            <div id="details" class="details-panel" style="height: calc(100% - 60px); overflow-y: auto;">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🖱️</div>
+                    <h3>Детали коммита</h3>
+                    <p>Выберите узел на графе слева, чтобы просмотреть объединенную информацию и изменения.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-desc">
+                <strong>JServer MCTS Analysis Tool</strong><br>
+                Merged view approach for visualizing common transitive subgraphs.
+            </div>
+            <div class="footer-copy">
+                &copy; Chupinin Anton 2026
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/javascript">
+{{JS}}
+    </script>
+</body>
+</html>

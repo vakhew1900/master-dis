@@ -6,13 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.master.diploma.git.git.model.CommitGraph;
-import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.dto.CompareResultDto;
 import org.master.diploma.git.graph.dto.GitComparisonResultDto;
 import org.master.diploma.git.graph.dto.samples.GitGraphDto;
-import org.master.diploma.git.graph.dto.converter.ReferenceGraphConverter;
-import org.master.diploma.git.graph.dto.converter.StudentGraphConverter;
 
 /**
  * DTO for the traditional side-by-side comparison of two Git graphs.

@@ -1,4 +1,4 @@
-package org.master.diploma.git.graph.dto.converter;
+package org.master.diploma.git.graph.dto.two_graph;
 
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.graph.GraphCompareResult;

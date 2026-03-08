@@ -4,8 +4,6 @@ import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.dto.ComparisonResultBuilder;
 import org.master.diploma.git.graph.dto.CompareResultDto;
-import org.master.diploma.git.graph.dto.converter.ReferenceGraphConverter;
-import org.master.diploma.git.graph.dto.converter.StudentGraphConverter;
 
 /**
  * Builder implementation for Side-by-Side (Two Graph) visualization.

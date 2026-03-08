@@ -3,6 +3,7 @@ package org.master.diploma.git.graph.dto.merged_graph;
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.dto.GitComparisonPostProcessor;
 
 import java.util.HashSet;
@@ -19,12 +20,12 @@ public class MergedGraphComparisonPostProcessor extends GitComparisonPostProcess
         Set<Integer> matchedG1 = new HashSet<>(result.getMatchingVertices().keySet());
         Set<Integer> matchedG2 = new HashSet<>(result.getMatchingVertices().values());
 
-        for (Commit commit1 : first.getVertices().stream().map(v -> v.asCommit()).toList()) {
+        for (Commit commit1 : first.getVertices().stream().map(Vertex::asCommit).toList()) {
             if (matchedG1.contains(commit1.getNumber())) {
                 continue;
             }
 
-            for (Commit commit2 : second.getVertices().stream().map(v -> v.asCommit()).toList()) {
+            for (Commit commit2 : second.getVertices().stream().map(Vertex::asCommit).toList()) {
                 if (matchedG2.contains(commit2.getNumber())) {
                     continue;
                 }

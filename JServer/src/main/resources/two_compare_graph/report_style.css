@@ -173,7 +173,7 @@ body {
 
 .details-column {
     flex: 1;
-    padding: 20px;
+    padding: 15px;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 10px;
@@ -183,10 +183,11 @@ body {
     margin-top: 0;
     color: var(--text-header);
     border-bottom: 1px solid var(--border-color);
-    padding-bottom: 12px;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 1px;
 }
 
@@ -195,15 +196,15 @@ body {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     color: var(--text-main);
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: 6px 10px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    margin: 10px 0;
+    margin: 8px 0;
     transition: background 0.2s;
 }
 
@@ -213,7 +214,7 @@ body {
 
 .commit-metadata-toggle::after {
     content: '▼';
-    font-size: 10px;
+    font-size: 9px;
     transition: transform 0.3s;
 }
 
@@ -226,25 +227,25 @@ body {
     overflow: hidden;
     transition: max-height 0.3s ease-out, padding 0.3s;
     background: rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
+    border-radius: 4px;
 }
 
 .commit-metadata-content.show {
     max-height: 300px;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 8px;
+    margin-bottom: 10px;
     border: 1px solid var(--border-color);
 }
 
 .metadata-row {
-    margin: 5px 0;
-    font-size: 13px;
+    margin: 3px 0;
+    font-size: 12px;
     display: flex;
 }
 
 .metadata-label {
     font-weight: 600;
-    min-width: 100px;
+    min-width: 80px;
     color: #888;
 }
 
@@ -288,34 +289,54 @@ body {
     max-height: 350px; 
     overflow-y: auto; 
     background: #121212; 
-    padding: 10px; 
-    border-radius: 8px;
+    padding: 5px; 
+    border-radius: 6px;
     list-style: none;
-    margin: 15px 0;
+    margin: 10px 0;
     border: 1px solid var(--border-color);
 }
 
 .diff-line {
     font-family: 'JetBrains Mono', 'Consolas', monospace; 
-    font-size: 12.5px;
-    padding: 3px 10px;
+    font-size: 11.5px;
+    padding: 2px 8px;
     margin-bottom: 1px;
     white-space: pre-wrap;
     color: #cfd8dc;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.diff-line::before {
+    content: '';
+    display: inline-block;
+    min-width: 14px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .diff-line-added { background-color: var(--diff-added-bg); }
 .diff-line-removed { background-color: var(--diff-removed-bg); }
 
 /* Diff States */
-.state-MISSED {
-    opacity: 0.35;
-    filter: grayscale(0.5);
+.state-CORRECT {
+    border-left: 3px solid #496c4b;
 }
+.state-CORRECT::before { content: '✓'; color: #5da063; }
+
+.state-MISSED {
+    opacity: 0.5;
+    border-left: 3px solid #804b4b;
+    background-color: rgba(128, 75, 75, 0.1);
+}
+.state-MISSED::before { content: '✗'; color: #b26b6b; }
 
 .state-EXTRACT {
-    border-left: 4px solid #cc7832; /* Darcula Orange Accent */
+    border-left: 3px solid #cc7832;
+    background-color: rgba(204, 120, 50, 0.1);
 }
+.state-EXTRACT::before { content: '!'; color: #cc7832; }
 
 /* Footer Styling */
 .main-footer {

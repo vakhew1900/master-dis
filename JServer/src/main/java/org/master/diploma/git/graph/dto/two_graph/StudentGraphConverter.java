@@ -16,7 +16,7 @@ import java.util.Set;
  * Converter for the first graph (Student's graph - G1).
  * Marks extra elements (not present in reference) as EXTRACT.
  */
-public class StudentGraphConverter extends GitGraphConverter {
+public class StudentGraphConverter extends TwoGraphConverter {
 
     public StudentGraphConverter(GraphCompareResult result) {
         super(result);

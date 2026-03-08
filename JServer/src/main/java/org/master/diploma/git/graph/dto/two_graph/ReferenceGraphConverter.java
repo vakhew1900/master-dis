@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Converter for the second graph (Reference graph - G2).
  * Marks missing elements (present in reference, but not in student's work) as MISSED.
  */
-public class ReferenceGraphConverter extends GitGraphConverter {
+public class ReferenceGraphConverter extends TwoGraphConverter {
 
     private final Map<Integer, Integer> g2ToG1;
 

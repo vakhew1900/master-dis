@@ -14,55 +14,42 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 /**
- * Generator for HTML reports to visualize comparison results between two Git graphs.
+ * Generator for HTML reports to visualize comparison results.
  */
-public class TwoGraphHtmlReportGenerator implements ReportGenerator {
+public class HtmlReportGenerator implements ReportGenerator {
 
-    private static final Logger logger = LogManager.getLogger(TwoGraphHtmlReportGenerator.class);
-    private static final String TEMPLATE_PATH = "/two_compare_graph/report_template.html";
-    private static final String STYLE_PATH = "/two_compare_graph/report_style.css";
-    private static final String SCRIPT_PATH = "/two_compare_graph/report_script.js";
+    private static final Logger logger = LogManager.getLogger(HtmlReportGenerator.class);
     private final Gson gson;
-    private final String outputPath;
 
-    public TwoGraphHtmlReportGenerator(String outputPath) {
+    public HtmlReportGenerator() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
-        this.outputPath = outputPath;
     }
 
-    /**
-     * Generates an HTML report from the comparison result.
-     *
-     * @param result     The comparison result DTO.
-     * @throws IOException If an error occurs during file operations.
-     */
     @Override
-    public void generateReport(GitComparisonResultDto result) throws IOException {
+    public void generateReport(GitComparisonResultDto result, ReportContext context) throws IOException {
         String json = gson.toJson(result);
-        String template = readResource(TEMPLATE_PATH);
-        String css = readResource(STYLE_PATH);
-        String js = readResource(SCRIPT_PATH);
+        String template = readResource(context.getTemplatePath());
+        String commonCss = context.getCommonStylePath() != null ? readResource(context.getCommonStylePath()) : "";
+        String css = readResource(context.getStylePath());
+        String js = readResource(context.getScriptPath());
 
         String html = template
+                .replace("{{COMMON_CSS}}", commonCss)
                 .replace("{{CSS}}", css)
                 .replace("{{JS}}", js)
                 .replace("{{DATA}}", json);
 
-        Path path = Path.of(outputPath);
+        Path path = Path.of(context.getOutputPath());
+        Files.createDirectories(path.getParent());
         Files.writeString(path, html, StandardCharsets.UTF_8);
         logger.info("Report generated successfully at: " + path.toAbsolutePath());
     }
 
-    /**
-     * Generates the report and attempts to open it in the default browser.
-     *
-     * @param result     The comparison result DTO.
-     */
     @Override
-    public void generateAndOpenReport(GitComparisonResultDto result) {
+    public void generateAndOpenReport(GitComparisonResultDto result, ReportContext context) {
         try {
-            generateReport(result);
-            File htmlFile = new File(outputPath);
+            generateReport(result, context);
+            File htmlFile = new File(context.getOutputPath());
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().browse(htmlFile.toURI());
             } else {

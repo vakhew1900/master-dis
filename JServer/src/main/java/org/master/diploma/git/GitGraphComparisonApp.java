@@ -4,14 +4,13 @@ import org.master.diploma.git.git.GitHelper;
 import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.dto.GitComparisonResultDto;
-import org.master.diploma.git.graph.dto.two_graph.TwoGraphComparisonResultDto;
-import org.master.diploma.git.graph.dto.two_graph.TwoGraphResultBuilder;
 import org.master.diploma.git.graph.subgraphmethod.BranchMethodExecutor;
 import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
 import org.master.diploma.git.label.LabelGenerator;
 import org.master.diploma.git.label.SimpleLabelGenerator;
+import org.master.diploma.git.report.HtmlReportGenerator;
+import org.master.diploma.git.report.ReportConfigurations;
 import org.master.diploma.git.report.ReportGenerator;
-import org.master.diploma.git.report.TwoGraphHtmlReportGenerator;
 
 import java.io.IOException;
 
@@ -30,7 +29,7 @@ public class GitGraphComparisonApp {
         this.labelGenerator = labelGenerator;
     }
 
-    public void run(String studentRepoPath, String referenceRepoPath) throws IOException {
+    public void run(String studentRepoPath, String referenceRepoPath, String baseOutputPath) throws IOException {
         System.out.println("Processing student repository: " + studentRepoPath);
         CommitGraph studentGraph = GitHelper.createCommitGraph(studentRepoPath);
         
@@ -44,10 +43,21 @@ public class GitGraphComparisonApp {
         System.out.println("Comparing graphs using " + methodExecutor.getClass().getSimpleName() + "...");
         GraphCompareResult compareResult = methodExecutor.execute(studentGraph, referenceGraph);
 
-        System.out.println("Generating report...");
-        GitComparisonResultDto resultDto =
-                new TwoGraphResultBuilder().build(studentGraph, referenceGraph, compareResult);
-        reportGenerator.generateAndOpenReport(resultDto);
+        System.out.println("Generating reports...");
+        
+        // Report 1: Two Graph Comparison
+        GitComparisonResultDto twoGraphDto =
+                new org.master.diploma.git.graph.dto.two_graph.TwoGraphResultBuilder().build(studentGraph, referenceGraph, compareResult);
+        String twoGraphPath = baseOutputPath.replace(".html", "_two.html");
+        if (twoGraphPath.equals(baseOutputPath)) twoGraphPath += "_two.html";
+        reportGenerator.generateAndOpenReport(twoGraphDto, org.master.diploma.git.report.ReportConfigurations.twoGraphContext(twoGraphPath));
+
+        // Report 2: Merged Graph Comparison
+        GitComparisonResultDto mergedGraphDto =
+                new org.master.diploma.git.graph.dto.merged_graph.MergedGraphResultBuilder().build(studentGraph, referenceGraph, compareResult);
+        String mergedGraphPath = baseOutputPath.replace(".html", "_merged.html");
+        if (mergedGraphPath.equals(baseOutputPath)) mergedGraphPath += "_merged.html";
+        reportGenerator.generateAndOpenReport(mergedGraphDto, org.master.diploma.git.report.ReportConfigurations.mergedGraphContext(mergedGraphPath));
         
         System.out.println("Done!");
     }
@@ -65,12 +75,12 @@ public class GitGraphComparisonApp {
 
         // Default implementation choices
         SubgraphMethodExecutor executor = new BranchMethodExecutor();
-        ReportGenerator reportGenerator = new TwoGraphHtmlReportGenerator(outputPath);
+        ReportGenerator reportGenerator = new org.master.diploma.git.report.HtmlReportGenerator();
         LabelGenerator labelGenerator = SimpleLabelGenerator.getInstance();
 
         GitGraphComparisonApp app = new GitGraphComparisonApp(executor, reportGenerator, labelGenerator);
         try {
-            app.run(studentPath, referencePath);
+            app.run(studentPath, referencePath, outputPath);
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();

@@ -21,11 +21,11 @@ public class MergedGraphConverter extends GitGraphConverter {
 
     private final Map<Integer, Integer> g1ToG2;
     private final Map<Integer, Integer> g2ToG1;
-    private final  CommitGraph referenceGraph;
+    private final  CommitGraph targetGraph;
 
-    public MergedGraphConverter(GraphCompareResult result, CommitGraph referenceGraph) {
+    public MergedGraphConverter(GraphCompareResult result, CommitGraph targetGraph) {
         super(result);
-        this.referenceGraph = referenceGraph;
+        this.targetGraph = targetGraph;
         this.g1ToG2 = result.getMatchingVertices();
         this.g2ToG1 = result.getMatchingVertices().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (a, b) -> a));
@@ -33,29 +33,29 @@ public class MergedGraphConverter extends GitGraphConverter {
 
 
     @Override
-    public GitGraphDto convert(CommitGraph studentGraph) {
+    public GitGraphDto convert(CommitGraph currentGraph) {
 
         List<NodeDto> nodes = new ArrayList<>();
         Set<Integer> processedG2Nodes = new HashSet<>();
 
-        for (Commit studentCommit : studentGraph.getVertices().stream().map(Vertex::asCommit).toList()) {
+        for (Commit studentCommit : currentGraph.getVertices().stream().map(Vertex::asCommit).toList()) {
             Integer g2Number = g1ToG2.get(studentCommit.getNumber());
             if (g2Number != null) {
-                Commit referenceCommit = referenceGraph.getVertex(g2Number);
+                Commit referenceCommit = targetGraph.getVertex(g2Number);
                 nodes.add(createMergedNode(studentCommit, referenceCommit));
                 processedG2Nodes.add(g2Number);
             } else {
-                nodes.add(createStudentOnlyNode(studentCommit));
+                nodes.add(createCurrentOnlyNode(studentCommit));
             }
         }
 
-        for (Commit referenceCommit : referenceGraph.getVertices().stream().map(Vertex::asCommit).toList()) {
+        for (Commit referenceCommit : targetGraph.getVertices().stream().map(Vertex::asCommit).toList()) {
             if (!processedG2Nodes.contains(referenceCommit.getNumber())) {
-                nodes.add(createReferenceOnlyNode(referenceCommit));
+                nodes.add(createTargetOnlyNode(referenceCommit));
             }
         }
 
-        List<LinkDto> links = buildMergedLinks(studentGraph, referenceGraph);
+        List<LinkDto> links = buildMergedLinks(currentGraph, targetGraph);
         return new GitGraphDto(nodes, links);
     }
 
@@ -81,14 +81,14 @@ public class MergedGraphConverter extends GitGraphConverter {
         return NodeDto.from(student, severity, diffs);
     }
 
-    private NodeDto createStudentOnlyNode(Commit student) {
+    private NodeDto createCurrentOnlyNode(Commit student) {
         List<DiffDto> diffs = student.getLabels().stream()
                 .map(l -> new DiffDto(l.getLabelInfo().getValue(), DiffDto.STATE_EXTRACT))
                 .collect(Collectors.toList());
         return NodeDto.from(student, NodeDto.SEVERITY_EXTRA, diffs);
     }
 
-    private NodeDto createReferenceOnlyNode(Commit reference) {
+    private NodeDto createTargetOnlyNode(Commit reference) {
         List<DiffDto> diffs = reference.getLabels().stream()
                 .map(l -> new DiffDto(l.getLabelInfo().getValue(), DiffDto.STATE_MISSED))
                 .collect(Collectors.toList());

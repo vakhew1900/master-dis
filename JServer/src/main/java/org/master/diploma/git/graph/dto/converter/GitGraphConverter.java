@@ -1,4 +1,4 @@
-package org.master.diploma.git.graph.dto.two_graph;
+package org.master.diploma.git.graph.dto.converter;
 
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.git.model.CommitGraph;

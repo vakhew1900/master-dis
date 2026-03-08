@@ -2,6 +2,7 @@ package org.master.diploma.git.graph.dto.two_graph;
 
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.dto.converter.GitGraphConverter;
 import org.master.diploma.git.graph.dto.samples.DiffDto;
 import org.master.diploma.git.graph.dto.samples.NodeDto;
 import org.master.diploma.git.label.GitLabel;

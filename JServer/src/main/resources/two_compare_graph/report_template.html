@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Git Graph Comparison Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+{{CSS}}
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">GIT COMPARISON REPORT</div>
+            <nav class="nav-bar">
+                <a href="#" class="nav-link">Главная</a>
+                <a href="#" class="nav-link active">Сравнение графов</a>
+                <a href="#" class="nav-link">Отчеты</a>
+                <a href="#" class="nav-link">Список заданий</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="legend">
+            <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Identical</div>
+            <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Modified</div>
+            <div class="legend-item"><div class="color-box severity-EXTRA"></div> Extra / Unmatched</div>
+            <div class="legend-item"><div class="color-box severity-MOVABLE"></div> Movable</div>
+        </div>
+
+        <div class="graphs-wrapper">
+            <div class="graph-container">
+                <div class="graph-header">Student Graph <span id="student-count"></span></div>
+                <div id="student-network" class="network"></div>
+            </div>
+            <div class="graph-container">
+                <div class="graph-header">Reference Graph <span id="reference-count"></span></div>
+                <div id="reference-network" class="network"></div>
+            </div>
+        </div>
+
+        <div id="details" class="details-panel">
+            <div style="text-align: center; opacity: 0.5; padding: 40px;">
+                <p>Select a node to see detailed commit comparison</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-desc">
+                <strong>JServer MCTS Analysis Tool</strong><br>
+                Experimental system for Maximum Common Transitive Subgraph comparison in Git repositories.
+                Designed for automated grading and structural analysis of version control history.
+            </div>
+            <div class="footer-copy">
+                &copy; Chupinin Anton 2026
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/javascript">
+{{JS}}
+    </script>
+</body>
+</html>

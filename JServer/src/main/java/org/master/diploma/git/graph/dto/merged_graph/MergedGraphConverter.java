@@ -45,7 +45,7 @@ public class MergedGraphConverter extends GitGraphConverter {
                 nodes.add(createMergedNode(studentCommit, referenceCommit));
                 processedG2Nodes.add(g2Number);
             } else {
-                nodes.add(createCurrentOnlyNode(studentCommit));
+                nodes. add(createCurrentOnlyNode(studentCommit));
             }
         }
 
@@ -60,25 +60,37 @@ public class MergedGraphConverter extends GitGraphConverter {
     }
 
     private NodeDto createMergedNode(Commit student, Commit reference) {
+        String severity = getSeverity(student);
+        List<DiffDto> diffs = createDiffs(student, reference);
+        return NodeDto.from(student, severity, diffs);
+    }
+
+    private String getSeverity(Commit commit) {
+        GraphCompareResult.LabelError error = result.getLabelErrors().get(commit.getNumber());
+        if (error == null || (error.getExtraLabels().isEmpty() && error.getMissingLabels().isEmpty())) {
+            return NodeDto.SEVERITY_IDENTICAL;
+        }
+        return NodeDto.SEVERITY_MODIFIED;
+    }
+
+    private List<DiffDto> createDiffs(Commit student, Commit reference) {
         GraphCompareResult.LabelError error = result.getLabelErrors().get(student.getNumber());
         Set<Integer> extraLabels = error != null ? new HashSet<>(error.getExtraLabels()) : Collections.emptySet();
         Set<Integer> missingLabels = error != null ? new HashSet<>(error.getMissingLabels()) : Collections.emptySet();
 
         List<DiffDto> diffs = new ArrayList<>();
+        // Add student labels (Identical or Extra)
         for (GitLabel label : student.getLabels()) {
             String state = extraLabels.contains(label.getId()) ? DiffDto.STATE_EXTRACT : DiffDto.STATE_CORRECT;
             diffs.add(new DiffDto(label.getLabelInfo().getValue(), state));
         }
+        // Add missing reference labels
         for (GitLabel label : reference.getLabels()) {
             if (missingLabels.contains(label.getId())) {
                 diffs.add(new DiffDto(label.getLabelInfo().getValue(), DiffDto.STATE_MISSED));
             }
         }
-
-        String severity = (extraLabels.isEmpty() && missingLabels.isEmpty()) 
-                ? NodeDto.SEVERITY_IDENTICAL : NodeDto.SEVERITY_MODIFIED;
-
-        return NodeDto.from(student, severity, diffs);
+        return diffs;
     }
 
     private NodeDto createCurrentOnlyNode(Commit student) {
@@ -104,6 +116,7 @@ public class MergedGraphConverter extends GitGraphConverter {
                 links.add(new LinkDto(source.getHash(), target.getHash()));
             }
         }
+
         for (Map.Entry<Integer, Set<Integer>> entry : referenceGraph.getAdjacencyMatrix().entrySet()) {
             Commit source = referenceGraph.getVertex(entry.getKey());
             String sourceId = getMergedId(source, g2ToG1, studentGraph);

@@ -10,7 +10,7 @@ import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.GraphCompareResult;
 import org.master.diploma.git.graph.dto.CompareResultDto;
 import org.master.diploma.git.graph.dto.GitComparisonResultDto;
-import org.master.diploma.git.graph.dto.GitGraphDto;
+import org.master.diploma.git.graph.dto.samples.GitGraphDto;
 import org.master.diploma.git.graph.dto.converter.ReferenceGraphConverter;
 import org.master.diploma.git.graph.dto.converter.StudentGraphConverter;
 

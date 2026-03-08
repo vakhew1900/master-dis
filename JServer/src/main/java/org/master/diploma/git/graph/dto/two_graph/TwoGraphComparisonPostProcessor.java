@@ -3,7 +3,7 @@ package org.master.diploma.git.graph.dto.two_graph;
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.dto.GitComparisonPostProcessor;
-import org.master.diploma.git.graph.dto.NodeDto;
+import org.master.diploma.git.graph.dto.samples.NodeDto;
 
 import java.util.HashSet;
 import java.util.List;

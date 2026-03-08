@@ -1,4 +1,4 @@
-package org.master.diploma.git.graph.dto;
+package org.master.diploma.git.graph.dto.samples;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;

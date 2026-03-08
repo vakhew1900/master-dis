@@ -1,0 +1,56 @@
+package org.master.diploma.git.graph.dto.two_graph;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.master.diploma.git.git.model.CommitGraph;
+import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.dto.CompareResultDto;
+import org.master.diploma.git.graph.dto.GitComparisonResultDto;
+import org.master.diploma.git.graph.dto.GitGraphDto;
+import org.master.diploma.git.graph.dto.converter.ReferenceGraphConverter;
+import org.master.diploma.git.graph.dto.converter.StudentGraphConverter;
+
+/**
+ * DTO for the traditional side-by-side comparison of two Git graphs.
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class TwoGraphComparisonResultDto implements GitComparisonResultDto {
+
+    private static final Gson GSON = new Gson();
+
+    public static class FIELDS {
+        public static final String FIRST_GRAPH = "first_graph";
+        public static final String SECOND_GRAPH = "second_graph";
+        public static final String COMPARE_RESULT = "compare_result";
+    }
+
+    @SerializedName(FIELDS.FIRST_GRAPH)
+    private GitGraphDto firstGraph;
+
+    @SerializedName(FIELDS.SECOND_GRAPH)
+    private GitGraphDto secondGraph;
+
+    @SerializedName(FIELDS.COMPARE_RESULT)
+    private CompareResultDto compareResult;
+
+    public TwoGraphComparisonResultDto(CommitGraph commitGraph1, CommitGraph commitGraph2, GraphCompareResult graphCompareResult) {
+        this.firstGraph = new StudentGraphConverter(graphCompareResult).convert(commitGraph1);
+        this.secondGraph = new ReferenceGraphConverter(graphCompareResult).convert(commitGraph2);
+        this.compareResult = CompareResultDto.from(commitGraph1, commitGraph2, graphCompareResult);
+
+        // Apply specific post-processing for two-graph view
+        new TwoGraphComparisonPostProcessor().postProcess(this, commitGraph1, commitGraph2);
+    }
+
+    @Override
+    public String toString() {
+       return GSON.toJson(this);
+    }
+}

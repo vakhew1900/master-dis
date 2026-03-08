@@ -14,18 +14,18 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 /**
- * Generator for HTML reports to visualize Git graph comparison results.
+ * Generator for HTML reports to visualize comparison results between two Git graphs.
  */
-public class HtmlReportGenerator implements ReportGenerator {
+public class TwoGraphHtmlReportGenerator implements ReportGenerator {
 
-    private static final Logger logger = LogManager.getLogger(HtmlReportGenerator.class);
-    private static final String TEMPLATE_PATH = "/report_template.html";
-    private static final String STYLE_PATH = "/report_style.css";
-    private static final String SCRIPT_PATH = "/report_script.js";
+    private static final Logger logger = LogManager.getLogger(TwoGraphHtmlReportGenerator.class);
+    private static final String TEMPLATE_PATH = "/two_compare_graph/report_template.html";
+    private static final String STYLE_PATH = "/two_compare_graph/report_style.css";
+    private static final String SCRIPT_PATH = "/two_compare_graph/report_script.js";
     private final Gson gson;
     private final String outputPath;
 
-    public HtmlReportGenerator(String outputPath) {
+    public TwoGraphHtmlReportGenerator(String outputPath) {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.outputPath = outputPath;
     }

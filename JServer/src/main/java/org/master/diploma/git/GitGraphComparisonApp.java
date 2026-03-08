@@ -8,8 +8,8 @@ import org.master.diploma.git.graph.subgraphmethod.BranchMethodExecutor;
 import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
 import org.master.diploma.git.label.LabelGenerator;
 import org.master.diploma.git.label.SimpleLabelGenerator;
-import org.master.diploma.git.report.HtmlReportGenerator;
 import org.master.diploma.git.report.ReportGenerator;
+import org.master.diploma.git.report.TwoGraphHtmlReportGenerator;
 
 import java.io.IOException;
 
@@ -62,7 +62,7 @@ public class GitGraphComparisonApp {
 
         // Default implementation choices
         SubgraphMethodExecutor executor = new BranchMethodExecutor();
-        ReportGenerator reportGenerator = new HtmlReportGenerator(outputPath);
+        ReportGenerator reportGenerator = new TwoGraphHtmlReportGenerator(outputPath);
         LabelGenerator labelGenerator = SimpleLabelGenerator.getInstance();
 
         GitGraphComparisonApp app = new GitGraphComparisonApp(executor, reportGenerator, labelGenerator);

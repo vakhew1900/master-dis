@@ -216,7 +216,7 @@ function renderNodeInfo(node) {
     const severityText = severityMap[node.severity] || node.severity;
 
     return `
-        <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 16px;">[${node.number}] ${node.hash.substring(0, 12)}...</h3>
+        <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash.substring(0, 12)}...</h3>
         <div style="margin-bottom: 5px;">
             <p style="margin: 2px 0; font-size: 13px;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex; vertical-align: middle; gap: 5px;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${severityText}</span></p>
         </div>

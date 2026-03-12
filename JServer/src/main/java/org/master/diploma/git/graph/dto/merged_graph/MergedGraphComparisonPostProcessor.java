@@ -22,7 +22,6 @@ public class MergedGraphComparisonPostProcessor extends GitComparisonPostProcess
         Set<String> matchedInSecond = new HashSet<>(dto.getCompareResult().getMatchedHashes1To2().values());
 
         for (NodeDto node : nodes) {
-            // Find student nodes that are extra
             if (!NodeDto.SEVERITY_EXTRA.equals(node.getSeverity())) {
                 continue;
             }
@@ -30,7 +29,6 @@ public class MergedGraphComparisonPostProcessor extends GitComparisonPostProcess
             Commit commit = first.getVertex(node.getNumber());
 
             for (NodeDto otherNode : nodes) {
-                // Find reference nodes that are missed and not yet matched
                 if (!NodeDto.SEVERITY_MISSED.equals(otherNode.getSeverity()) || matchedInSecond.contains(otherNode.getHash())) {
                     continue;
                 }

@@ -31,7 +31,7 @@ function init() {
 function renderNetwork(graphDto) {
     const nodes = new vis.DataSet(graphDto.nodes.map(node => ({
         id: node.id,
-        label: `[${node.number}] ${node.hash.substring(0, 7)}`,
+        label: `[${node.number}] ${node.hash.includes(' / ') ? node.hash : node.hash.substring(0, 7)}`,
         title: `${node.message}\nStatus: ${node.severity}`,
         className: `severity-${node.severity}`,
         color: getSeverityColor(node.severity)
@@ -58,7 +58,7 @@ function renderNetwork(graphDto) {
         },
         layout: {
             hierarchical: {
-                direction: 'UD',
+                direction: 'DU', // Flipped: Down to Up
                 sortMethod: 'directed',
                 nodeSpacing: 150,
                 levelSeparation: 100
@@ -73,7 +73,25 @@ function renderNetwork(graphDto) {
 
     network.on("click", function (params) {
         if (params.nodes.length > 0) {
-            showDetails(params.nodes[0]);
+            const nodeId = params.nodes[0];
+            const node = graphDto.nodes.find(n => n.id === nodeId);
+            
+            if (node && node.severity === 'MOVABLE') {
+                const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
+                let counterpartId = mapping[node.id]; // Try as student
+                if (!counterpartId) {
+                    // Try as reference
+                    counterpartId = Object.keys(mapping).find(key => mapping[key] === node.id);
+                }
+                
+                if (counterpartId) {
+                    network.selectNodes([node.id, counterpartId]);
+                    showMovableDetails(node.id, counterpartId);
+                    return;
+                }
+            }
+            
+            showDetails(nodeId);
         }
     });
 }
@@ -87,7 +105,7 @@ function showDetails(nodeId) {
 
     const html = `
         <div class="details-column">
-            <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash.substring(0, 12)}...</h3>
+            <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
             <div style="margin-bottom: 5px;">
                 <p style="margin: 2px 0; font-size: 13px;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex; vertical-align: middle; gap: 5px;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
             </div>
@@ -114,6 +132,45 @@ function showDetails(nodeId) {
         </div>
     `;
     document.getElementById(IDS.DETAILS_PANEL).innerHTML = html;
+}
+
+/**
+ * Displays details for two movable nodes side-by-side.
+ */
+function showMovableDetails(id1, id2) {
+    const node1 = comparisonData.merged_graph.nodes.find(n => n.id === id1);
+    const node2 = comparisonData.merged_graph.nodes.find(n => n.id === id2);
+    if (!node1 || !node2) return;
+
+    // Ensure student is first (optional, but consistent)
+    const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
+    const student = mapping[node1.id] ? node1 : node2;
+    const reference = student === node1 ? node2 : node1;
+
+    const html = `
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="details-column" style="border-left: 3px solid #6b90b2; padding-left: 10px; background: rgba(107, 144, 178, 0.05);">
+                <h4 style="color:#6b90b2; margin: 0 0 5px 0;">STUDENT (Moved)</h4>
+                ${renderNodeSummary(student)}
+            </div>
+            <div class="details-column" style="border-left: 3px solid #6b90b2; padding-left: 10px; background: rgba(107, 144, 178, 0.05);">
+                <h4 style="color:#6b90b2; margin: 0 0 5px 0;">REFERENCE (Moved)</h4>
+                ${renderNodeSummary(reference)}
+            </div>
+        </div>
+    `;
+    document.getElementById(IDS.DETAILS_PANEL).innerHTML = html;
+}
+
+function renderNodeSummary(node) {
+    return `
+        <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
+        <div class="metadata-row">
+            <div class="metadata-label">Message:</div>
+            <div class="metadata-value" style="color: #6a8759;">"${node.message}"</div>
+        </div>
+        ${node.diffs && node.diffs.length > 0 ? renderDiffs(node.diffs) : ''}
+    `;
 }
 
 if (document.readyState === 'complete') init();

@@ -62,7 +62,11 @@ public class MergedGraphConverter extends GitGraphConverter {
     private NodeDto createMergedNode(Commit student, Commit reference) {
         String severity = getSeverity(student);
         List<DiffDto> diffs = createDiffs(student, reference);
-        return NodeDto.from(student, severity, diffs);
+        NodeDto node = NodeDto.from(student, severity, diffs);
+        if (!student.getHash().equals(reference.getHash())) {
+            node.setHash(student.getHash().substring(0, 7) + " / " + reference.getHash().substring(0, 7));
+        }
+        return node;
     }
 
     private String getSeverity(Commit commit) {
@@ -104,7 +108,8 @@ public class MergedGraphConverter extends GitGraphConverter {
         List<DiffDto> diffs = reference.getLabels().stream()
                 .map(l -> new DiffDto(l.getLabelInfo().getValue(), DiffDto.STATE_MISSED))
                 .collect(Collectors.toList());
-        return NodeDto.from(reference, NodeDto.SEVERITY_MISSED, diffs);
+        NodeDto node = NodeDto.from(reference, NodeDto.SEVERITY_MISSED, diffs);
+        return node;
     }
 
     private List<LinkDto> buildMergedLinks(CommitGraph studentGraph, CommitGraph referenceGraph) {

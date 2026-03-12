@@ -2,42 +2,46 @@ package org.master.diploma.git.graph.dto.merged_graph;
 
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.git.model.CommitGraph;
-import org.master.diploma.git.graph.GraphCompareResult;
-import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.dto.GitComparisonPostProcessor;
+import org.master.diploma.git.graph.dto.samples.NodeDto;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Post-processor for the merged graph view.
- * Updates the raw GraphCompareResult with MOVABLE matches before the merged DTO is built.
+ * Updates NodeDto severities directly within the merged DTO after it is built.
  */
-public class MergedGraphComparisonPostProcessor extends GitComparisonPostProcessor<GraphCompareResult> {
+public class MergedGraphComparisonPostProcessor extends GitComparisonPostProcessor<MergedGraphComparisonResultDto> {
 
     @Override
-    public void postProcess(GraphCompareResult result, CommitGraph first, CommitGraph second) {
-        Set<Integer> matchedG1 = new HashSet<>(result.getMatchingVertices().keySet());
-        Set<Integer> matchedG2 = new HashSet<>(result.getMatchingVertices().values());
+    public void postProcess(MergedGraphComparisonResultDto dto, CommitGraph first, CommitGraph second) {
+        List<NodeDto> nodes = dto.getMergedGraph().getNodes();
+        
+        Set<String> matchedInSecond = new HashSet<>(dto.getCompareResult().getMatchedHashes1To2().values());
 
-        for (Commit commit1 : first.getVertices().stream().map(Vertex::asCommit).toList()) {
-            if (matchedG1.contains(commit1.getNumber())) {
+        for (NodeDto node : nodes) {
+            // Find student nodes that are extra
+            if (!NodeDto.SEVERITY_EXTRA.equals(node.getSeverity())) {
                 continue;
             }
 
-            for (Commit commit2 : second.getVertices().stream().map(Vertex::asCommit).toList()) {
-                if (matchedG2.contains(commit2.getNumber())) {
+            Commit commit = first.getVertex(node.getNumber());
+
+            for (NodeDto otherNode : nodes) {
+                // Find reference nodes that are missed and not yet matched
+                if (!NodeDto.SEVERITY_MISSED.equals(otherNode.getSeverity()) || matchedInSecond.contains(otherNode.getHash())) {
                     continue;
                 }
 
-                if (commit1.canRelate(commit2)) {
-                    // Match found as MOVABLE
-                    result.getMatchingVertices().put(commit1.getNumber(), commit2.getNumber());
-                    // Since we don't want to modify GraphCompareResult with new fields, 
-                    // we'll rely on the fact that these are now "matched" for the merger.
-                    
-                    matchedG1.add(commit1.getNumber());
-                    matchedG2.add(commit2.getNumber());
+                Commit otherCommit = second.getVertex(otherNode.getNumber());
+
+                if (commit.canRelate(otherCommit)) {
+                    node.setSeverity(NodeDto.SEVERITY_MOVABLE);
+                    otherNode.setSeverity(NodeDto.SEVERITY_MOVABLE);
+                    dto.getCompareResult().getMatchedHashes1To2().put(node.getHash(), otherNode.getHash());
+                    matchedInSecond.add(otherNode.getHash());
                     break;
                 }
             }

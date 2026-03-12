@@ -45,7 +45,7 @@ public class MergedGraphConverter extends GitGraphConverter {
                 nodes.add(createMergedNode(studentCommit, referenceCommit));
                 processedG2Nodes.add(g2Number);
             } else {
-                nodes. add(createCurrentOnlyNode(studentCommit));
+                nodes.add(createCurrentOnlyNode(studentCommit));
             }
         }
 

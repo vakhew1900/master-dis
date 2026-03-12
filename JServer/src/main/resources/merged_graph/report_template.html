@@ -30,8 +30,9 @@
             <div class="legend" style="justify-content: flex-start; gap: 20px; padding: 10px 15px;">
                 <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Идентичен</div>
                 <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Изменен</div>
-                <div class="legend-item"><div class="color-box severity-EXTRA"></div> Лишний (Student)</div>
-                <div class="legend-item"><div class="color-box severity-EXTRA" style="filter: brightness(0.7)"></div> Пропущен (Ref)</div>
+                <div class="legend-item"><div class="color-box severity-EXTRA"></div> Лишний (у студента)</div>
+                <div class="legend-item"><div class="color-box severity-MISSED"></div> Пропущен (в эталоне)</div>
+                <div class="legend-item"><div class="color-box severity-MOVABLE"></div> Перемещен</div>
             </div>
             
             <div class="graph-container">
@@ -71,6 +72,7 @@
     </footer>
 
     <script type="text/javascript">
+{{COMMON_JS}}
 {{JS}}
     </script>
 </body>

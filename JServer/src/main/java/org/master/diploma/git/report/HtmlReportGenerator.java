@@ -30,11 +30,13 @@ public class HtmlReportGenerator implements ReportGenerator {
         String json = gson.toJson(result);
         String template = readResource(context.getTemplatePath());
         String commonCss = context.getCommonStylePath() != null ? readResource(context.getCommonStylePath()) : "";
+        String commonJs = context.getCommonScriptPath() != null ? readResource(context.getCommonScriptPath()) : "";
         String css = readResource(context.getStylePath());
         String js = readResource(context.getScriptPath());
 
         String html = template
                 .replace("{{COMMON_CSS}}", commonCss)
+                .replace("{{COMMON_JS}}", commonJs)
                 .replace("{{CSS}}", css)
                 .replace("{{JS}}", js)
                 .replace("{{DATA}}", json);

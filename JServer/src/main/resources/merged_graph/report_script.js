@@ -78,21 +78,6 @@ function renderNetwork(graphDto) {
     });
 }
 
-function getSeverityColor(severity) {
-    const colors = {
-        'IDENTICAL': { background: '#365939', border: '#496c4b' },
-        'MODIFIED': { background: '#5e5339', border: '#80714a' },
-        'EXTRA': { background: '#593939', border: '#804b4b' },
-        'MOVABLE': { background: '#384c67', border: '#4b6a8e' }
-    };
-    return colors[severity] || colors['IDENTICAL'];
-}
-
-function nodeToId(hash, nodeList) {
-    const node = nodeList.find(n => n.hash === hash || n.id === hash);
-    return node ? node.id : hash;
-}
-
 /**
  * Displays details for the selected node.
  */
@@ -100,18 +85,11 @@ function showDetails(nodeId) {
     const node = comparisonData.merged_graph.nodes.find(n => n.id === nodeId);
     if (!node) return;
 
-    const severityMap = {
-        'IDENTICAL': 'Идентичен',
-        'MODIFIED': 'Изменен',
-        'EXTRA': 'Лишний / Не совпал',
-        'MOVABLE': 'Перемещен'
-    };
-
     const html = `
         <div class="details-column">
             <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash.substring(0, 12)}...</h3>
             <div style="margin-bottom: 5px;">
-                <p style="margin: 2px 0; font-size: 13px;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex; vertical-align: middle; gap: 5px;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${severityMap[node.severity] || node.severity}</span></p>
+                <p style="margin: 2px 0; font-size: 13px;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex; vertical-align: middle; gap: 5px;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
             </div>
             
             <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">
@@ -136,24 +114,6 @@ function showDetails(nodeId) {
         </div>
     `;
     document.getElementById(IDS.DETAILS_PANEL).innerHTML = html;
-}
-
-function renderDiffs(diffs) {
-    return `
-        <ul class="diff-list">
-            ${diffs.map(d => {
-                const className = `diff-line state-${d.state}`;
-                const value = d.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                return `<li class="${className}" title="Status: ${d.state}">${value}</li>`;
-            }).join('')}
-        </ul>
-    `;
-}
-
-function toggleMetadata(button) {
-    button.classList.toggle('active');
-    const content = button.nextElementSibling;
-    content.classList.toggle('show');
 }
 
 if (document.readyState === 'complete') init();

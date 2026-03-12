@@ -16,6 +16,7 @@ public class ReportConfigurations {
                 .stylePath(BASE_PATH + TWO_COMPARE_DIR + "report_style.css")
                 .scriptPath(BASE_PATH + TWO_COMPARE_DIR + "report_script.js")
                 .commonStylePath(BASE_PATH + COMMON_DIR + "common_style.css")
+                .commonScriptPath(BASE_PATH + COMMON_DIR + "common_script.js")
                 .outputPath(outputPath)
                 .build();
     }
@@ -26,6 +27,7 @@ public class ReportConfigurations {
                 .stylePath(BASE_PATH + MERGED_DIR + "report_style.css")
                 .scriptPath(BASE_PATH + MERGED_DIR + "report_script.js")
                 .commonStylePath(BASE_PATH + COMMON_DIR + "common_style.css")
+                .commonScriptPath(BASE_PATH + COMMON_DIR + "common_script.js")
                 .outputPath(outputPath)
                 .build();
     }

@@ -10,30 +10,6 @@ const IDS = {
 // Placeholder for injected JSON data
 const comparisonData = {{DATA}};
 
-// Darcula Palette for Graph Nodes
-const severityColors = {
-    'IDENTICAL': { 
-        background: '#365939', 
-        border: '#496c4b', 
-        highlight: { background: '#496c4b', border: '#5da063' } 
-    },
-    'MODIFIED': { 
-        background: '#5e5339', 
-        border: '#80714a', 
-        highlight: { background: '#80714a', border: '#a69664' } 
-    },
-    'EXTRA': { 
-        background: '#593939', 
-        border: '#804b4b', 
-        highlight: { background: '#804b4b', border: '#b26b6b' } 
-    },
-    'MOVABLE': { 
-        background: '#384c67', 
-        border: '#4b6a8e', 
-        highlight: { background: '#4b6a8e', border: '#6b90b2' } 
-    }
-};
-
 let studentNetwork = null;
 let referenceNetwork = null;
 
@@ -130,7 +106,7 @@ function createNetworkData(graphDto) {
         id: node.id,
         label: `<b>[${node.number}]</b>\n${node.id.substring(0, 7)}`,
         title: node.message,
-        color: severityColors[node.severity] || { background: '#3c3f41', border: '#4b4b4b' }
+        color: getSeverityColor(node.severity)
     }));
 
     const edges = (graphDto.links || []).map(link => ({
@@ -206,19 +182,10 @@ function showCombinedDetails(nodeId, clickedGraphType) {
 }
 
 function renderNodeInfo(node) {
-    const severityMap = {
-        'IDENTICAL': 'Идентичен',
-        'MODIFIED': 'Изменен',
-        'EXTRA': 'Лишний',
-        'MOVABLE': 'Перемещен'
-    };
-    
-    const severityText = severityMap[node.severity] || node.severity;
-
     return `
         <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash.substring(0, 12)}...</h3>
         <div style="margin-bottom: 5px;">
-            <p style="margin: 2px 0; font-size: 13px;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex; vertical-align: middle; gap: 5px;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${severityText}</span></p>
+            <p style="margin: 2px 0; font-size: 13px;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex; vertical-align: middle; gap: 5px;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
         </div>
         
         <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">
@@ -240,30 +207,6 @@ function renderNodeInfo(node) {
         </div>
 
         ${node.diffs && node.diffs.length > 0 ? '<h5 style="margin: 10px 0 5px 0; font-size: 12px; color: #888; text-transform: uppercase;">Changes:</h5>' + renderDiffs(node.diffs) : ''}
-    `;
-}
-
-function toggleMetadata(button) {
-    button.classList.toggle('active');
-    const content = button.nextElementSibling;
-    content.classList.toggle('show');
-}
-
-function renderDiffs(diffs) {
-    return `
-        <ul class="diff-list">
-            ${diffs.map(d => {
-                const value = d.value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                let className = 'diff-line';
-                if (value.startsWith('+')) className += ' diff-line-added';
-                else className += ' diff-line-removed';
-                
-                // Add state class (CORRECT, MISSED, EXTRACT)
-                if (d.state) className += ' state-' + d.state;
-                
-                return `<li class="${className}" title="Status: ${d.state}">${value}</li>`;
-            }).join('')}
-        </ul>
     `;
 }
 

@@ -104,7 +104,7 @@ public class MergedGraphConverter extends GitGraphConverter {
         List<DiffDto> diffs = reference.getLabels().stream()
                 .map(l -> new DiffDto(l.getLabelInfo().getValue(), DiffDto.STATE_MISSED))
                 .collect(Collectors.toList());
-        return NodeDto.from(reference, NodeDto.SEVERITY_EXTRA, diffs);
+        return NodeDto.from(reference, NodeDto.SEVERITY_MISSED, diffs);
     }
 
     private List<LinkDto> buildMergedLinks(CommitGraph studentGraph, CommitGraph referenceGraph) {

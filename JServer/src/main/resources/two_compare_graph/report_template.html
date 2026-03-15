@@ -26,12 +26,17 @@
     </header>
 
     <div class="container">
-        <div class="legend">
-            <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Идентичен</div>
-            <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Изменен</div>
-            <div class="legend-item"><div class="color-box severity-EXTRA"></div> Лишний / Не совпал</div>
-            <div class="legend-item"><div class="color-box severity-MOVABLE"></div> Перемещен</div>
-        </div>
+        <details class="legend-details" open>
+            <summary class="legend-summary">Легенда графа</summary>
+            <div class="legend-content">
+                <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Идентичен</div>
+                <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Изменен</div>
+                <div class="legend-item"><div class="color-box severity-EXTRA"></div> Лишний (нет в эталоне)</div>
+                <div class="legend-item"><div class="color-box severity-MISSED"></div> Пропущен (нет в работе)</div>
+                <div class="legend-item"><div class="color-box severity-MOVABLE_STUDENT"></div> Перемещен (студент)</div>
+                <div class="legend-item"><div class="color-box severity-MOVABLE_REFERENCE"></div> Перемещен (эталон)</div>
+            </div>
+        </details>
 
         <div class="graphs-wrapper">
             <div class="graph-container">

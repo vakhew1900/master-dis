@@ -29,17 +29,26 @@ function init() {
  * Renders the merged graph network.
  */
 function renderNetwork(graphDto) {
+    const studentHashes = Object.keys(comparisonData.compare_result.matched_hashes_1_to_2);
+    
     const nodes = new vis.DataSet(graphDto.nodes.map(node => {
-        let label = `[${node.number}] ${node.hash.includes(' / ') ? node.hash : node.hash.substring(0, 7)}`;
-        if (node.severity === 'EXTRA' || node.severity === 'MISSED') {
-            label = `тњЦ ${label}`;
+        let label = getShortHash(node.hash);
+        
+        let graphType = null;
+        if (node.severity === 'MOVABLE') {
+            graphType = studentHashes.includes(node.id) ? 'student' : 'reference';
         }
+
+        const colorConfig = getSeverityColor(node.severity, graphType);
+        
         return {
             id: node.id,
             label: label,
-            title: `${node.message}\nСтатус: ${getSeverityName(node.severity)}`,
+            title: createTooltip(node),
             className: `severity-${node.severity}`,
-            color: getSeverityColor(node.severity)
+            color: colorConfig,
+            shape: 'dot',
+            ctxRenderer: getCustomRenderer(node.severity)
         };
     }));
 
@@ -47,7 +56,7 @@ function renderNetwork(graphDto) {
         from: nodeToId(link.source, graphDto.nodes),
         to: nodeToId(link.target, graphDto.nodes),
         arrows: 'to',
-        color: { color: '#666', highlight: '#4b6eaf' },
+        color: { color: '#555', highlight: '#4b6eaf' },
         width: 2
     })));
 
@@ -55,20 +64,19 @@ function renderNetwork(graphDto) {
     const data = { nodes, edges };
     const options = {
         nodes: {
-            shape: 'dot',
-            size: 16,
+            size: 13,
             font: { color: '#a9b7c6', size: 12, face: 'Inter' },
             borderWidth: 2
         },
         edges: {
-            smooth: { type: 'cubicBezier', forceDirection: 'vertical', roundness: 0.4 }
+            smooth: { type: 'cubicBezier', forceDirection: 'vertical', roundness: 0.6 }
         },
         layout: {
             hierarchical: {
                 direction: 'DU', // Flipped: Down to Up
                 sortMethod: 'directed',
-                nodeSpacing: 100,
-                levelSeparation: 80,
+                nodeSpacing: 120,
+                levelSeparation: 100,
                 edgeMinimization: true,
                 parentCentralization: true
             }

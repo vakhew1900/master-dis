@@ -30,15 +30,14 @@ async function init() {
                     enabled: true,
                     direction: 'DU', // Bottom-up direction
                     sortMethod: 'directed',
-                    levelSeparation: 100,
-                    nodeSpacing: 100,
+                    levelSeparation: 120,
+                    nodeSpacing: 120,
                     edgeMinimization: true,
                     parentCentralization: true
                 }
             },
             nodes: {
-                shape: 'dot',
-                size: 20,
+                size: 16,
                 font: {
                     color: '#a9b7c6',
                     size: 13,
@@ -59,7 +58,7 @@ async function init() {
                 arrows: {
                     to: { enabled: true, scaleFactor: 1.0 }
                 },
-                color: { color: '#666', highlight: '#4b6eaf', hover: '#888' },
+                color: { color: '#555', highlight: '#4b6eaf', hover: '#888' },
                 width: 2,
                 selectionWidth: 3,
                 hoverWidth: 3,
@@ -67,7 +66,7 @@ async function init() {
                     enabled: true,
                     type: 'cubicBezier',
                     forceDirection: 'vertical',
-                    roundness: 0.5
+                    roundness: 0.6
                 }
             },
             physics: {
@@ -103,15 +102,17 @@ function createNetworkData(graphDto, graphType) {
     if (!graphDto || !graphDto.nodes) return { nodes: new vis.DataSet([]), edges: new vis.DataSet([]) };
     
     const nodes = graphDto.nodes.map(node => {
-        let label = `<b>[${node.number}]</b>\n${node.id.substring(0, 7)}`;
-        if (node.severity === 'EXTRA' || node.severity === 'MISSED') {
-            label = `тњЦ ${label}`;
-        }
+        let label = getShortHash(node.hash);
+        
+        const colorConfig = getSeverityColor(node.severity, graphType);
+        
         return {
             id: node.id,
             label: label,
-            title: `${node.message}\nСтатус: ${getSeverityName(node.severity)}`,
-            color: getSeverityColor(node.severity, graphType)
+            title: createTooltip(node),
+            color: colorConfig,
+            shape: 'dot',
+            ctxRenderer: getCustomRenderer(node.severity)
         };
     });
 

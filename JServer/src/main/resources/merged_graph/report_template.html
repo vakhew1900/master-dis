@@ -27,13 +27,17 @@
 
     <div class="container main-content-layout">
         <div class="left-panel">
-            <div class="legend" style="justify-content: flex-start; gap: 20px; padding: 10px 15px;">
-                <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Идентичен</div>
-                <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Изменен</div>
-                <div class="legend-item"><div class="color-box severity-EXTRA"></div> Лишний (у студента)</div>
-                <div class="legend-item"><div class="color-box severity-MISSED"></div> Пропущен (в эталоне)</div>
-                <div class="legend-item"><div class="color-box severity-MOVABLE"></div> Перемещен</div>
-            </div>
+            <details class="legend-details" open>
+                <summary class="legend-summary">Легенда графа</summary>
+                <div class="legend-content">
+                    <div class="legend-item"><div class="color-box severity-IDENTICAL"></div> Идентичен</div>
+                    <div class="legend-item"><div class="color-box severity-MODIFIED"></div> Изменен</div>
+                    <div class="legend-item"><div class="color-box severity-EXTRA"></div> Лишний (нет в эталоне)</div>
+                    <div class="legend-item"><div class="color-box severity-MISSED"></div> Пропущен (нет в работе)</div>
+                    <div class="legend-item"><div class="color-box severity-MOVABLE_STUDENT"></div> Перемещен (студент)</div>
+                    <div class="legend-item"><div class="color-box severity-MOVABLE_REFERENCE"></div> Перемещен (эталон)</div>
+                </div>
+            </details>
             
             <div class="graph-container">
                 <div class="graph-header">Объединенная история <span id="node-count"></span></div>
@@ -43,10 +47,10 @@
 
         <div class="right-panel">
             <div class="legend" style="margin-bottom: 15px; font-size: 12px; padding: 8px 15px;">
-                <div class="legend-item" style="color: #888; font-weight: 600; text-transform: uppercase; font-size: 10px;">Diff:</div>
-                <div class="legend-item"><span style="color: #5da063; font-weight: bold;">✓</span> Correct</div>
-                <div class="legend-item"><span style="color: #b26b6b; font-weight: bold;">✗</span> Missed</div>
-                <div class="legend-item"><span style="color: #cc7832; font-weight: bold;">!</span> Extra</div>
+                <div class="legend-item" style="color: #888; font-weight: 600; text-transform: uppercase; font-size: 10px;">Изменения:</div>
+                <div class="legend-item"><span style="color: #5da063; font-weight: bold;">✓</span> Верно</div>
+                <div class="legend-item"><span style="color: #b26b6b; font-weight: bold;">✗</span> Пропущено</div>
+                <div class="legend-item"><span style="color: #cc7832; font-weight: bold;">!</span> Лишнее</div>
             </div>
 
             <div id="details" class="details-panel" style="height: calc(100% - 60px); overflow-y: auto;">

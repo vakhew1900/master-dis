@@ -14,12 +14,14 @@
     --severity-modified-border: #80714a;
     --severity-extra-bg: #593939;
     --severity-extra-border: #804b4b;
-    --severity-extra-student: #593939; /* Same for now, but can be customized */
-    --severity-extra-reference: #482c2c;
-    --severity-movable-bg: #384c67;
-    --severity-movable-border: #4b6a8e;
+    --severity-missed-bg: transparent;
+    --severity-missed-border: #804b4b;
+    --severity-movable-student: #384c67;
+    --severity-movable-student-border: #4b6a8e;
+    --severity-movable-reference: #4e3867;
+    --severity-movable-reference-border: #6a4b8e;
     
-    --edge-color: #666666;
+    --edge-color: #555555;
     --edge-highlight: #4b6eaf;
     
     --diff-added-bg: #2d4436;
@@ -258,7 +260,10 @@ body {
 .severity-IDENTICAL { background-color: var(--severity-identical-bg); border-color: var(--severity-identical-border); }
 .severity-MODIFIED { background-color: var(--severity-modified-bg); border-color: var(--severity-modified-border); }
 .severity-EXTRA { background-color: var(--severity-extra-bg); border-color: var(--severity-extra-border); }
-.severity-MOVABLE { background-color: var(--severity-movable-bg); border-color: var(--severity-movable-border); }
+.severity-MISSED { background-color: var(--severity-missed-bg); border-color: var(--severity-missed-border); }
+.severity-MOVABLE { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); }
+.severity-MOVABLE_STUDENT { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); }
+.severity-MOVABLE_REFERENCE { background-color: var(--severity-movable-reference); border-color: var(--severity-movable-reference-border); }
 
 /* Collapsible Legend */
 .legend-details {
@@ -267,6 +272,7 @@ body {
     border: 1px solid var(--border-color);
     margin-bottom: 10px;
     overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 .legend-summary {
@@ -278,22 +284,68 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    list-style: none; /* Hide default arrow */
 }
 
-.legend-summary:hover {
-    background: rgba(255, 255, 255, 0.05);
+.legend-summary::-webkit-details-marker {
+    display: none;
 }
 
-.legend-summary::marker {
+.legend-summary::before {
+    content: '\25B8';
+    display: inline-block;
+    transition: transform 0.3s ease;
     color: var(--nav-active);
 }
 
+.legend-details[open] .legend-summary::before {
+    transform: rotate(90deg);
+}
+
 .legend-content {
-    padding: 10px 20px 20px 20px;
+    padding: 15px 20px;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     border-top: 1px solid var(--border-color);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.legend-details[open] .legend-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Custom Tooltip Styling */
+div.vis-tooltip {
+    background-color: var(--panel-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-main) !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+    font-family: var(--font-family) !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    max-width: 450px !important;
+    pointer-events: none;
+}
+
+.tooltip-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: var(--text-header);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.tooltip-diff {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    margin-top: 5px;
 }
 
 /* Diff Styling */

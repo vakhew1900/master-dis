@@ -122,40 +122,89 @@ function createTooltip(node) {
  * Custom renderer for nodes.
  */
 function getCustomRenderer(severity) {
-    return function({ ctx, x, y, state: { selected, hover }, style }) {
-        const size = style.size;
+    return function({ ctx, x, y, state: { selected, hover }, style, label }) {
+        const {
+            color = '#97C2FC',      // заливка узла
+            borderColor = '#2B7CE9',
+            borderWidth = 1,
+            size = 20,
+            shadow = false,
+            shadowColor = 'rgba(0,0,0,0.3)',
+            shadowSize = 5,
+            shadowX = 2,
+            shadowY = 2
+        } = style;
+
         const currentSeverity = (severity || '').trim().toUpperCase();
 
-        // 1. Draw base circle - vis.js has already resolved highlight colors into style.background
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, 2 * Math.PI, false);
-        ctx.fillStyle = style.background; // Use the already-resolved background color
-        ctx.fill();
-        
-        // 2. Draw border
-        ctx.strokeStyle = style.borderColor;
-        ctx.lineWidth = style.borderWidth;
-        ctx.stroke();
-        
-        // 3. Draw Red Cross for EXTRA or MISSED nodes
-        if (currentSeverity === 'EXTRA' || currentSeverity === 'MISSED') {
-            ctx.beginPath();
-            const crossSize = size * 0.8;
-            ctx.moveTo(x - crossSize, y - crossSize);
-            ctx.lineTo(x + crossSize, y + crossSize);
-            ctx.moveTo(x + crossSize, y - crossSize);
-            ctx.lineTo(x - crossSize, y + crossSize);
-            ctx.strokeStyle = '#f44336';
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
-            ctx.stroke();
-        }
+        return {
+            drawNode() {
+                if (typeof x !== 'number' || typeof y !== 'number' || !ctx?.beginPath) return;
+
+                // 🔹 Тень (если включена)
+                if (shadow) {
+                    ctx.save();
+                    ctx.shadowColor = shadowColor;
+                    ctx.shadowBlur = shadowSize;
+                    ctx.shadowOffsetX = shadowX;
+                    ctx.shadowOffsetY = shadowY;
+                }
+
+                // 🔹 Основной круг
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+                ctx.fillStyle = color;  // ← правильно: style.color, не background
+                ctx.fill();
+
+                // 🔹 Сброс тени для границы (чтобы не размывалась)
+                if (shadow) {
+                    ctx.shadowBlur = 0;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                }
+
+                // 🔹 Граница
+                ctx.strokeStyle = borderColor;
+                ctx.lineWidth = borderWidth;
+                ctx.stroke();
+
+                // 🔹 Восстанавливаем контекст после тени
+                if (shadow) ctx.restore();
+
+                // 🔹 Красный крест для EXTRA / MISSED
+                if (currentSeverity === 'EXTRA' || currentSeverity === 'MISSED') {
+                    ctx.beginPath();
+                    const crossSize = size * 0.8;
+                    ctx.moveTo(x - crossSize, y - crossSize);
+                    ctx.lineTo(x + crossSize, y + crossSize);
+                    ctx.moveTo(x + crossSize, y - crossSize);
+                    ctx.lineTo(x - crossSize, y + crossSize);
+                    ctx.strokeStyle = '#f44336';
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                }
+            },
+
+            drawExternalLabel() {
+                if (label?.text && ctx?.fillText) {
+                    ctx.font = style.font || '14px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = style.fontFill || '#000';
+                    ctx.fillText(label.text, x, y + size + 18);
+                }
+            },
+
+            nodeDimensions: {
+                width: size * 2,
+                height: size * 2
+            }
+        };
     };
 }
 
-/**
- * Maps a node hash or ID to the actual node ID in vis.network.
- */
+
 function nodeToId(hash, nodeList) {
     const node = nodeList.find(n => n.hash === hash || n.id === hash);
     return node ? node.id : hash;

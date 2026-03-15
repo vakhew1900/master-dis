@@ -41,14 +41,13 @@ function renderNetwork(graphDto) {
         }
 
         const colorConfig = getSeverityColor(node.severity, graphType);
-        
+
         return {
             id: node.id,
             label: label,
             title: createTooltip(node),
-            className: `severity-${node.severity}`,
             color: colorConfig,
-            shape: 'dot',
+            shape: (node.severity === 'EXTRA')? 'custom': 'dot',
             ctxRenderer: getCustomRenderer(node.severity)
         };
     }));

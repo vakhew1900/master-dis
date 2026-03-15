@@ -259,7 +259,9 @@ body {
 }
 
 .color-box.severity-EXTRA::before,
-.color-box.severity-EXTRA::after {
+.color-box.severity-EXTRA::after,
+.color-box.severity-MISSED::before,
+.color-box.severity-MISSED::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -271,11 +273,13 @@ body {
     border-radius: 1px;
 }
 
-.color-box.severity-EXTRA::before {
+.color-box.severity-EXTRA::before,
+.color-box.severity-MISSED::before {
     transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.color-box.severity-EXTRA::after {
+.color-box.severity-EXTRA::after,
+.color-box.severity-MISSED::after {
     transform: translate(-50%, -50%) rotate(-45deg);
 }
 

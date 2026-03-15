@@ -153,13 +153,13 @@ function createNetworkData(graphDto, graphType) {
         let label = getShortHash(node.hash);
         
         const colorConfig = getSeverityColor(node.severity, graphType);
-        
+        console.log(node.severity)
         return {
             id: node.id,
             label: label,
             title: createTooltip(node),
             color: colorConfig,
-            shape: 'dot',
+            shape: (node.severity === 'EXTRA')? 'custom': 'dot',
             ctxRenderer: getCustomRenderer(node.severity)
         };
     });

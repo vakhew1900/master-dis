@@ -19,9 +19,9 @@ const SEVERITY_COLORS = {
         highlight: { background: '#804b4b', border: '#b26b6b' } 
     },
     'MISSED': { 
-        background: 'rgba(0,0,0,0)', 
+        background: '#2b2b2b', 
         border: '#804b4b', 
-        highlight: { background: 'rgba(128, 75, 75, 0.2)', border: '#b26b6b' } 
+        highlight: { background: '#3c3f41', border: '#b26b6b' } /* Opaque highlight */
     },
     'MOVABLE': { 
         background: '#384c67', 
@@ -72,9 +72,9 @@ function getSeverityName(severity) {
  */
 function getShortHash(hash) {
     if (!hash) return '';
-    // Handle multiple hashes separated by '/' or ' / '
+    // For merged nodes, shorten each part to keep the label manageable
     if (hash.includes('/')) {
-        return hash.split('/').map(h => h.trim().substring(0, 7)).join(' / ');
+        return hash.split('/').map(h => h.trim().substring(0, 4)).join(' / ');
     }
     return hash.substring(0, 7);
 }
@@ -119,42 +119,35 @@ function createTooltip(node) {
 }
 
 /**
- * Custom renderer for nodes that handles ALL nodes correctly.
+ * Custom renderer for nodes.
  */
 function getCustomRenderer(severity) {
     return function({ ctx, x, y, state: { selected, hover }, style }) {
         const size = style.size;
-        
-        // 1. Draw base circle
+        const currentSeverity = (severity || '').trim().toUpperCase();
+
+        // 1. Draw base circle - vis.js has already resolved highlight colors into style.background
         ctx.beginPath();
         ctx.arc(x, y, size, 0, 2 * Math.PI, false);
-        
-        if (severity === 'MISSED') {
-            ctx.fillStyle = '#2b2b2b'; // Same as --panel-bg
-        } else {
-            ctx.fillStyle = style.color; // Filled with status color
-        }
+        ctx.fillStyle = style.background; // Use the already-resolved background color
         ctx.fill();
         
         // 2. Draw border
         ctx.strokeStyle = style.borderColor;
         ctx.lineWidth = style.borderWidth;
-        if (selected || hover) {
-            ctx.lineWidth = style.borderWidth * 2.5;
-            ctx.strokeStyle = style.highlightColor || style.borderColor;
-        }
         ctx.stroke();
         
-        // 3. Draw Red Cross for EXTRA nodes
-        if (severity === 'EXTRA') {
+        // 3. Draw Red Cross for EXTRA or MISSED nodes
+        if (currentSeverity === 'EXTRA' || currentSeverity === 'MISSED') {
             ctx.beginPath();
-            const crossSize = size * 0.7;
+            const crossSize = size * 0.8;
             ctx.moveTo(x - crossSize, y - crossSize);
             ctx.lineTo(x + crossSize, y + crossSize);
             ctx.moveTo(x + crossSize, y - crossSize);
             ctx.lineTo(x - crossSize, y + crossSize);
-            ctx.strokeStyle = '#ff4444';
-            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = '#f44336';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
             ctx.stroke();
         }
     };

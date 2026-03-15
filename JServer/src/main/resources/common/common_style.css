@@ -14,7 +14,7 @@
     --severity-modified-border: #80714a;
     --severity-extra-bg: #593939;
     --severity-extra-border: #804b4b;
-    --severity-missed-bg: transparent;
+    --severity-missed-bg: #2b2b2b; /* Use solid background to match renderer */
     --severity-missed-border: #804b4b;
     --severity-movable-student: #384c67;
     --severity-movable-student-border: #4b6a8e;
@@ -255,6 +255,28 @@ body {
     height: 16px;
     border-radius: 50%;
     border: 2px solid;
+    position: relative; /* Needed for pseudo-element positioning */
+}
+
+.color-box.severity-EXTRA::before,
+.color-box.severity-EXTRA::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 110%;
+    height: 2.5px;
+    background-color: #f44336;
+    transform-origin: center;
+    border-radius: 1px;
+}
+
+.color-box.severity-EXTRA::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.color-box.severity-EXTRA::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .severity-IDENTICAL { background-color: var(--severity-identical-bg); border-color: var(--severity-identical-border); }

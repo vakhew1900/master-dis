@@ -79,8 +79,8 @@ function renderNetwork(graphDto) {
             hierarchical: {
                 direction: 'DU', // Flipped: Down to Up
                 sortMethod: 'directed',
-                nodeSpacing: 65,
-                levelSeparation: 65,
+                nodeSpacing: 80,
+                levelSeparation: 80,
                 edgeMinimization: true,
                 parentCentralization: true,
                 blockShifting: true
@@ -89,11 +89,25 @@ function renderNetwork(graphDto) {
         physics: {
             enabled: false
         },
-        interaction: { hover: true, selectConnectedEdges: false }
+        interaction: { 
+            hover: true, 
+            selectConnectedEdges: false,
+            dragNodes: false
+        }
     };
 
     network = new vis.Network(container, data, options);
     document.getElementById(IDS.NODE_COUNT).textContent = `(${graphDto.nodes.length} узлов)`;
+
+    // Prevent view dragging when a drag starts on a node
+    network.on("dragStart", function (params) {
+        if (params.nodes.length > 0) {
+            network.setOptions({ interaction: { dragView: false } });
+        }
+    });
+    network.on("dragEnd", function () {
+        network.setOptions({ interaction: { dragView: true } });
+    });
 
     // DRAW dashed line manually on canvas to avoid layout shifts
     network.on("afterDrawing", function (ctx) {
@@ -113,35 +127,55 @@ function renderNetwork(graphDto) {
         }
     });
 
-    network.on("click", function (params) {
-        // Reset pair
-        activeMovablePair = null;
-
+    network.on("dragEnd", function (params) {
+        network.setOptions({ interaction: { dragView: true } });
+        // If we just finished dragging a node (and didn't drag it far), treat it as a click
         if (params.nodes.length > 0) {
-            const nodeId = params.nodes[0];
-            const node = graphDto.nodes.find(n => n.id === nodeId);
-            
-            if (node && node.severity === 'MOVABLE') {
-                const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
-                let counterpartId = mapping[node.id]; // Try as student
-                if (!counterpartId) {
-                    // Try as reference
-                    counterpartId = Object.keys(mapping).find(key => mapping[key] === node.id);
-                }
-                
-                if (counterpartId) {
-                    network.selectNodes([node.id, counterpartId]);
-                    activeMovablePair = { from: node.id, to: counterpartId };
-                    showMovableDetails(node.id, counterpartId);
-                    network.redraw(); // Trigger manual drawing
-                    return;
-                }
-            }
-            
-            showDetails(nodeId);
+            handleNodeClick(params.nodes[0]);
         }
-        network.redraw();
     });
+
+    // This handler now only fires for true clicks, not drags
+    network.on("click", function (params) {
+        if (params.nodes.length > 0) {
+            handleNodeClick(params.nodes[0]);
+        }
+    });
+}
+
+/**
+ * Handles all logic for when a node is clicked or selected via drag-release.
+ * @param {string} nodeId The ID of the selected node.
+ */
+function handleNodeClick(nodeId) {
+    // Reset any active movable pair drawings
+    activeMovablePair = null;
+    
+    const node = comparisonData.merged_graph.nodes.find(n => n.id === nodeId);
+    if (!node) return;
+
+    // Special handling for MOVABLE nodes to select and detail both
+    if (node.severity === 'MOVABLE') {
+        const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
+        let counterpartId = mapping[node.id]; // Try as student
+        if (!counterpartId) {
+            // Try as reference
+            counterpartId = Object.keys(mapping).find(key => mapping[key] === node.id);
+        }
+        
+        if (counterpartId) {
+            network.selectNodes([node.id, counterpartId]);
+            activeMovablePair = { from: node.id, to: counterpartId };
+            showMovableDetails(node.id, counterpartId);
+            network.redraw(); // Trigger redraw for the dashed line
+            return;
+        }
+    }
+    
+    // Default action: select the single node and show its details
+    network.selectNodes([nodeId]);
+    showDetails(nodeId);
+    network.redraw();
 }
 
 /**

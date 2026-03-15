@@ -45,8 +45,8 @@ function renderNetwork(graphDto, containerId, graphType) {
                 enabled: true,
                 direction: 'DU', // Bottom-up direction
                 sortMethod: 'directed',
-                levelSeparation: 65,
-                nodeSpacing: 65,
+                levelSeparation: 80,
+                nodeSpacing: 80,
                 edgeMinimization: true,
                 parentCentralization: true,
                 blockShifting: true
@@ -88,7 +88,8 @@ function renderNetwork(graphDto, containerId, graphType) {
         interaction: {
             hover: true,
             tooltipDelay: 200,
-            hideEdgesOnDrag: false
+            hideEdgesOnDrag: false,
+            dragNodes: false
         }
     };
 
@@ -97,10 +98,25 @@ function renderNetwork(graphDto, containerId, graphType) {
     if (graphType === 'student') studentNetwork = network;
     else referenceNetwork = network;
 
+    // Prevent view dragging when a drag starts on a node
+    network.on("dragStart", function (params) {
+        if (params.nodes.length > 0) {
+            network.setOptions({ interaction: { dragView: false } });
+        }
+    });
+
+    // On drag end, re-enable view dragging and handle it as a selection event
+    network.on("dragEnd", function (params) {
+        network.setOptions({ interaction: { dragView: true } });
+        if (params.nodes.length > 0) {
+            handleNodeSelection(params.nodes[0], graphType);
+        }
+    });
+
+    // This handler now only fires for true clicks (no dragging)
     network.on("click", function (params) {
         if (params.nodes.length > 0) {
-            const nodeId = params.nodes[0];
-            handleNodeSelection(nodeId, graphType);
+            handleNodeSelection(params.nodes[0], graphType);
         }
     });
 
@@ -165,12 +181,12 @@ function createNetworkData(graphDto, graphType) {
  */
 function showDetails(nodeId, counterpartId, sourceGraphType) {
     const studentNode = sourceGraphType === 'student' ? 
-        comparisonData.graph1.nodes.find(n => n.id === nodeId) : 
-        (counterpartId ? comparisonData.graph1.nodes.find(n => n.id === counterpartId) : null);
+        comparisonData.first_graph.nodes.find(n => n.id === nodeId) :
+        (counterpartId ? comparisonData.first_graph.nodes.find(n => n.id === counterpartId) : null);
     
     const referenceNode = sourceGraphType === 'reference' ? 
-        comparisonData.graph2.nodes.find(n => n.id === nodeId) : 
-        (counterpartId ? comparisonData.graph2.nodes.find(n => n.id === counterpartId) : null);
+        comparisonData.second_graph.nodes.find(n => n.id === nodeId) :
+        (counterpartId ? comparisonData.second_graph.nodes.find(n => n.id === counterpartId) : null);
 
     const html = `
         <div class="details-grid">

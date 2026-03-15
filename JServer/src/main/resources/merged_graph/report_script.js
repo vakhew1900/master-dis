@@ -7,6 +7,7 @@ const IDS = {
 
 let network = null;
 let comparisonData = null;
+let activeMovablePair = null; // Store pair for canvas drawing
 
 /**
  * Initializes the report.
@@ -69,31 +70,52 @@ function renderNetwork(graphDto) {
             borderWidth: 2
         },
         edges: {
-            smooth: { type: 'cubicBezier', forceDirection: 'vertical', roundness: 0.6 }
+            smooth: { 
+                type: 'curvedCW', 
+                roundness: 0.2 
+            }
         },
         layout: {
             hierarchical: {
                 direction: 'DU', // Flipped: Down to Up
                 sortMethod: 'directed',
-                nodeSpacing: 120,
-                levelSeparation: 100,
+                nodeSpacing: 65,
+                levelSeparation: 65,
                 edgeMinimization: true,
-                parentCentralization: true
+                parentCentralization: true,
+                blockShifting: true
             }
         },
-        physics: false,
+        physics: {
+            enabled: false
+        },
         interaction: { hover: true, selectConnectedEdges: false }
     };
 
     network = new vis.Network(container, data, options);
     document.getElementById(IDS.NODE_COUNT).textContent = `(${graphDto.nodes.length} узлов)`;
 
-    network.on("click", function (params) {
-        // Clear previous movable edges
-        const currentEdges = edges.get({ filter: (e) => e.isMovable });
-        if (currentEdges.length > 0) {
-            edges.remove(currentEdges.map(e => e.id));
+    // DRAW dashed line manually on canvas to avoid layout shifts
+    network.on("afterDrawing", function (ctx) {
+        if (activeMovablePair) {
+            const pos1 = network.getPositions([activeMovablePair.from])[activeMovablePair.from];
+            const pos2 = network.getPositions([activeMovablePair.to])[activeMovablePair.to];
+            if (pos1 && pos2) {
+                ctx.strokeStyle = 'rgba(75, 110, 175, 0.7)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(pos1.x, pos1.y);
+                ctx.lineTo(pos2.x, pos2.y);
+                ctx.stroke();
+                ctx.setLineDash([]); // reset for other drawings
+            }
         }
+    });
+
+    network.on("click", function (params) {
+        // Reset pair
+        activeMovablePair = null;
 
         if (params.nodes.length > 0) {
             const nodeId = params.nodes[0];
@@ -109,26 +131,16 @@ function renderNetwork(graphDto) {
                 
                 if (counterpartId) {
                     network.selectNodes([node.id, counterpartId]);
-                    
-                    // Add temporary dashed edge between moved nodes
-                    edges.add({
-                        id: `movable-${node.id}-${counterpartId}`,
-                        from: node.id,
-                        to: counterpartId,
-                        dashes: true,
-                        color: { color: 'rgba(75, 110, 175, 0.4)' },
-                        width: 1,
-                        arrows: '',
-                        isMovable: true
-                    });
-
+                    activeMovablePair = { from: node.id, to: counterpartId };
                     showMovableDetails(node.id, counterpartId);
+                    network.redraw(); // Trigger manual drawing
                     return;
                 }
             }
             
             showDetails(nodeId);
         }
+        network.redraw();
     });
 }
 
@@ -139,11 +151,17 @@ function showDetails(nodeId) {
     const node = comparisonData.merged_graph.nodes.find(n => n.id === nodeId);
     if (!node) return;
 
+    let colorClass = `text-severity-${node.severity}`;
+    if (node.severity === 'MOVABLE') {
+        const studentHashes = Object.keys(comparisonData.compare_result.matched_hashes_1_to_2);
+        colorClass = studentHashes.includes(node.id) ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+    }
+
     const html = `
         <div class="details-column">
             <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
             <div style="margin-bottom: 5px;">
-                <p style="margin: 2px 0; font-size: 13px;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex; vertical-align: middle; gap: 5px;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
+                <p style="margin: 2px 0; font-size: 13px;"><strong>Статус:</strong> <span class="legend-item ${colorClass}" style="display:inline-flex; vertical-align: middle; gap: 5px; font-weight: bold;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
             </div>
             
             <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">
@@ -164,7 +182,7 @@ function showDetails(nodeId) {
                 </div>
             </div>
 
-            ${node.diffs && node.diffs.length > 0 ? '<h5 style="margin: 10px 0 5px 0; font-size: 12px; color: #888; text-transform: uppercase;">Merged Changes:</h5>' + renderDiffs(node.diffs) : ''}
+            ${node.diffs && node.diffs.length > 0 ? '<h5 style="margin: 10px 0 5px 0; font-size: 12px; color: #888; text-transform: uppercase;">Объединенные изменения:</h5>' + renderDiffs(node.diffs) : ''}
         </div>
     `;
     document.getElementById(IDS.DETAILS_PANEL).innerHTML = html;
@@ -186,11 +204,11 @@ function showMovableDetails(id1, id2) {
     const html = `
         <div style="display: flex; flex-direction: column; gap: 20px;">
             <div class="details-column" style="border-left: 3px solid #6b90b2; padding-left: 10px; background: rgba(107, 144, 178, 0.05);">
-                <h4 style="color:#6b90b2; margin: 0 0 5px 0;">STUDENT (Moved)</h4>
+                <h4 style="color:#6b90b2; margin: 0 0 5px 0;">СТУДЕНТ (Перемещен)</h4>
                 ${renderNodeSummary(student)}
             </div>
-            <div class="details-column" style="border-left: 3px solid #6b90b2; padding-left: 10px; background: rgba(107, 144, 178, 0.05);">
-                <h4 style="color:#6b90b2; margin: 0 0 5px 0;">REFERENCE (Moved)</h4>
+            <div class="details-column" style="border-left: 3px solid #4e3867; padding-left: 10px; background: rgba(78, 56, 103, 0.05);">
+                <h4 style="color:#906bb2; margin: 0 0 5px 0;">ЭТАЛОН (Перемещен)</h4>
                 ${renderNodeSummary(reference)}
             </div>
         </div>
@@ -199,11 +217,28 @@ function showMovableDetails(id1, id2) {
 }
 
 function renderNodeSummary(node) {
+    let colorClass = `text-severity-${node.severity}`;
+    if (node.severity === 'MOVABLE') {
+        const studentHashes = Object.keys(comparisonData.compare_result.matched_hashes_1_to_2);
+        colorClass = studentHashes.includes(node.id) ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+    }
+
     return `
         <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
+        <div style="margin-bottom: 5px;">
+            <p style="margin: 2px 0; font-size: 13px;"><strong>Статус:</strong> <span class="legend-item ${colorClass}" style="display:inline-flex; vertical-align: middle; gap: 5px; font-weight: bold;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
+        </div>
         <div class="metadata-row">
             <div class="metadata-label">Message:</div>
             <div class="metadata-value" style="color: #6a8759;">"${node.message}"</div>
+        </div>
+        <div class="metadata-row">
+            <div class="metadata-label">Author:</div>
+            <div class="metadata-value">${node.author ? node.author.name : 'N/A'}</div>
+        </div>
+        <div class="metadata-row">
+            <div class="metadata-label">Date:</div>
+            <div class="metadata-value" style="color: #cc7832">${node.commitDate}</div>
         </div>
         ${node.diffs && node.diffs.length > 0 ? renderDiffs(node.diffs) : ''}
     `;

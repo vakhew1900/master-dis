@@ -7,97 +7,129 @@ const IDS = {
     REFERENCE_COUNT: 'reference-count'
 };
 
-// Placeholder for injected JSON data
-const comparisonData = {{DATA}};
-
 let studentNetwork = null;
 let referenceNetwork = null;
+let comparisonData = null;
 
-async function init() {
-    console.log("Initializing Enhanced Git Comparison Report...");
-    
-    await new Promise(resolve => setTimeout(resolve, 200));
-
-    if (typeof vis === 'undefined') {
-        setTimeout(init, 500);
-        return;
-    }
-
+/**
+ * Initializes the report.
+ */
+function init() {
     try {
-        const options = {
-            layout: {
-                hierarchical: {
-                    enabled: true,
-                    direction: 'DU', // Bottom-up direction
-                    sortMethod: 'directed',
-                    levelSeparation: 120,
-                    nodeSpacing: 120,
-                    edgeMinimization: true,
-                    parentCentralization: true
-                }
-            },
-            nodes: {
-                size: 16,
-                font: {
-                    color: '#a9b7c6',
-                    size: 13,
-                    face: 'Inter, Segoe UI',
-                    multi: true,
-                    bold: { color: '#ffffff' }
-                },
-                borderWidth: 2,
-                shadow: {
-                    enabled: true,
-                    color: 'rgba(0,0,0,0.3)',
-                    size: 5,
-                    x: 2,
-                    y: 2
-                }
-            },
-            edges: {
-                arrows: {
-                    to: { enabled: true, scaleFactor: 1.0 }
-                },
-                color: { color: '#555', highlight: '#4b6eaf', hover: '#888' },
-                width: 2,
-                selectionWidth: 3,
-                hoverWidth: 3,
-                smooth: {
-                    enabled: true,
-                    type: 'cubicBezier',
-                    forceDirection: 'vertical',
-                    roundness: 0.6
-                }
-            },
-            physics: {
-                enabled: false // Hierarchical layout works better without physics once stabilized
-            },
-            interaction: {
-                hover: true,
-                navigationButtons: false, // Buttons removed per request
-                keyboard: true,
-                tooltipDelay: 200,
-                hideEdgesOnDrag: true
-            }
-        };
+        comparisonData = {{DATA}};
+        if (!comparisonData) {
+            console.error("No valid comparison data found.");
+            return;
+        }
 
-        const studentData = createNetworkData(comparisonData.first_graph, 'student');
-        const referenceData = createNetworkData(comparisonData.second_graph, 'reference');
-
+        renderNetwork(comparisonData.first_graph, IDS.STUDENT_NETWORK, 'student');
+        renderNetwork(comparisonData.second_graph, IDS.REFERENCE_NETWORK, 'reference');
+        
         document.getElementById(IDS.STUDENT_COUNT).textContent = `(${comparisonData.first_graph.nodes.length} узлов)`;
         document.getElementById(IDS.REFERENCE_COUNT).textContent = `(${comparisonData.second_graph.nodes.length} узлов)`;
-
-        studentNetwork = new vis.Network(document.getElementById(IDS.STUDENT_NETWORK), studentData, options);
-        referenceNetwork = new vis.Network(document.getElementById(IDS.REFERENCE_NETWORK), referenceData, options);
-
-        setupInteractions(studentNetwork, referenceNetwork);
-        
     } catch (e) {
-        console.error("Critical Init Error:", e);
-        document.getElementById(IDS.DETAILS_PANEL).innerHTML = `<h3 style="color:#d73a49">Render Error</h3><pre style="color:#a9b7c6">${e.stack}</pre>`;
+        console.error("Initialization failed:", e);
     }
 }
 
+/**
+ * Renders a specific graph network.
+ */
+function renderNetwork(graphDto, containerId, graphType) {
+    const data = createNetworkData(graphDto, graphType);
+    const container = document.getElementById(containerId);
+    
+    const options = {
+        layout: {
+            hierarchical: {
+                enabled: true,
+                direction: 'DU', // Bottom-up direction
+                sortMethod: 'directed',
+                levelSeparation: 65,
+                nodeSpacing: 65,
+                edgeMinimization: true,
+                parentCentralization: true,
+                blockShifting: true
+            }
+        },
+        nodes: {
+            size: 16,
+            font: {
+                color: '#a9b7c6',
+                size: 13,
+                face: 'Inter, Segoe UI',
+                multi: true,
+                bold: { color: '#ffffff' }
+            },
+            borderWidth: 2,
+            shadow: {
+                enabled: true,
+                color: 'rgba(0,0,0,0.3)',
+                size: 5,
+                x: 2,
+                y: 2
+            }
+        },
+        edges: {
+            arrows: {
+                to: { enabled: true, scaleFactor: 1.0 }
+            },
+            color: { color: '#555', highlight: '#4b6eaf', hover: '#888' },
+            width: 2,
+            selectionWidth: 3,
+            hoverWidth: 3,
+            smooth: {
+                enabled: true,
+                type: 'curvedCW',
+                roundness: 0.2
+            }
+        },
+        physics: { enabled: false },
+        interaction: {
+            hover: true,
+            tooltipDelay: 200,
+            hideEdgesOnDrag: false
+        }
+    };
+
+    const network = new vis.Network(container, data, options);
+    
+    if (graphType === 'student') studentNetwork = network;
+    else referenceNetwork = network;
+
+    network.on("click", function (params) {
+        if (params.nodes.length > 0) {
+            const nodeId = params.nodes[0];
+            handleNodeSelection(nodeId, graphType);
+        }
+    });
+
+    return network;
+}
+
+/**
+ * Synchronizes selection between student and reference graphs.
+ */
+function handleNodeSelection(nodeId, sourceGraphType) {
+    const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
+    let counterpartId = null;
+
+    if (sourceGraphType === 'student') {
+        counterpartId = mapping[nodeId];
+        if (counterpartId) referenceNetwork.selectNodes([counterpartId]);
+        else referenceNetwork.unselectAll();
+    } else {
+        counterpartId = Object.keys(mapping).find(key => mapping[key] === nodeId);
+        if (counterpartId) studentNetwork.selectNodes([counterpartId]);
+        else studentNetwork.unselectAll();
+    }
+
+    showDetails(nodeId, counterpartId, sourceGraphType);
+}
+
+/**
+ * Creates the DataSet for a specific graph.
+ */
 function createNetworkData(graphDto, graphType) {
     if (!graphDto || !graphDto.nodes) return { nodes: new vis.DataSet([]), edges: new vis.DataSet([]) };
     
@@ -116,88 +148,62 @@ function createNetworkData(graphDto, graphType) {
         };
     });
 
-    const edges = (graphDto.links || []).map(link => ({
-        from: link.source,
-        to: link.target
+    const edges = graphDto.links.map(link => ({
+        from: nodeToId(link.source, graphDto.nodes),
+        to: nodeToId(link.target, graphDto.nodes),
+        arrows: 'to'
     }));
 
-    return { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+    return {
+        nodes: new vis.DataSet(nodes),
+        edges: new vis.DataSet(edges)
+    };
 }
 
-function setupInteractions(sNet, rNet) {
-    sNet.on("click", (params) => {
-        if (params.nodes.length > 0) {
-            const nodeId = params.nodes[0];
-            showCombinedDetails(nodeId, 'student');
-            syncSelection(nodeId, 'student', rNet);
-        }
-    });
-
-    rNet.on("click", (params) => {
-        if (params.nodes.length > 0) {
-            const nodeId = params.nodes[0];
-            showCombinedDetails(nodeId, 'reference');
-            syncSelection(nodeId, 'reference', sNet);
-        }
-    });
-}
-
-function syncSelection(nodeId, sourceGraphType, targetNetwork) {
-    const mapping = comparisonData.compare_result ? comparisonData.compare_result.matched_hashes_1_to_2 : {};
-    if (sourceGraphType === 'student') {
-        const matched = mapping[nodeId];
-        if (matched) targetNetwork.selectNodes([matched]);
-        else targetNetwork.unselectAll();
-    } else {
-        const matched = Object.keys(mapping).find(key => mapping[key] === nodeId);
-        if (matched) targetNetwork.selectNodes([matched]);
-        else targetNetwork.unselectAll();
-    }
-}
-
-function showCombinedDetails(nodeId, clickedGraphType) {
-    let studentNode, referenceNode;
-    const mapping = comparisonData.compare_result ? comparisonData.compare_result.matched_hashes_1_to_2 : {};
-
-    if (clickedGraphType === 'student') {
-        studentNode = comparisonData.first_graph.nodes.find(n => n.id === nodeId);
-        const matchedHash = mapping[nodeId];
-        if (matchedHash) {
-            referenceNode = comparisonData.second_graph.nodes.find(n => n.id === matchedHash);
-        }
-    } else {
-        referenceNode = comparisonData.second_graph.nodes.find(n => n.id === nodeId);
-        const matchedHash = Object.keys(mapping).find(key => mapping[key] === nodeId);
-        if (matchedHash) {
-            studentNode = comparisonData.first_graph.nodes.find(n => n.id === matchedHash);
-        }
-    }
+/**
+ * Displays details for selected node(s).
+ */
+function showDetails(nodeId, counterpartId, sourceGraphType) {
+    const studentNode = sourceGraphType === 'student' ? 
+        comparisonData.graph1.nodes.find(n => n.id === nodeId) : 
+        (counterpartId ? comparisonData.graph1.nodes.find(n => n.id === counterpartId) : null);
+    
+    const referenceNode = sourceGraphType === 'reference' ? 
+        comparisonData.graph2.nodes.find(n => n.id === nodeId) : 
+        (counterpartId ? comparisonData.graph2.nodes.find(n => n.id === counterpartId) : null);
 
     const html = `
         <div class="details-grid">
             <div class="details-column">
-                <h4>Коммит студента</h4>
-                ${studentNode ? renderNodeInfo(studentNode) : '<p style="opacity:0.3">Соответствующий коммит не найден</p>'}
+                <h4>Student Version</h4>
+                ${studentNode ? renderNodeInfo(studentNode) : '<div class="empty-state">No matching commit</div>'}
             </div>
             <div class="details-column">
-                <h4>Ожидаемый коммит</h4>
-                ${referenceNode ? renderNodeInfo(referenceNode) : '<p style="opacity:0.3">Соответствующий коммит не найден</p>'}
+                <h4>Reference Version</h4>
+                ${referenceNode ? renderNodeInfo(referenceNode) : '<div class="empty-state">No matching commit</div>'}
             </div>
         </div>
     `;
+    
     document.getElementById(IDS.DETAILS_PANEL).innerHTML = html;
 }
 
+/**
+ * Renders HTML for a single node's metadata and diffs.
+ */
 function renderNodeInfo(node) {
+    let colorClass = `text-severity-${node.severity}`;
+    if (node.severity === 'MOVABLE') {
+        // In comparison report, graphType is already known from column, but we keep it safe
+        colorClass = 'text-severity-MOVABLE_STUDENT'; // placeholder
+    }
+
     return `
-        <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash.substring(0, 12)}...</h3>
+        <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
         <div style="margin-bottom: 5px;">
-            <p style="margin: 2px 0; font-size: 13px;"><strong>Severity:</strong> <span class="legend-item" style="display:inline-flex; vertical-align: middle; gap: 5px;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
+            <p style="margin: 2px 0; font-size: 13px;"><strong>Статус:</strong> <span class="legend-item ${colorClass}" style="display:inline-flex; vertical-align: middle; gap: 5px; font-weight: bold;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
         </div>
-        
-        <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">
-            Commit Details
-        </button>
+        <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">Commit Details</button>
         <div class="commit-metadata-content">
             <div class="metadata-row">
                 <div class="metadata-label">Message:</div>
@@ -212,8 +218,7 @@ function renderNodeInfo(node) {
                 <div class="metadata-value" style="color: #cc7832">${node.commitDate}</div>
             </div>
         </div>
-
-        ${node.diffs && node.diffs.length > 0 ? '<h5 style="margin: 10px 0 5px 0; font-size: 12px; color: #888; text-transform: uppercase;">Changes:</h5>' + renderDiffs(node.diffs) : ''}
+        ${node.diffs && node.diffs.length > 0 ? '<h5 style=\"margin: 10px 0 5px 0; font-size: 12px; color: #888; text-transform: uppercase;\">Changes:</h5>' + renderDiffs(node.diffs) : ''}
     `;
 }
 

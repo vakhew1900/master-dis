@@ -43,11 +43,11 @@ const SEVERITY_COLORS = {
 const SEVERITY_NAMES = {
     'IDENTICAL': 'Идентичен',
     'MODIFIED': 'Изменен',
-    'EXTRA': 'Лишний (отсутствует в эталоне)',
-    'MISSED': 'Пропущен (отсутствует в работе)',
+    'EXTRA': 'Лишний (нет в эталоне)',
+    'MISSED': 'Пропущен (нет в работе)',
     'MOVABLE': 'Перемещен',
-    'MOVABLE_STUDENT': 'Перемещен (у студента)',
-    'MOVABLE_REFERENCE': 'Перемещен (в эталоне)'
+    'MOVABLE_STUDENT': 'Перемещен (студент)',
+    'MOVABLE_REFERENCE': 'Перемещен (эталон)'
 };
 
 /**
@@ -87,9 +87,16 @@ function createTooltip(node) {
     const shortHash = getShortHash(node.hash);
     const msg = node.message.length > 50 ? node.message.substring(0, 47) + '...' : node.message;
     
+    // Determine status color class
+    let colorClass = `text-severity-${node.severity}`;
+    if (node.severity === 'MOVABLE') {
+        const studentHashes = (comparisonData.compare_result && comparisonData.compare_result.matched_hashes_1_to_2) ? Object.keys(comparisonData.compare_result.matched_hashes_1_to_2) : [];
+        colorClass = studentHashes.includes(node.id) ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+    }
+
     let html = `
         <div class="tooltip-header">${shortHash} | ${msg}</div>
-        <div style="margin-bottom: 5px;"><strong>Статус:</strong> ${getSeverityName(node.severity)}</div>
+        <div style="margin-bottom: 5px;"><strong>Статус:</strong> <span class="${colorClass}">${getSeverityName(node.severity)}</span></div>
     `;
 
     if (node.diffs && node.diffs.length > 0) {
@@ -123,7 +130,7 @@ function getCustomRenderer(severity) {
         ctx.arc(x, y, size, 0, 2 * Math.PI, false);
         
         if (severity === 'MISSED') {
-            ctx.fillStyle = 'rgba(0,0,0,0)'; // Hollow
+            ctx.fillStyle = '#2b2b2b'; // Same as --panel-bg
         } else {
             ctx.fillStyle = style.color; // Filled with status color
         }

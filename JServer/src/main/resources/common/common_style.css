@@ -265,6 +265,14 @@ body {
 .severity-MOVABLE_STUDENT { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); }
 .severity-MOVABLE_REFERENCE { background-color: var(--severity-movable-reference); border-color: var(--severity-movable-reference-border); }
 
+/* Status Text Colors */
+.text-severity-IDENTICAL { color: #5da063; }
+.text-severity-MODIFIED { color: #a69664; }
+.text-severity-EXTRA { color: #b26b6b; }
+.text-severity-MISSED { color: #b26b6b; }
+.text-severity-MOVABLE_STUDENT { color: #6b90b2; }
+.text-severity-MOVABLE_REFERENCE { color: #906bb2; }
+
 /* Collapsible Legend */
 .legend-details {
     background: var(--panel-bg);

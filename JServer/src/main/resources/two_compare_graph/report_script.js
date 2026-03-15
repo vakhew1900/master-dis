@@ -30,18 +30,18 @@ async function init() {
                     enabled: true,
                     direction: 'DU', // Bottom-up direction
                     sortMethod: 'directed',
-                    levelSeparation: 150,
-                    nodeSpacing: 200,
+                    levelSeparation: 100,
+                    nodeSpacing: 100,
                     edgeMinimization: true,
                     parentCentralization: true
                 }
             },
             nodes: {
                 shape: 'dot',
-                size: 24,
+                size: 20,
                 font: {
                     color: '#a9b7c6',
-                    size: 14,
+                    size: 13,
                     face: 'Inter, Segoe UI',
                     multi: true,
                     bold: { color: '#ffffff' }
@@ -50,16 +50,16 @@ async function init() {
                 shadow: {
                     enabled: true,
                     color: 'rgba(0,0,0,0.3)',
-                    size: 10,
-                    x: 5,
-                    y: 5
+                    size: 5,
+                    x: 2,
+                    y: 2
                 }
             },
             edges: {
                 arrows: {
-                    to: { enabled: true, scaleFactor: 1.2 }
+                    to: { enabled: true, scaleFactor: 1.0 }
                 },
-                color: { color: '#444444', highlight: '#888888', hover: '#666666' },
+                color: { color: '#666', highlight: '#4b6eaf', hover: '#888' },
                 width: 2,
                 selectionWidth: 3,
                 hoverWidth: 3,
@@ -82,8 +82,8 @@ async function init() {
             }
         };
 
-        const studentData = createNetworkData(comparisonData.first_graph);
-        const referenceData = createNetworkData(comparisonData.second_graph);
+        const studentData = createNetworkData(comparisonData.first_graph, 'student');
+        const referenceData = createNetworkData(comparisonData.second_graph, 'reference');
 
         document.getElementById(IDS.STUDENT_COUNT).textContent = `(${comparisonData.first_graph.nodes.length} узлов)`;
         document.getElementById(IDS.REFERENCE_COUNT).textContent = `(${comparisonData.second_graph.nodes.length} узлов)`;
@@ -99,15 +99,21 @@ async function init() {
     }
 }
 
-function createNetworkData(graphDto) {
+function createNetworkData(graphDto, graphType) {
     if (!graphDto || !graphDto.nodes) return { nodes: new vis.DataSet([]), edges: new vis.DataSet([]) };
     
-    const nodes = graphDto.nodes.map(node => ({
-        id: node.id,
-        label: `<b>[${node.number}]</b>\n${node.id.substring(0, 7)}`,
-        title: node.message,
-        color: getSeverityColor(node.severity)
-    }));
+    const nodes = graphDto.nodes.map(node => {
+        let label = `<b>[${node.number}]</b>\n${node.id.substring(0, 7)}`;
+        if (node.severity === 'EXTRA' || node.severity === 'MISSED') {
+            label = `тњЦ ${label}`;
+        }
+        return {
+            id: node.id,
+            label: label,
+            title: `${node.message}\nСтатус: ${getSeverityName(node.severity)}`,
+            color: getSeverityColor(node.severity, graphType)
+        };
+    });
 
     const edges = (graphDto.links || []).map(link => ({
         from: link.source,

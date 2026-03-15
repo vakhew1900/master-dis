@@ -27,6 +27,16 @@ const SEVERITY_COLORS = {
         background: '#384c67', 
         border: '#4b6a8e', 
         highlight: { background: '#4b6a8e', border: '#6b90b2' } 
+    },
+    'MOVABLE_STUDENT': { 
+        background: '#384c67', 
+        border: '#4b6a8e', 
+        highlight: { background: '#4b6a8e', border: '#6b90b2' } 
+    },
+    'MOVABLE_REFERENCE': { 
+        background: '#2b3a4f', 
+        border: '#3a4e66', 
+        highlight: { background: '#3a4e66', border: '#4b6a8e' } 
     }
 };
 
@@ -35,13 +45,18 @@ const SEVERITY_NAMES = {
     'MODIFIED': 'Изменен',
     'EXTRA': 'Лишний (у студента)',
     'MISSED': 'Пропущен (в эталоне)',
-    'MOVABLE': 'Перемещен'
+    'MOVABLE': 'Перемещен',
+    'MOVABLE_STUDENT': 'Перемещен (у студента)',
+    'MOVABLE_REFERENCE': 'Перемещен (в эталоне)'
 };
 
 /**
  * Returns the color configuration for a given severity.
  */
-function getSeverityColor(severity) {
+function getSeverityColor(severity, graphType) {
+    if (severity === 'MOVABLE' && graphType) {
+        return SEVERITY_COLORS[graphType === 'student' ? 'MOVABLE_STUDENT' : 'MOVABLE_REFERENCE'];
+    }
     return SEVERITY_COLORS[severity] || { background: '#3c3f41', border: '#4b4b4b' };
 }
 

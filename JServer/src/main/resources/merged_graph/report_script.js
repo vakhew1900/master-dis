@@ -29,19 +29,26 @@ function init() {
  * Renders the merged graph network.
  */
 function renderNetwork(graphDto) {
-    const nodes = new vis.DataSet(graphDto.nodes.map(node => ({
-        id: node.id,
-        label: `[${node.number}] ${node.hash.includes(' / ') ? node.hash : node.hash.substring(0, 7)}`,
-        title: `${node.message}\nStatus: ${node.severity}`,
-        className: `severity-${node.severity}`,
-        color: getSeverityColor(node.severity)
-    })));
+    const nodes = new vis.DataSet(graphDto.nodes.map(node => {
+        let label = `[${node.number}] ${node.hash.includes(' / ') ? node.hash : node.hash.substring(0, 7)}`;
+        if (node.severity === 'EXTRA' || node.severity === 'MISSED') {
+            label = `тњЦ ${label}`;
+        }
+        return {
+            id: node.id,
+            label: label,
+            title: `${node.message}\nСтатус: ${getSeverityName(node.severity)}`,
+            className: `severity-${node.severity}`,
+            color: getSeverityColor(node.severity)
+        };
+    }));
 
     const edges = new vis.DataSet(graphDto.links.map(link => ({
         from: nodeToId(link.source, graphDto.nodes),
         to: nodeToId(link.target, graphDto.nodes),
         arrows: 'to',
-        color: { color: '#555', highlight: '#4b6eaf' }
+        color: { color: '#666', highlight: '#4b6eaf' },
+        width: 2
     })));
 
     const container = document.getElementById(IDS.NETWORK);
@@ -60,8 +67,10 @@ function renderNetwork(graphDto) {
             hierarchical: {
                 direction: 'DU', // Flipped: Down to Up
                 sortMethod: 'directed',
-                nodeSpacing: 150,
-                levelSeparation: 100
+                nodeSpacing: 100,
+                levelSeparation: 80,
+                edgeMinimization: true,
+                parentCentralization: true
             }
         },
         physics: false,
@@ -72,6 +81,12 @@ function renderNetwork(graphDto) {
     document.getElementById(IDS.NODE_COUNT).textContent = `(${graphDto.nodes.length} узлов)`;
 
     network.on("click", function (params) {
+        // Clear previous movable edges
+        const currentEdges = edges.get({ filter: (e) => e.isMovable });
+        if (currentEdges.length > 0) {
+            edges.remove(currentEdges.map(e => e.id));
+        }
+
         if (params.nodes.length > 0) {
             const nodeId = params.nodes[0];
             const node = graphDto.nodes.find(n => n.id === nodeId);
@@ -86,6 +101,19 @@ function renderNetwork(graphDto) {
                 
                 if (counterpartId) {
                     network.selectNodes([node.id, counterpartId]);
+                    
+                    // Add temporary dashed edge between moved nodes
+                    edges.add({
+                        id: `movable-${node.id}-${counterpartId}`,
+                        from: node.id,
+                        to: counterpartId,
+                        dashes: true,
+                        color: { color: 'rgba(75, 110, 175, 0.4)' },
+                        width: 1,
+                        arrows: '',
+                        isMovable: true
+                    });
+
                     showMovableDetails(node.id, counterpartId);
                     return;
                 }

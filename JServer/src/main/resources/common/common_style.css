@@ -14,8 +14,13 @@
     --severity-modified-border: #80714a;
     --severity-extra-bg: #593939;
     --severity-extra-border: #804b4b;
+    --severity-extra-student: #593939; /* Same for now, but can be customized */
+    --severity-extra-reference: #482c2c;
     --severity-movable-bg: #384c67;
     --severity-movable-border: #4b6a8e;
+    
+    --edge-color: #666666;
+    --edge-highlight: #4b6eaf;
     
     --diff-added-bg: #2d4436;
     --diff-removed-bg: #482c2c;
@@ -254,6 +259,42 @@ body {
 .severity-MODIFIED { background-color: var(--severity-modified-bg); border-color: var(--severity-modified-border); }
 .severity-EXTRA { background-color: var(--severity-extra-bg); border-color: var(--severity-extra-border); }
 .severity-MOVABLE { background-color: var(--severity-movable-bg); border-color: var(--severity-movable-border); }
+
+/* Collapsible Legend */
+.legend-details {
+    background: var(--panel-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.legend-summary {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend-summary:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.legend-summary::marker {
+    color: var(--nav-active);
+}
+
+.legend-content {
+    padding: 10px 20px 20px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    border-top: 1px solid var(--border-color);
+}
 
 /* Diff Styling */
 .diff-list {

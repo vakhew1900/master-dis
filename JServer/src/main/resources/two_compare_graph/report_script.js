@@ -216,14 +216,18 @@ function renderNodeInfo(node) {
 
     return `
         <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
-        <div style="margin-bottom: 5px;">
-            <p style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
-                <strong style="color: #888;">Статус:</strong> 
-                <span class="${colorClass}" style="display:inline-flex; align-items: center; gap: 6px; font-weight: bold;">
-                    <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0;"></div> 
-                    ${getSeverityName(node.severity)}
-                </span>
-            </p>
+       <div style="margin-bottom: 5px;">
+        <!-- Заменили <p> на <div> для лучшей семантики интерфейса -->
+        <div style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+        <strong style="color: #888;">Статус:</strong> 
+        
+        <!-- Заменили <span> на <div>, так как внутри есть блочные элементы и flex -->
+        <div class="${colorClass}" style="display:flex; align-items: center; gap: 6px; font-weight: bold;">
+            <!-- Внутренний элемент тоже лучше сделать span или div, но div допустим внутри div -->
+            <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0; border-radius: 50%;"></div> 
+            ${getSeverityName(node.severity)}
+        </div>
+    </div>
         </div>
         <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">Commit Details</button>
         <div class="commit-metadata-content">

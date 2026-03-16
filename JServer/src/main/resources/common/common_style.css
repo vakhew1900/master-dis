@@ -338,16 +338,18 @@ body {
 }
 
 .legend-wrapper {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .legend-details[open] .legend-wrapper {
-    max-height: 200px; /* Adjust based on content */
+    grid-template-rows: 1fr;
 }
 
 .legend-content {
+    min-height: 0;
+    overflow: hidden;
     padding: 0 20px;
     display: flex;
     flex-wrap: wrap;

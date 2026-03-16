@@ -185,24 +185,27 @@ function showDetails(nodeId) {
     if (!node) return;
 
     let colorClass = `text-severity-${node.severity}`;
+    let circleClass = `severity-${node.severity}`;
     if (node.severity === 'MOVABLE') {
         const studentHashes = Object.keys(comparisonData.compare_result.matched_hashes_1_to_2);
-        colorClass = studentHashes.includes(node.id) ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+        const isStudent = studentHashes.includes(node.id);
+        colorClass = isStudent ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+        circleClass = isStudent ? 'severity-MOVABLE_STUDENT' : 'severity-MOVABLE_REFERENCE';
     }
 
     const html = `
         <div class="details-column">
             <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
-            <div style="margin-bottom: 5px;">
-                <p style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
-                    <strong style="color: #888;">Статус:</strong> 
-                    <span class="${colorClass}" style="display:inline-flex; align-items: center; gap: 6px; font-weight: bold;">
-                        <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0;"></div> 
-                        ${getSeverityName(node.severity)}
-                    </span>
-                </p>
+          <div style="margin-bottom: 5px;">
+        <div style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+            <strong style="color: #888;">Статус:</strong> 
+           
+            <div class="${colorClass}" style="display:flex; align-items: center; gap: 6px; font-weight: bold;">
+                <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0; border-radius: 50%;"></div> 
+                ${getSeverityName(node.severity)}
             </div>
-            
+            </div>
+        </div>
             <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">
                 Commit Details
             </button>
@@ -257,21 +260,24 @@ function showMovableDetails(id1, id2) {
 
 function renderNodeSummary(node) {
     let colorClass = `text-severity-${node.severity}`;
+    let circleClass = `severity-${node.severity}`;
     if (node.severity === 'MOVABLE') {
         const studentHashes = Object.keys(comparisonData.compare_result.matched_hashes_1_to_2);
-        colorClass = studentHashes.includes(node.id) ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+        const isStudent = studentHashes.includes(node.id);
+        colorClass = isStudent ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+        circleClass = isStudent ? 'severity-MOVABLE_STUDENT' : 'severity-MOVABLE_REFERENCE';
     }
 
     return `
         <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
-        <div style="margin-bottom: 5px;">
-            <p style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
-                <strong style="color: #888;">Статус:</strong> 
-                <span class="${colorClass}" style="display:inline-flex; align-items: center; gap: 6px; font-weight: bold;">
-                    <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0;"></div> 
-                    ${getSeverityName(node.severity)}
-                </span>
-            </p>
+      <div style="margin-bottom: 5px;">
+    <div style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+        <strong style="color: #888;">Статус:</strong> 
+        <div class="${colorClass}" style="display:flex; align-items: center; gap: 6px; font-weight: bold;">
+            <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0; border-radius: 50%;"></div> 
+            ${getSeverityName(node.severity)}
+            </div>
+        </div>
         </div>
         <div class="metadata-row">
             <div class="metadata-label">Message:</div>

@@ -194,7 +194,13 @@ function showDetails(nodeId) {
         <div class="details-column">
             <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
             <div style="margin-bottom: 5px;">
-                <p style="margin: 2px 0; font-size: 13px;"><strong>Статус:</strong> <span class="legend-item ${colorClass}" style="display:inline-flex; vertical-align: middle; gap: 5px; font-weight: bold;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
+                <p style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <strong style="color: #888;">Статус:</strong> 
+                    <span class="${colorClass}" style="display:inline-flex; align-items: center; gap: 6px; font-weight: bold;">
+                        <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0;"></div> 
+                        ${getSeverityName(node.severity)}
+                    </span>
+                </p>
             </div>
             
             <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">
@@ -259,7 +265,13 @@ function renderNodeSummary(node) {
     return `
         <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
         <div style="margin-bottom: 5px;">
-            <p style="margin: 2px 0; font-size: 13px;"><strong>Статус:</strong> <span class="legend-item ${colorClass}" style="display:inline-flex; vertical-align: middle; gap: 5px; font-weight: bold;"><div class="color-box severity-${node.severity}" style="width:10px; height:10px;"></div> ${getSeverityName(node.severity)}</span></p>
+            <p style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                <strong style="color: #888;">Статус:</strong> 
+                <span class="${colorClass}" style="display:inline-flex; align-items: center; gap: 6px; font-weight: bold;">
+                    <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0;"></div> 
+                    ${getSeverityName(node.severity)}
+                </span>
+            </p>
         </div>
         <div class="metadata-row">
             <div class="metadata-label">Message:</div>

@@ -41,6 +41,9 @@ public class TwoGraphComparisonPostProcessor extends GitComparisonPostProcessor<
                     otherNode.setSeverity(NodeDto.SEVERITY_MOVABLE);
                     dto.getCompareResult().getMatchedHashes1To2().put(node.getHash(), otherNode.getHash());
                     matchedInSecond.add(otherNode.getHash());
+                    
+                    // Recalculate diffs for the paired nodes to show actual differences instead of just EXTRACT/MISSED
+                    recalculateDiffs(node, otherNode, commit, otherCommit);
                     break;
                 }
             }

@@ -43,6 +43,8 @@ function renderNetwork(graphDto, containerId, graphType) {
         layout: {
             hierarchical: {
                 enabled: true,
+                shakeTowards: 'roots',
+                treeSpacing: 400,
                 direction: 'DU', // Bottom-up direction
                 sortMethod: 'directed',
                 levelSeparation: 80,

@@ -126,7 +126,7 @@ public final class GitHelper {
             try (DiffFormatter diffFormatter = new DiffFormatter(out)) {
                 // Настройки форматирования diff
                 diffFormatter.setRepository(repository);
-                diffFormatter.setDiffComparator(RawTextComparator.WS_IGNORE_ALL); // Игнорируем пробелы
+//                diffFormatter.setDiffComparator(RawTextComparator.WS_IGNORE_ALL); // Игнорируем пробелы
                 diffFormatter.setDetectRenames(true); // Детектируем переименования
                 diffFormatter.setContext(0); // Минимум контекста вокруг изменений
 

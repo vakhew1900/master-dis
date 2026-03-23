@@ -80,4 +80,35 @@
             <version>0.3.2</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- [START JAR ASSEMBLY CONFIG] -->
+            <!-- Плагин для сборки JAR со всеми зависимостями -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.master.diploma.git.GitGraphComparisonApp</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- [END JAR ASSEMBLY CONFIG] -->
+        </plugins>
+    </build>
 </project>

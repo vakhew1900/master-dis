@@ -2,6 +2,7 @@ package org.master.diploma.git.graph.dto.two_graph;
 
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.GitGraphCompareResult;
 import org.master.diploma.git.graph.dto.converter.GitGraphConverter;
 import org.master.diploma.git.graph.dto.samples.DiffDto;
 import org.master.diploma.git.graph.dto.samples.NodeDto;
@@ -18,7 +19,7 @@ import java.util.Set;
  */
 public class StudentGraphConverter extends TwoGraphConverter {
 
-    public StudentGraphConverter(GraphCompareResult result) {
+    public StudentGraphConverter(GitGraphCompareResult result) {
         super(result);
     }
 
@@ -26,6 +27,9 @@ public class StudentGraphConverter extends TwoGraphConverter {
     protected String getSeverity(int vertexNumber) {
         if (!result.getMatchingVertices().containsKey(vertexNumber)) {
             return NodeDto.SEVERITY_EXTRA;
+        }
+        if (result.getMovableVertices().contains(vertexNumber)) {
+            return NodeDto.SEVERITY_MOVABLE;
         }
         GraphCompareResult.LabelError error = result.getLabelErrors().get(vertexNumber);
         if (error != null && !error.getExtraLabels().isEmpty()) {

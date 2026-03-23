@@ -2,7 +2,7 @@ package org.master.diploma.git.graph.dto.two_graph;
 
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.git.model.CommitGraph;
-import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.GitGraphCompareResult;
 import org.master.diploma.git.graph.dto.converter.GitGraphConverter;
 import org.master.diploma.git.graph.dto.samples.DiffDto;
 import org.master.diploma.git.graph.dto.samples.GitGraphDto;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public abstract class TwoGraphConverter extends GitGraphConverter {
 
-    protected TwoGraphConverter(GraphCompareResult result) {
+    protected TwoGraphConverter(GitGraphCompareResult result) {
         super(result);
     }
 

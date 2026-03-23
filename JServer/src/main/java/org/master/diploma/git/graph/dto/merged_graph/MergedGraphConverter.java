@@ -3,6 +3,7 @@ package org.master.diploma.git.graph.dto.merged_graph;
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.git.model.CommitGraph;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.GitGraphCompareResult;
 import org.master.diploma.git.graph.Vertex;
 import org.master.diploma.git.graph.dto.converter.GitGraphConverter;
 import org.master.diploma.git.graph.dto.samples.DiffDto;
@@ -23,14 +24,13 @@ public class MergedGraphConverter extends GitGraphConverter {
     private final Map<Integer, Integer> g2ToG1;
     private final  CommitGraph targetGraph;
 
-    public MergedGraphConverter(GraphCompareResult result, CommitGraph targetGraph) {
+    public MergedGraphConverter(GitGraphCompareResult result, CommitGraph targetGraph) {
         super(result);
         this.targetGraph = targetGraph;
         this.g1ToG2 = result.getMatchingVertices();
         this.g2ToG1 = result.getMatchingVertices().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (a, b) -> a));
     }
-
 
     @Override
     public GitGraphDto convert(CommitGraph currentGraph) {
@@ -70,6 +70,9 @@ public class MergedGraphConverter extends GitGraphConverter {
     }
 
     private String getSeverity(Commit commit) {
+        if (result.getMovableVertices().contains(commit.getNumber())) {
+            return NodeDto.SEVERITY_MOVABLE;
+        }
         GraphCompareResult.LabelError error = result.getLabelErrors().get(commit.getNumber());
         if (error == null || (error.getExtraLabels().isEmpty() && error.getMissingLabels().isEmpty())) {
             return NodeDto.SEVERITY_IDENTICAL;

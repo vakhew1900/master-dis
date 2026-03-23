@@ -2,6 +2,7 @@ package org.master.diploma.git.graph.dto.two_graph;
 
 import org.master.diploma.git.git.model.Commit;
 import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.GitGraphCompareResult;
 import org.master.diploma.git.graph.dto.converter.GitGraphConverter;
 import org.master.diploma.git.graph.dto.samples.DiffDto;
 import org.master.diploma.git.graph.dto.samples.NodeDto;
@@ -22,7 +23,7 @@ public class ReferenceGraphConverter extends TwoGraphConverter {
 
     private final Map<Integer, Integer> g2ToG1;
 
-    public ReferenceGraphConverter(GraphCompareResult result) {
+    public ReferenceGraphConverter(GitGraphCompareResult result) {
         super(result);
         this.g2ToG1 = result.getMatchingVertices().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (a, b) -> a));
@@ -33,6 +34,9 @@ public class ReferenceGraphConverter extends TwoGraphConverter {
         Integer g1Number = g2ToG1.get(vertexNumber);
         if (g1Number == null) {
             return NodeDto.SEVERITY_EXTRA;
+        }
+        if (result.getMovableVertices().contains(vertexNumber)) {
+            return NodeDto.SEVERITY_MOVABLE;
         }
         GraphCompareResult.LabelError error = result.getLabelErrors().get(g1Number);
         if (error != null && !error.getMissingLabels().isEmpty()) {

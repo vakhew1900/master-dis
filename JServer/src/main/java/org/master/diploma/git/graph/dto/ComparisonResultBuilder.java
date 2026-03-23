@@ -10,12 +10,12 @@ import org.master.diploma.git.graph.GraphCompareResult;
  * @param <R> The type of the resulting GitComparisonResultDto.
  * @param <T> The type of object used for post-processing.
  */
-public abstract class ComparisonResultBuilder<R extends GitComparisonResultDto, T> {
+public abstract class ComparisonResultBuilder<R extends GitComparisonResultDto> {
 
-    protected final GitComparisonPostProcessor<T> postProcessor;
+    protected final GitComparisonPreProcessor preProcessor;
 
-    protected ComparisonResultBuilder(GitComparisonPostProcessor<T> postProcessor) {
-        this.postProcessor = postProcessor;
+    protected ComparisonResultBuilder(GitComparisonPreProcessor preProcessor) {
+        this.preProcessor = preProcessor;
     }
 
     /**

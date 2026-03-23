@@ -7,12 +7,12 @@ def main():
     # Определяем пути относительно скрипта
     script_dir = Path(__file__).parent
     pairs_file = script_dir / "pairs.json"
-    project_root = script_dir.parent.parent.parent
+    project_root = script_dir.parent
     
     # Путь к собранному fat-JAR
     jar_path = project_root / "target/JServer-1.0-SNAPSHOT-jar-with-dependencies.jar"
     if not jar_path.exists():
-        print(f"Error: JAR not found at {jar_path}. Build the project with 'mvn clean package' first.")
+        print(f'Error: JAR not found at {jar_path}. Build the project with "mvn clean package" first.')
         return
 
     # Путь к Java 17+ (предпочтительно из JetBrains Runtime)
@@ -33,7 +33,7 @@ def main():
     reports_base_dir = project_root / "bulk_reports"
     reports_base_dir.mkdir(exist_ok=True)
     
-    print(f"Found {len(data_pairs)} pairs to compare from {pairs_file.name}.")
+    print(f'Found {len(data_pairs)} pairs to compare from {pairs_file.name}.')
 
     for i, pair in enumerate(data_pairs):
         student = pair['student']
@@ -45,8 +45,7 @@ def main():
         
         output_path = pair_report_dir / "report.html"
         
-        print(f"
-[{i+1}/{len(data_pairs)}] Comparing into {pair_report_dir.name}:")
+        print(f"[{i+1}/{len(data_pairs)}] Comparing into {pair_report_dir.name}:")
         
         cmd = [
             java_bin,

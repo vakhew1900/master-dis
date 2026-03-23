@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode
-public class GraphCompareResult implements Cloneable {
+public class GraphCompareResult {
 
     public static final String MATCHING_VERTICES = "matching_vertices";
     public static final String LABEL_ERRORS = "label_errors";
@@ -39,9 +39,7 @@ public class GraphCompareResult implements Cloneable {
     @Getter
     @Setter
     @EqualsAndHashCode
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class LabelError implements Cloneable {
+    public static class LabelError {
         public static final String EXTRA = "extra_labels";
         public static final String MISSING = "missing_labels";
 
@@ -77,26 +75,11 @@ public class GraphCompareResult implements Cloneable {
                     .map(Label::getId)
                     .collect(Collectors.toList());
         }
-
-        @Override
-        public LabelError clone() {
-            return new LabelError(new ArrayList<>(extraLabels), new ArrayList<>(missingLabels));
-        }
     }
 
     public void add(GraphCompareResult other) {
         this.matchingVertices.putAll(other.matchingVertices);
         this.labelErrors.putAll(other.labelErrors);
-    }
-
-    @Override
-    public GraphCompareResult clone() {
-        GraphCompareResult clone = new GraphCompareResult();
-        clone.invert = this.invert;
-        clone.matchingVertices = new HashMap<>(this.matchingVertices);
-        clone.labelErrors = new HashMap<>();
-        this.labelErrors.forEach((k, v) -> clone.labelErrors.put(k, v.clone()));
-        return clone;
     }
 
     public boolean isBigger(GraphCompareResult other) {

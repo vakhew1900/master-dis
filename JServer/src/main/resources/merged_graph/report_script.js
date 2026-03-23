@@ -77,7 +77,7 @@ function renderNetwork(graphDto) {
         layout: {
             hierarchical: {
                 direction: 'DU', // Flipped: Down to Up
-                shakeTowards: 'roots'
+                shakeTowards: 'roots',
                 sortMethod: 'directed',
                 treeSpacing: 400,
                 nodeSpacing: 80,

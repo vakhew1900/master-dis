@@ -58,7 +58,7 @@ def main():
         try:
             process = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace')
             if process.returncode == 0:
-                print(f"  SUCCESS: Report generated.")
+                print(f"  SUCCESS: Report generated.")  
             else:
                 print(f"  ERROR (code {process.returncode}):")
                 print("--- STDOUT ---")

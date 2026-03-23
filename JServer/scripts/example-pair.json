@@ -1,0 +1,10 @@
+[
+  {
+    "student": "path/to/repo",
+    "reference":  "path/to/repo"
+  },
+  {
+    "student": "path/to/repo",
+    "reference": "path/to/repo"
+  }
+]

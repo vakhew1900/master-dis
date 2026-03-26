@@ -87,11 +87,11 @@ function createTooltip(node) {
     const shortHash = getShortHash(node.hash);
     const msg = node.message.length > 50 ? node.message.substring(0, 47) + '...' : node.message;
     
-    // Determine status color class
+    // Determine status color class using hash for logical matching against CompareResultDto
     let colorClass = `text-severity-${node.severity}`;
     if (node.severity === 'MOVABLE') {
         const studentHashes = (comparisonData.compare_result && comparisonData.compare_result.matched_hashes_1_to_2) ? Object.keys(comparisonData.compare_result.matched_hashes_1_to_2) : [];
-        colorClass = studentHashes.includes(node.id) ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+        colorClass = studentHashes.includes(node.hash) ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
     }
 
     let html = `

@@ -53,8 +53,8 @@ function renderNetwork(graphDto) {
     }));
 
     const edges = new vis.DataSet(graphDto.links.map(link => ({
-        from: nodeToId(link.source, graphDto.nodes),
-        to: nodeToId(link.target, graphDto.nodes),
+        from: link.source,
+        to: link.target,
         arrows: 'to',
         color: { color: '#555', highlight: '#4b6eaf' },
         width: 2
@@ -240,7 +240,7 @@ function showMovableDetails(id1, id2) {
     const node2 = comparisonData.merged_graph.nodes.find(n => n.id === id2);
     if (!node1 || !node2) return;
 
-    // Ensure student is first (optional, but consistent)
+    // Ensure student is first (hash lookup)
     const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
     const student = mapping[node1.id] ? node1 : node2;
     const reference = student === node1 ? node2 : node1;

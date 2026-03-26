@@ -27,6 +27,7 @@ public class CompareResultDto {
     /**
      * Creates a CompareResultDto from raw GraphCompareResult and the original graphs.
      * Converts vertex numbers to commit hashes for the frontend.
+     * Uses hashes as the primary mapping key to remain compatible with all view modes.
      */
     public static CompareResultDto from(CommitGraph g1, CommitGraph g2, GraphCompareResult result) {
         Map<String, String> mapping = new HashMap<>();

@@ -16,12 +16,13 @@ import java.util.stream.Collectors;
 
 /**
  * Converter that merges two Git graphs into a single representation.
+ * Uses prefixed vertex numbers for IDs to guarantee uniqueness even with identical hashes.
  */
 public class MergedGraphConverter extends GitGraphConverter {
 
     private final Map<Integer, Integer> g1ToG2;
     private final Map<Integer, Integer> g2ToG1;
-    private final  CommitGraph targetGraph;
+    private final CommitGraph targetGraph;
 
     public MergedGraphConverter(GraphCompareResult result, CommitGraph targetGraph) {
         super(result);
@@ -40,18 +41,20 @@ public class MergedGraphConverter extends GitGraphConverter {
 
         for (Commit studentCommit : currentGraph.getVertices().stream().map(Vertex::asCommit).toList()) {
             Integer g2Number = g1ToG2.get(studentCommit.getNumber());
+            String id = "g1_" + studentCommit.getNumber();
             if (g2Number != null) {
                 Commit referenceCommit = targetGraph.getVertex(g2Number);
-                nodes.add(createMergedNode(studentCommit, referenceCommit));
+                nodes.add(createMergedNode(id, studentCommit, referenceCommit));
                 processedG2Nodes.add(g2Number);
             } else {
-                nodes.add(createCurrentOnlyNode(studentCommit));
+                nodes.add(createCurrentOnlyNode(id, studentCommit));
             }
         }
 
         for (Commit referenceCommit : targetGraph.getVertices().stream().map(Vertex::asCommit).toList()) {
             if (!processedG2Nodes.contains(referenceCommit.getNumber())) {
-                nodes.add(createTargetOnlyNode(referenceCommit));
+                String id = "g2_" + referenceCommit.getNumber();
+                nodes.add(createTargetOnlyNode(id, referenceCommit));
             }
         }
 
@@ -59,10 +62,11 @@ public class MergedGraphConverter extends GitGraphConverter {
         return new GitGraphDto(nodes, links);
     }
 
-    private NodeDto createMergedNode(Commit student, Commit reference) {
+    private NodeDto createMergedNode(String id, Commit student, Commit reference) {
         String severity = getSeverity(student);
         List<DiffDto> diffs = createDiffs(student, reference);
         NodeDto node = NodeDto.from(student, severity, diffs);
+        node.setId(id);
         if (!student.getHash().equals(reference.getHash())) {
             node.setHash(student.getHash().substring(0, 7) + " / " + reference.getHash().substring(0, 7));
         }
@@ -97,48 +101,49 @@ public class MergedGraphConverter extends GitGraphConverter {
         return diffs;
     }
 
-    private NodeDto createCurrentOnlyNode(Commit student) {
+    private NodeDto createCurrentOnlyNode(String id, Commit student) {
         List<DiffDto> diffs = student.getLabels().stream()
                 .map(l -> new DiffDto(l.getLabelInfo().getValue(), DiffDto.STATE_EXTRACT))
                 .collect(Collectors.toList());
-        return NodeDto.from(student, NodeDto.SEVERITY_EXTRA, diffs);
+        NodeDto node = NodeDto.from(student, NodeDto.SEVERITY_EXTRA, diffs);
+        node.setId(id);
+        return node;
     }
 
-    private NodeDto createTargetOnlyNode(Commit reference) {
+    private NodeDto createTargetOnlyNode(String id, Commit reference) {
         List<DiffDto> diffs = reference.getLabels().stream()
                 .map(l -> new DiffDto(l.getLabelInfo().getValue(), DiffDto.STATE_MISSED))
                 .collect(Collectors.toList());
         NodeDto node = NodeDto.from(reference, NodeDto.SEVERITY_MISSED, diffs);
+        node.setId(id);
         return node;
     }
 
     private List<LinkDto> buildMergedLinks(CommitGraph studentGraph, CommitGraph referenceGraph) {
         Set<LinkDto> links = new HashSet<>();
         for (Map.Entry<Integer, Set<Integer>> entry : studentGraph.getAdjacencyMatrix().entrySet()) {
-            Commit source = studentGraph.getVertex(entry.getKey());
+            String sourceId = "g1_" + entry.getKey();
             for (Integer targetNum : entry.getValue()) {
-                Commit target = studentGraph.getVertex(targetNum);
-                links.add(new LinkDto(source.getHash(), target.getHash()));
+                String targetId = "g1_" + targetNum;
+                links.add(new LinkDto(sourceId, targetId));
             }
         }
 
         for (Map.Entry<Integer, Set<Integer>> entry : referenceGraph.getAdjacencyMatrix().entrySet()) {
-            Commit source = referenceGraph.getVertex(entry.getKey());
-            String sourceId = getMergedId(source, g2ToG1, studentGraph);
+            String sourceId = getMergedId(entry.getKey(), g2ToG1);
             for (Integer targetNum : entry.getValue()) {
-                Commit target = referenceGraph.getVertex(targetNum);
-                String targetId = getMergedId(target, g2ToG1, studentGraph);
+                String targetId = getMergedId(targetNum, g2ToG1);
                 links.add(new LinkDto(sourceId, targetId));
             }
         }
         return new ArrayList<>(links);
     }
 
-    private String getMergedId(Commit commit, Map<Integer, Integer> mapping, CommitGraph otherGraph) {
-        Integer otherNum = mapping.get(commit.getNumber());
-        if (otherNum != null) {
-            return otherGraph.getVertex(otherNum).getHash();
+    private String getMergedId(int g2Number, Map<Integer, Integer> mapping) {
+        Integer g1Number = mapping.get(g2Number);
+        if (g1Number != null) {
+            return "g1_" + g1Number;
         }
-        return commit.getHash();
+        return "g2_" + g2Number;
     }
 }

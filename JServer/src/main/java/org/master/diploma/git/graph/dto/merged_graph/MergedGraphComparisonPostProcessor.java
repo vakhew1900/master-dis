@@ -29,7 +29,7 @@ public class MergedGraphComparisonPostProcessor extends GitComparisonPostProcess
             Commit commit = first.getVertex(node.getNumber());
 
             for (NodeDto otherNode : nodes) {
-                if (!NodeDto.SEVERITY_MISSED.equals(otherNode.getSeverity()) || matchedInSecond.contains(otherNode.getHash())) {
+                if (!NodeDto.SEVERITY_MISSED.equals(otherNode.getSeverity()) || matchedInSecond.contains(otherNode.getId())) {
                     continue;
                 }
 
@@ -38,8 +38,8 @@ public class MergedGraphComparisonPostProcessor extends GitComparisonPostProcess
                 if (commit.canRelate(otherCommit)) {
                     node.setSeverity(NodeDto.SEVERITY_MOVABLE);
                     otherNode.setSeverity(NodeDto.SEVERITY_MOVABLE);
-                    dto.getCompareResult().getMatchedHashes1To2().put(node.getHash(), otherNode.getHash());
-                    matchedInSecond.add(otherNode.getHash());
+                    dto.getCompareResult().getMatchedHashes1To2().put(node.getId(), otherNode.getId());
+                    matchedInSecond.add(otherNode.getId());
                     
                     // Recalculate diffs for the paired nodes to show actual differences instead of just EXTRACT/MISSED
                     recalculateDiffs(node, otherNode, commit, otherCommit);

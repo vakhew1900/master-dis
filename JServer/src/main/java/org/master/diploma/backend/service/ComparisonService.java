@@ -1,11 +1,62 @@
 package org.master.diploma.backend.service;
 
+import lombok.RequiredArgsConstructor;
+import org.master.diploma.git.git.GitHelper;
+import org.master.diploma.git.git.model.CommitGraph;
+import org.master.diploma.git.graph.GraphCompareResult;
+import org.master.diploma.git.graph.dto.ComparisonResultBuilder;
+import org.master.diploma.git.graph.dto.GitComparisonResultDto;
+import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
+import org.master.diploma.git.label.SimpleLabelGenerator;
 import org.springframework.stereotype.Service;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ComparisonService {
-    public String compareRepositories(String referenceRepoPath, String studentRepoPath) {
-        // TODO: Integration with GitGraphComparisonApp
-        return "{\"status\": \"success\", \"message\": \"Stub comparison result\"}";
+    private final MinioService minioService;
+    private final Map<ComparisonMethod, SubgraphMethodExecutor> methodExecutors;
+    private final Map<ReportType, ComparisonResultBuilder<?, ?>> resultBuilders;
+
+    public enum ReportType {
+        TWO_GRAPH,
+        MERGED_GRAPH
+    }
+
+    public enum ComparisonMethod {
+        BRANCH,
+        BRUTE_FORCE,
+        DP,
+        UNIQUE_LABEL
+    }
+
+    public GitComparisonResultDto compareRepositories(String referenceRepoPath, 
+                                                     String studentRepoPath, 
+                                                     ReportType reportType,
+                                                     ComparisonMethod method) throws IOException {
+
+        File referenceDir = minioService.downloadRepository(referenceRepoPath);
+        File studentDir = minioService.downloadRepository(studentRepoPath);
+
+        CommitGraph referenceGraph = GitHelper.createCommitGraph(referenceDir);
+        CommitGraph studentGraph = GitHelper.createCommitGraph(studentDir);
+
+        SimpleLabelGenerator.getInstance().makeLabelForGitGraph(referenceGraph);
+        SimpleLabelGenerator.getInstance().makeLabelForGitGraph(studentGraph);
+
+        SubgraphMethodExecutor methodExecutor = methodExecutors.get(method);
+        if (methodExecutor == null) {
+            throw new IllegalArgumentException("Unsupported comparison method: " + method);
+        }
+        GraphCompareResult compareResult = methodExecutor.execute(studentGraph, referenceGraph);
+
+        ComparisonResultBuilder<?, ?> builder = resultBuilders.get(reportType);
+        if (builder == null) {
+            throw new IllegalArgumentException("Unsupported report type: " + reportType);
+        }
+
+        return builder.build(studentGraph, referenceGraph, compareResult);
     }
 }

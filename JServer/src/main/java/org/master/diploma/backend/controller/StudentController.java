@@ -7,6 +7,7 @@ import org.master.diploma.backend.config.Constants;
 import org.master.diploma.backend.entity.*;
 import org.master.diploma.backend.repository.*;
 import org.master.diploma.backend.service.*;
+import org.master.diploma.git.graph.dto.GitComparisonResultDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,11 @@ public class StudentController {
 
     @PostMapping(Constants.Routes.STUDENT_CHECK)
     @Operation(summary = "Check own solution")
-    public ResponseEntity<String> checkSolution(@PathVariable Long id) {
+    public ResponseEntity<GitComparisonResultDto> checkSolution(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "MERGED_GRAPH") ComparisonService.ReportType reportType,
+            @RequestParam(defaultValue = "BRANCH") ComparisonService.ComparisonMethod method) {
+        
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User student = userRepository.findByUsername(username).orElseThrow();
         Task task = taskRepository.findById(id).orElseThrow();
@@ -67,7 +72,16 @@ public class StudentController {
         StudentSubmission submission = submissionRepository.findByStudentAndTask(student, task)
                 .orElseThrow(() -> new RuntimeException("No submission found"));
 
-        String result = comparisonService.compareRepositories(task.getReferenceRepoPath(), submission.getStudentRepoPath());
-        return ResponseEntity.ok(result);
+        try {
+            GitComparisonResultDto result = comparisonService.compareRepositories(
+                    task.getReferenceRepoPath(), 
+                    submission.getStudentRepoPath(),
+                    reportType,
+                    method
+            );
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

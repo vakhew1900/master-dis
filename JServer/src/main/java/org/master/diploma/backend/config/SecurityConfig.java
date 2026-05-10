@@ -22,13 +22,13 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/student/**").hasRole("STUDENT")
+                .requestMatchers(Constants.Routes.AUTH + "/**").permitAll()
+                .requestMatchers(Constants.Routes.ADMIN + "/**").hasRole("ADMIN")
+                .requestMatchers(Constants.Routes.STUDENT + "/**").hasRole("STUDENT")
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults()); // For simplicity using Basic Auth for now
+            .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }

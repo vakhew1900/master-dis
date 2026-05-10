@@ -3,6 +3,7 @@ package org.master.diploma.backend.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.master.diploma.backend.config.Constants;
 import org.master.diploma.backend.entity.LaboratoryWork;
 import org.master.diploma.backend.repository.LaboratoryWorkRepository;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/labs")
+@RequestMapping(Constants.Routes.ADMIN_LABS)
 @RequiredArgsConstructor
 @Tag(name = "Admin Lab Management", description = "Endpoints for teachers to manage laboratory works")
 public class AdminLabController {

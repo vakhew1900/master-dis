@@ -3,13 +3,14 @@ package org.master.diploma.backend.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.master.diploma.backend.config.Constants;
 import org.master.diploma.backend.entity.Task;
 import org.master.diploma.backend.repository.TaskRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/admin/tasks")
+@RequestMapping(Constants.Routes.ADMIN_TASKS)
 @RequiredArgsConstructor
 @Tag(name = "Admin Task Management", description = "Endpoints for teachers to manage tasks")
 public class AdminTaskController {

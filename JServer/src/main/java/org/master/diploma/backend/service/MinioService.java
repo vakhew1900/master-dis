@@ -8,36 +8,48 @@ import java.nio.file.Path;
 
 @Service
 @RequiredArgsConstructor
-public class MinioService {
+public class MinioService extends FileService {
     private final ZipProcessingService zipProcessingService;
 
-    public String uploadFile(String bucketName, String objectName, InputStream inputStream, long size, String contentType) {
-        // TODO: Real MinIO implementation (e.g., using MinioClient)
+    @Override
+    public String uploadFile(String bucketName, String objectName, InputStream inputStream, long size, String contentType) throws IOException {
+        // TODO: Real MinIO implementation (e.g., minioClient.putObject(...))
         return "minio://" + bucketName + "/" + objectName;
     }
 
-    public InputStream downloadFile(String bucketName, String objectName) {
-        // TODO: Real MinIO implementation
-        return null;
+    @Override
+    public InputStream downloadFile(String bucketName, String objectName) throws IOException {
+        // TODO: Real MinIO implementation (e.g., minioClient.getObject(...))
+        return new ByteArrayInputStream(new byte[0]); // Stub
     }
 
-    /**
-     * Downloads a repository (as a ZIP) from MinIO and unzips it to a temporary directory.
-     * @param repoPath Path in MinIO (e.g., minio://bucket/object)
-     * @return File object pointing to the unzipped repository directory.
-     */
+    @Override
+    public void deleteFile(String bucketName, String objectName) throws IOException {
+        // TODO: Real MinIO implementation (e.g., minioClient.removeObject(...))
+        System.out.println("Deleting file from MinIO: " + bucketName + "/" + objectName);
+    }
+
+    @Override
     public File downloadRepository(String repoPath) throws IOException {
-        // 1. Create a temporary directory
         Path tempDir = Files.createTempDirectory("jserver_repo_");
         
-        // 2. Get InputStream from MinIO
-        // String objectName = repoPath.substring(repoPath.lastIndexOf("/") + 1);
-        // InputStream is = downloadFile("repositories", objectName);
-        
-        // FOR STUB: Assume we have some way to get the ZIP.
-        // In real implementation:
-        // zipProcessingService.unzip(is, tempDir);
+        // Example repoPath parsing: minio://bucket/object
+        String pathWithoutProtocol = repoPath.replace("minio://", "");
+        String bucketName = pathWithoutProtocol.substring(0, pathWithoutProtocol.indexOf("/"));
+        String objectName = pathWithoutProtocol.substring(pathWithoutProtocol.indexOf("/") + 1);
+
+        try (InputStream is = downloadFile(bucketName, objectName)) {
+            zipProcessingService.unzip(is, tempDir);
+        }
         
         return tempDir.toFile();
+    }
+    
+    public void deleteByFullRepoPath(String repoPath) throws IOException {
+        if (repoPath == null || !repoPath.startsWith("minio://")) return;
+        String pathWithoutProtocol = repoPath.replace("minio://", "");
+        String bucketName = pathWithoutProtocol.substring(0, pathWithoutProtocol.indexOf("/"));
+        String objectName = pathWithoutProtocol.substring(pathWithoutProtocol.indexOf("/") + 1);
+        deleteFile(bucketName, objectName);
     }
 }

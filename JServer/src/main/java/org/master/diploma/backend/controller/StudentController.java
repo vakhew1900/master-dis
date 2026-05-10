@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,28 +35,30 @@ public class StudentController {
 
     @PostMapping(Constants.Routes.STUDENT_UPLOAD)
     @Operation(summary = "Upload task solution (ZIP)")
-    public ResponseEntity<StudentSubmission> uploadSolution(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<StudentSubmission> uploadSolution(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User student = userRepository.findByUsername(username).orElseThrow();
         Task task = taskRepository.findById(id).orElseThrow();
 
-        try {
-            String path = minioService.uploadFile("submissions", 
-                username + "/" + id + "_" + System.currentTimeMillis() + ".zip", 
-                file.getInputStream(), file.getSize(), file.getContentType());
+        StudentSubmission submission = submissionRepository.findByStudentAndTask(student, task)
+                .orElse(StudentSubmission.builder()
+                        .student(student)
+                        .task(task)
+                        .build());
 
-            StudentSubmission submission = submissionRepository.findByStudentAndTask(student, task)
-                    .orElse(new StudentSubmission());
-            
-            submission.setStudent(student);
-            submission.setTask(task);
-            submission.setStudentRepoPath(path);
-            submission.setSubmittedAt(LocalDateTime.now());
-
-            return ResponseEntity.ok(submissionRepository.save(submission));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+        // Delete old file if exists
+        if (submission.getStudentRepoPath() != null) {
+            minioService.deleteByFullRepoPath(submission.getStudentRepoPath());
         }
+
+        String path = minioService.uploadFile("submissions", 
+            username + "/" + id + "_" + System.currentTimeMillis() + ".zip", 
+            file.getInputStream(), file.getSize(), file.getContentType());
+
+        submission.setStudentRepoPath(path);
+        submission.setSubmittedAt(LocalDateTime.now());
+
+        return ResponseEntity.ok(submissionRepository.save(submission));
     }
 
     @PostMapping(Constants.Routes.STUDENT_CHECK)
@@ -63,7 +66,7 @@ public class StudentController {
     public ResponseEntity<GitComparisonResultDto> checkSolution(
             @PathVariable Long id,
             @RequestParam(defaultValue = "MERGED_GRAPH") ComparisonService.ReportType reportType,
-            @RequestParam(defaultValue = "BRANCH") ComparisonService.ComparisonMethod method) {
+            @RequestParam(defaultValue = "BRANCH") ComparisonService.ComparisonMethod method) throws IOException {
         
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User student = userRepository.findByUsername(username).orElseThrow();
@@ -72,16 +75,12 @@ public class StudentController {
         StudentSubmission submission = submissionRepository.findByStudentAndTask(student, task)
                 .orElseThrow(() -> new RuntimeException("No submission found"));
 
-        try {
-            GitComparisonResultDto result = comparisonService.compareRepositories(
-                    task.getReferenceRepoPath(), 
-                    submission.getStudentRepoPath(),
-                    reportType,
-                    method
-            );
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        GitComparisonResultDto result = comparisonService.compareRepositories(
+                task.getReferenceRepoPath(), 
+                submission.getStudentRepoPath(),
+                reportType,
+                method
+        );
+        return ResponseEntity.ok(result);
     }
 }

@@ -71,4 +71,13 @@ public class AdminTaskController {
 
         return ResponseEntity.ok(taskRepository.save(task));
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a task and its reference repository")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) throws IOException {
+        Task task = taskRepository.findById(id).orElseThrow();
+        fileService.deleteByFullRepoPath(task.getReferenceRepoPath());
+        taskRepository.delete(task);
+        return ResponseEntity.ok().build();
+    }
 }

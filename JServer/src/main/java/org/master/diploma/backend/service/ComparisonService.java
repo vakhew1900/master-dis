@@ -60,7 +60,9 @@ public class ComparisonService {
 
             return builder.build(studentGraph, referenceGraph, compareResult);
         } finally {
-            // Cleanup temporary directories if needed
+            org.master.diploma.backend.support.FileHelper.deleteRecursive(referenceDir);
+            org.master.diploma.backend.support.FileHelper.deleteRecursive(studentDir);
         }
-    }
+        }
+
 }

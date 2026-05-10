@@ -23,6 +23,7 @@ public class AdminStudentController {
     private final UserRepository userRepository;
     private final StudentSubmissionRepository submissionRepository;
     private final TaskRepository taskRepository;
+    private final org.master.diploma.backend.service.FileService fileService;
 
     @GetMapping
     @Operation(summary = "Get all students")
@@ -54,9 +55,13 @@ public class AdminStudentController {
     }
 
     @DeleteMapping("/submissions/{submissionId}")
-    @Operation(summary = "Remove task assignment/submission")
-    public ResponseEntity<Void> removeAssignment(@PathVariable Long submissionId) {
-        submissionRepository.deleteById(submissionId);
+    @Operation(summary = "Remove task assignment/submission and its file")
+    public ResponseEntity<Void> removeAssignment(@PathVariable Long submissionId) throws java.io.IOException {
+        StudentSubmission submission = submissionRepository.findById(submissionId).orElseThrow();
+        if (submission.getStudentRepoPath() != null && !submission.getStudentRepoPath().equals("NOT_SUBMITTED")) {
+            fileService.deleteByFullRepoPath(submission.getStudentRepoPath());
+        }
+        submissionRepository.delete(submission);
         return ResponseEntity.ok().build();
     }
 

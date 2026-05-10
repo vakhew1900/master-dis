@@ -10,3 +10,6 @@ spring.jpa.hibernate.ddl-auto=update
 # OpenAPI
 springdoc.api-docs.path=/v3/api-docs
 springdoc.swagger-ui.path=/swagger-ui.html
+
+# JSON
+spring.mvc.converters.preferred-json-mapper=gson

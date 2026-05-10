@@ -1,6 +1,7 @@
 package org.master.diploma.backend.config;
 
 import lombok.RequiredArgsConstructor;
+import org.master.diploma.backend.entity.User;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -23,8 +24,8 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(Constants.Routes.AUTH + "/**").permitAll()
-                .requestMatchers(Constants.Routes.ADMIN + "/**").hasRole("ADMIN")
-                .requestMatchers(Constants.Routes.STUDENT + "/**").hasRole("STUDENT")
+                .requestMatchers(Constants.Routes.ADMIN + "/**").hasRole(User.Role.ADMIN.name())
+                .requestMatchers(Constants.Routes.STUDENT + "/**").hasRole(User.Role.STUDENT.name())
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )

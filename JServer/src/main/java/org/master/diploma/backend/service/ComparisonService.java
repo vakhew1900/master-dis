@@ -16,7 +16,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ComparisonService {
-    private final MinioService minioService;
+    private final FileService fileService;
     private final Map<ComparisonMethod, SubgraphMethodExecutor> methodExecutors;
     private final Map<ReportType, ComparisonResultBuilder<?, ?>> resultBuilders;
 
@@ -36,27 +36,31 @@ public class ComparisonService {
                                                      String studentRepoPath, 
                                                      ReportType reportType,
                                                      ComparisonMethod method) throws IOException {
+        
+        File referenceDir = fileService.downloadRepository(referenceRepoPath);
+        File studentDir = fileService.downloadRepository(studentRepoPath);
 
-        File referenceDir = minioService.downloadRepository(referenceRepoPath);
-        File studentDir = minioService.downloadRepository(studentRepoPath);
+        try {
+            CommitGraph referenceGraph = GitHelper.createCommitGraph(referenceDir);
+            CommitGraph studentGraph = GitHelper.createCommitGraph(studentDir);
 
-        CommitGraph referenceGraph = GitHelper.createCommitGraph(referenceDir);
-        CommitGraph studentGraph = GitHelper.createCommitGraph(studentDir);
+            SimpleLabelGenerator.getInstance().makeLabelForGitGraph(referenceGraph);
+            SimpleLabelGenerator.getInstance().makeLabelForGitGraph(studentGraph);
 
-        SimpleLabelGenerator.getInstance().makeLabelForGitGraph(referenceGraph);
-        SimpleLabelGenerator.getInstance().makeLabelForGitGraph(studentGraph);
+            SubgraphMethodExecutor methodExecutor = methodExecutors.get(method);
+            if (methodExecutor == null) {
+                throw new IllegalArgumentException("Unsupported comparison method: " + method);
+            }
+            GraphCompareResult compareResult = methodExecutor.execute(studentGraph, referenceGraph);
 
-        SubgraphMethodExecutor methodExecutor = methodExecutors.get(method);
-        if (methodExecutor == null) {
-            throw new IllegalArgumentException("Unsupported comparison method: " + method);
+            ComparisonResultBuilder<?, ?> builder = resultBuilders.get(reportType);
+            if (builder == null) {
+                throw new IllegalArgumentException("Unsupported report type: " + reportType);
+            }
+
+            return builder.build(studentGraph, referenceGraph, compareResult);
+        } finally {
+            // Cleanup temporary directories if needed
         }
-        GraphCompareResult compareResult = methodExecutor.execute(studentGraph, referenceGraph);
-
-        ComparisonResultBuilder<?, ?> builder = resultBuilders.get(reportType);
-        if (builder == null) {
-            throw new IllegalArgumentException("Unsupported report type: " + reportType);
-        }
-
-        return builder.build(studentGraph, referenceGraph, compareResult);
     }
 }

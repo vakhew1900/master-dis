@@ -7,6 +7,7 @@ import org.master.diploma.backend.config.Constants;
 import org.master.diploma.backend.entity.*;
 import org.master.diploma.backend.repository.*;
 import org.master.diploma.backend.service.*;
+import org.master.diploma.backend.support.FileHelper;
 import org.master.diploma.git.graph.dto.GitComparisonResultDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +25,7 @@ public class StudentController {
     private final TaskRepository taskRepository;
     private final StudentSubmissionRepository submissionRepository;
     private final UserRepository userRepository;
-    private final MinioService minioService;
+    private final FileService fileService;
     private final ComparisonService comparisonService;
 
     @GetMapping(Constants.Routes.STUDENT_TASKS)
@@ -46,13 +47,13 @@ public class StudentController {
                         .task(task)
                         .build());
 
-        // Delete old file if exists
         if (submission.getStudentRepoPath() != null) {
-            minioService.deleteByFullRepoPath(submission.getStudentRepoPath());
+            fileService.deleteByFullRepoPath(submission.getStudentRepoPath());
         }
 
-        String path = minioService.uploadFile("submissions", 
-            username + "/" + id + "_" + System.currentTimeMillis() + ".zip", 
+        String fileName = FileHelper.createSubmissionFileName(username, id);
+        String path = fileService.uploadFile(Constants.Buckets.SUBMISSIONS, 
+            fileName, 
             file.getInputStream(), file.getSize(), file.getContentType());
 
         submission.setStudentRepoPath(path);

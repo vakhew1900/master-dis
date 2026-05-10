@@ -7,7 +7,8 @@ import org.master.diploma.backend.config.Constants;
 import org.master.diploma.backend.entity.Task;
 import org.master.diploma.backend.repository.LaboratoryWorkRepository;
 import org.master.diploma.backend.repository.TaskRepository;
-import org.master.diploma.backend.service.MinioService;
+import org.master.diploma.backend.service.FileService;
+import org.master.diploma.backend.support.FileHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +21,7 @@ import java.io.IOException;
 public class AdminTaskController {
     private final TaskRepository taskRepository;
     private final LaboratoryWorkRepository labRepository;
-    private final MinioService minioService;
+    private final FileService fileService;
 
     @PostMapping
     @Operation(summary = "Create a new task with reference repository")
@@ -30,8 +31,9 @@ public class AdminTaskController {
             @RequestParam Long labId,
             @RequestParam("file") MultipartFile file) throws IOException {
         
-        String path = minioService.uploadFile("references", 
-                "lab_" + labId + "_task_" + number + "_" + System.currentTimeMillis() + ".zip", 
+        String fileName = FileHelper.createLabFileName(labId, number);
+        String path = fileService.uploadFile(Constants.Buckets.REFERENCES, 
+                fileName, 
                 file.getInputStream(), file.getSize(), file.getContentType());
 
         Task task = Task.builder()
@@ -58,12 +60,11 @@ public class AdminTaskController {
         if (description != null) task.setDescription(description);
         
         if (file != null) {
-            // Delete old file
-            minioService.deleteByFullRepoPath(task.getReferenceRepoPath());
+            fileService.deleteByFullRepoPath(task.getReferenceRepoPath());
             
-            // Upload new file
-            String path = minioService.uploadFile("references", 
-                    "lab_" + task.getLab().getId() + "_task_" + task.getNumber() + "_" + System.currentTimeMillis() + ".zip", 
+            String fileName = FileHelper.createLabFileName(task.getLab().getId(), task.getNumber());
+            String path = fileService.uploadFile(Constants.Buckets.REFERENCES, 
+                    fileName, 
                     file.getInputStream(), file.getSize(), file.getContentType());
             task.setReferenceRepoPath(path);
         }

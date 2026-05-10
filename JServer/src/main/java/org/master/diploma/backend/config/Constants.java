@@ -18,4 +18,9 @@ public class Constants {
         public static final String STUDENT_UPLOAD = "/{id}/upload";
         public static final String STUDENT_CHECK = "/{id}/check";
     }
+
+    public static class Buckets {
+        public static final String REFERENCES = "references";
+        public static final String SUBMISSIONS = "submissions";
+    }
 }

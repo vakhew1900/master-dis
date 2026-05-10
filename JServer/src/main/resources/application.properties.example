@@ -13,3 +13,8 @@ springdoc.swagger-ui.path=/swagger-ui.html
 
 # JSON
 spring.mvc.converters.preferred-json-mapper=gson
+
+# MinIO
+minio.url=http://localhost:9000
+minio.access-key=minioadmin
+minio.secret-key=minioadmin

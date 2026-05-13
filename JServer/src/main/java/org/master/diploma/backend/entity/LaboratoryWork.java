@@ -6,8 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name = LaboratoryWork.TABLE_NAME)
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+import org.master.diploma.backend.entity.Task;
+import java.util.Collections;
+
 @RestController
 @RequestMapping(Constants.Routes.ADMIN_LABS)
 @RequiredArgsConstructor
@@ -38,6 +41,33 @@ public class AdminLabController {
                     lab.setTopic(labDetails.getTopic());
                     lab.setDescription(labDetails.getDescription());
                     return ResponseEntity.ok(laboratoryWorkRepository.save(lab));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get laboratory work by ID")
+    public ResponseEntity<LaboratoryWork> getLabById(@PathVariable Long id) {
+        return laboratoryWorkRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/tasks")
+    @Operation(summary = "Get all tasks for a specific laboratory work")
+    public ResponseEntity<List<Task>> getTasksByLabId(@PathVariable Long id) {
+        return laboratoryWorkRepository.findById(id)
+                .map(lab -> ResponseEntity.ok(lab.getTasks()))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a laboratory work")
+    public ResponseEntity<Void> deleteLab(@PathVariable Long id) {
+        return laboratoryWorkRepository.findById(id)
+                .map(lab -> {
+                    laboratoryWorkRepository.delete(lab);
+                    return ResponseEntity.ok().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

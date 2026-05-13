@@ -6,8 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.master.diploma.backend.config.Constants;
 import org.master.diploma.backend.entity.User;
 import org.master.diploma.backend.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import org.master.diploma.backend.dto.UserDto;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping(Constants.Routes.AUTH)
@@ -22,5 +27,29 @@ public class AuthController {
     public User register(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "Login user (Basic Auth verification)")
+    public ResponseEntity<UserDto> login() {
+        // Spring Security handles the check. If we are here, auth is successful.
+        return getCurrentUser();
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "Get current authenticated user info")
+    public ResponseEntity<UserDto> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            return ResponseEntity.status(401).build();
+        }
+
+        return userRepository.findByUsername(auth.getName())
+                .map(user -> ResponseEntity.ok(UserDto.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .role(user.getRole().name())
+                        .build()))
+                .orElse(ResponseEntity.status(401).build());
     }
 }

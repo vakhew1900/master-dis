@@ -80,4 +80,18 @@ public class AdminTaskController {
         taskRepository.delete(task);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping
+    @Operation(summary = "Get all tasks")
+    public ResponseEntity<Iterable<Task>> getAllTasks() {
+        return ResponseEntity.ok(taskRepository.findAll());
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get task by ID")
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+        return taskRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

@@ -31,6 +31,14 @@ public class AdminStudentController {
         return userRepository.findByRole(User.Role.STUDENT);
     }
 
+    @GetMapping("/{studentId}/submissions")
+    @Operation(summary = "Get all submissions for a specific student")
+    public ResponseEntity<List<StudentSubmission>> getStudentSubmissions(@PathVariable Long studentId) {
+        return userRepository.findById(studentId)
+                .map(student -> ResponseEntity.ok(submissionRepository.findByStudent(student)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/submissions")
     @Operation(summary = "Get all student submissions")
     public List<StudentSubmission> getAllSubmissions() {

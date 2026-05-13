@@ -17,6 +17,9 @@ public class Constants {
         public static final String STUDENT_TASKS = STUDENT + "/tasks";
         public static final String STUDENT_UPLOAD = "/{id}/upload";
         public static final String STUDENT_CHECK = "/{id}/check";
+
+        public static final String COMPARISON = API_PREFIX + "/comparison";
+        public static final String COMPARE_FILES = "/compare-files";
     }
 
     public static class Buckets {

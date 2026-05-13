@@ -41,28 +41,35 @@ public class ComparisonService {
         File studentDir = fileService.downloadRepository(studentRepoPath);
 
         try {
-            CommitGraph referenceGraph = GitHelper.createCommitGraph(referenceDir);
-            CommitGraph studentGraph = GitHelper.createCommitGraph(studentDir);
-
-            SimpleLabelGenerator.getInstance().makeLabelForGitGraph(referenceGraph);
-            SimpleLabelGenerator.getInstance().makeLabelForGitGraph(studentGraph);
-
-            SubgraphMethodExecutor methodExecutor = methodExecutors.get(method);
-            if (methodExecutor == null) {
-                throw new IllegalArgumentException("Unsupported comparison method: " + method);
-            }
-            GraphCompareResult compareResult = methodExecutor.execute(studentGraph, referenceGraph);
-
-            ComparisonResultBuilder<?, ?> builder = resultBuilders.get(reportType);
-            if (builder == null) {
-                throw new IllegalArgumentException("Unsupported report type: " + reportType);
-            }
-
-            return builder.build(studentGraph, referenceGraph, compareResult);
+            return compareDirectories(referenceDir, studentDir, reportType, method);
         } finally {
             org.master.diploma.backend.support.FileHelper.deleteRecursive(referenceDir);
             org.master.diploma.backend.support.FileHelper.deleteRecursive(studentDir);
         }
+    }
+
+    public GitComparisonResultDto compareDirectories(File referenceDir,
+                                                     File studentDir,
+                                                     ReportType reportType,
+                                                     ComparisonMethod method) throws IOException {
+        CommitGraph referenceGraph = GitHelper.createCommitGraph(referenceDir);
+        CommitGraph studentGraph = GitHelper.createCommitGraph(studentDir);
+
+        SimpleLabelGenerator.getInstance().makeLabelForGitGraph(referenceGraph);
+        SimpleLabelGenerator.getInstance().makeLabelForGitGraph(studentGraph);
+
+        SubgraphMethodExecutor methodExecutor = methodExecutors.get(method);
+        if (methodExecutor == null) {
+            throw new IllegalArgumentException("Unsupported comparison method: " + method);
         }
+        GraphCompareResult compareResult = methodExecutor.execute(studentGraph, referenceGraph);
+
+        ComparisonResultBuilder<?, ?> builder = resultBuilders.get(reportType);
+        if (builder == null) {
+            throw new IllegalArgumentException("Unsupported report type: " + reportType);
+        }
+
+        return builder.build(studentGraph, referenceGraph, compareResult);
+    }
 
 }

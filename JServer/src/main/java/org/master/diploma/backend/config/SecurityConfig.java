@@ -24,6 +24,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(Constants.Routes.AUTH + "/**").permitAll()
+                .requestMatchers(Constants.Routes.COMPARISON + "/**").permitAll()
                 .requestMatchers(Constants.Routes.ADMIN + "/**").hasRole(User.Role.ADMIN.name())
                 .requestMatchers(Constants.Routes.STUDENT + "/**").hasRole(User.Role.STUDENT.name())
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()

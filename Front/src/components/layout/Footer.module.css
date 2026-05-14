@@ -1,0 +1,29 @@
+.mainFooter {
+    background-color: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+    padding: 40px 16px;
+    margin-top: auto;
+    color: #848d97;
+    font-size: 12px;
+}
+
+.footerContent {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footerDesc {
+    max-width: 600px;
+}
+
+.footerDesc strong {
+    color: #c9d1d9;
+}
+
+.footerCopy {
+    text-align: right;
+    font-weight: 500;
+}

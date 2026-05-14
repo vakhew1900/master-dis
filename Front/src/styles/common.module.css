@@ -1,0 +1,7 @@
+.detailsPanel {
+    background: var(--panel-bg);
+    padding: 24px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    margin-top: 24px;
+}

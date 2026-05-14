@@ -5,6 +5,10 @@ import MainLayout from './components/layout/MainLayout';
 import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
 import StudentPage from './pages/StudentPage';
+import LoginPage from './pages/auth/LoginPage';
+import ComparisonPage from './pages/ComparisonPage';
+import ComparisonResultPage from './pages/ComparisonResultPage';
+import { ProtectedRoute } from './components/routing/ProtectedRoute';
 
 function App() {
   return (
@@ -13,8 +17,24 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
-            <Route path="admin" element={<AdminPage />} />
-            <Route path="student" element={<StudentPage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route 
+              path="comparison" 
+              element={
+                <ProtectedRoute role="STUDENT">
+                  <ComparisonPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="comparison-result" 
+              element={
+                <ProtectedRoute role="STUDENT">
+                  <ComparisonResultPage />
+                </ProtectedRoute>
+              } 
+            />
+            {/* ... */}
           </Route>
         </Routes>
       </Router>

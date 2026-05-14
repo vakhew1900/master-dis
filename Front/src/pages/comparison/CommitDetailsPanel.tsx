@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { components } from '../../api/models/schema';
 import styles from './CommitDetailsPanel.module.css';
 
@@ -24,23 +24,49 @@ const DiffLine: React.FC<{ diff: DiffDto }> = ({ diff }) => {
 };
 
 const NodeInfo: React.FC<{ node: NodeDto; title: string }> = ({ node, title }) => {
+  const [showMetadata, setShowMetadata] = useState(false);
+
+  if (!node) {
+    return (
+      <div className={styles.column}>
+        <h4>{title}</h4>
+        <div className={styles.empty}>Нет данных (узел отсутствует)</div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.column}>
       <h4>{title}</h4>
-      {node ? (
-        <>
-          <div className={styles.meta}>
-            <div><strong>Hash:</strong> {node.hash?.substring(0, 10)}...</div>
-            <div><strong>Author:</strong> {node.author?.name}</div>
-            <div><strong>Date:</strong> {node.commitDate}</div>
-            <div className={styles.message}>"{node.message}"</div>
-          </div>
+      <div className={styles.header}>
+        <span className={styles.hash}>[{node.number}] {node.hash?.substring(0, 7)}</span>
+        <span className={`${styles.statusBadge} ${styles[`severity-${node.severity}`]}`}>
+          {node.severity}
+        </span>
+      </div>
+
+      <button 
+        className={styles.toggleBtn}
+        onClick={() => setShowMetadata(!showMetadata)}
+      >
+        {showMetadata ? 'Скрыть детали' : 'Детали коммита'}
+      </button>
+
+      {showMetadata && (
+        <div className={styles.meta}>
+          <div><strong>Сообщение:</strong> <span className={styles.message}>{node.message}</span></div>
+          <div><strong>Автор:</strong> {node.author?.name} ({node.author?.email})</div>
+          <div><strong>Дата:</strong> {node.commitDate}</div>
+        </div>
+      )}
+
+      {node.diffs && node.diffs.length > 0 && (
+        <div className={styles.diffSection}>
+          <div className={styles.diffTitle}>Изменения:</div>
           <div className={styles.diffList}>
-            {node.diffs?.map((d, i) => <DiffLine key={i} diff={d} />)}
+            {node.diffs.map((d, i) => <DiffLine key={i} diff={d} />)}
           </div>
-        </>
-      ) : (
-        <div className={styles.empty}>Нет данных (узел отсутствует)</div>
+        </div>
       )}
     </div>
   );
@@ -57,8 +83,8 @@ export const CommitDetailsPanel: React.FC<CommitDetailsPanelProps> = ({ studentN
 
   return (
     <div className={styles.panel}>
-      <NodeInfo node={studentNode!} title="Студент" />
-      <NodeInfo node={referenceNode!} title="Эталон" />
+      <NodeInfo node={studentNode!} title="Репозиторий студента" />
+      <NodeInfo node={referenceNode!} title="Эталонный репозиторий" />
     </div>
   );
 };

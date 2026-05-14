@@ -24,7 +24,8 @@ export const ComparisonLegend: React.FC = () => {
     { severity: 'IDENTICAL', label: 'IDENTICAL', description: 'Полное совпадение' },
     { severity: 'MODIFIED', label: 'MODIFIED', description: 'Изменен (diff)' },
     { severity: 'EXTRA', label: 'EXTRA', description: 'Лишний узел' },
-    { severity: 'MOVABLE', label: 'MOVABLE', description: 'Перемещен' },
+    { severity: 'MOVABLE_STUDENT', label: 'MOVABLE (S)', description: 'Перемещен (Студент)' },
+    { severity: 'MOVABLE_REFERENCE', label: 'MOVABLE (R)', description: 'Перемещен (Эталон)' },
   ];
 
   return (

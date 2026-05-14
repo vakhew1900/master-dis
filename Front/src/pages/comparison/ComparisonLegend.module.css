@@ -64,5 +64,32 @@
 
 .severity-IDENTICAL { background-color: var(--severity-identical-bg); border-color: var(--severity-identical-border); }
 .severity-MODIFIED { background-color: var(--severity-modified-bg); border-color: var(--severity-modified-border); }
-.severity-EXTRA { background-color: var(--severity-extra-bg); border-color: var(--severity-extra-border); }
-.severity-MOVABLE { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); }
+.severity-EXTRA { 
+    background-color: var(--severity-extra-bg); 
+    border-color: var(--severity-extra-border); 
+    position: relative;
+}
+
+.severity-EXTRA::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -2px;
+    right: -2px;
+    height: 2px;
+    background: #f44336;
+    transform: rotate(45deg);
+}
+
+.severity-EXTRA::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -2px;
+    right: -2px;
+    height: 2px;
+    background: #f44336;
+    transform: rotate(-45deg);
+}
+.severity-MOVABLE_STUDENT { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); }
+.severity-MOVABLE_REFERENCE { background-color: var(--severity-movable-reference); border-color: var(--severity-movable-reference-border); }

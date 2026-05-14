@@ -10,6 +10,8 @@ import org.master.diploma.backend.support.FileHelper;
 import org.master.diploma.git.graph.dto.GitComparisonResultDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +23,7 @@ import java.nio.file.Path;
 @RestController
 @RequestMapping(Constants.Routes.COMPARISON)
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Comparison Operations", description = "Endpoints for direct repository comparison via file uploads")
 public class ComparisonController {
 
@@ -34,6 +37,9 @@ public class ComparisonController {
             @RequestParam("student") MultipartFile studentFile,
             @RequestParam(defaultValue = "MERGED_GRAPH") ComparisonService.ReportType reportType,
             @RequestParam(defaultValue = "BRANCH") ComparisonService.ComparisonMethod method) throws IOException {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("User {} initiated repository comparison: reportType={}, method={}", username, reportType, method);
 
         Path tempDir = Files.createTempDirectory("jserver-cmp-");
         Path refPath = tempDir.resolve("reference");

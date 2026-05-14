@@ -9,6 +9,7 @@ import org.master.diploma.backend.repository.*;
 import org.master.diploma.backend.service.*;
 import org.master.diploma.backend.support.FileHelper;
 import org.master.diploma.git.graph.dto.GitComparisonResultDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping(Constants.Routes.STUDENT)
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Student Operations", description = "Endpoints for students to view tasks and submit work")
 public class StudentController {
     private final TaskRepository taskRepository;
@@ -70,6 +72,8 @@ public class StudentController {
             @RequestParam(defaultValue = "BRANCH") ComparisonService.ComparisonMethod method) throws IOException {
         
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("User {} initiated solution check for task {}: reportType={}, method={}", username, id, reportType, method);
+        
         User student = userRepository.findByUsername(username).orElseThrow();
         Task task = taskRepository.findById(id).orElseThrow();
 

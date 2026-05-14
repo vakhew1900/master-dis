@@ -1,0 +1,67 @@
+.panel {
+    background: var(--panel-bg);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    gap: 30px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.column {
+    flex: 1;
+}
+
+.column h4 {
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: #888;
+}
+
+.meta {
+    font-size: 13px;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.message {
+    color: #6a8759;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.diffList {
+    background: #121212;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.diffLine {
+    white-space: pre-wrap;
+    padding: 2px 5px;
+}
+
+.added { background-color: var(--diff-added-bg); }
+.removed { background-color: var(--diff-removed-bg); }
+
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: #555;
+    font-style: italic;
+}
+
+.placeholder {
+    background: var(--panel-bg);
+    border: 1px dashed var(--border-color);
+    padding: 40px;
+    text-align: center;
+    color: #888;
+    margin-top: 20px;
+    border-radius: 6px;
+}

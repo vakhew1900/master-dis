@@ -1,31 +1,18 @@
 import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
-import remarkParse from 'remark-parse';
-import { unified } from 'unified';
-import { visit } from 'unist-util-visit';
 import rehypeSlug from 'rehype-slug';
 import content from '../docs/home.md?raw';
 import styles from './HomePage.module.css';
 
-interface Heading {
-  text: string;
-  id: string;
-}
-
+// Упрощенная версия без unified для локализации ошибки
 const HomePage: React.FC = () => {
-  // Автоматический парсинг заголовков для навигации
   const headings = useMemo(() => {
-    const ast = unified().use(remarkParse).parse(content);
-    const foundHeadings: Heading[] = [];
-    
-    visit(ast, 'heading', (node: any) => {
-      if (node.depth === 2) { // Берем только H2 для навигации
-        const text = node.children.map((c: any) => c.value).join('');
-        const id = text.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
-        foundHeadings.push({ text, id });
-      }
-    });
-    return foundHeadings;
+    // Временный ручной парсинг через Regex, чтобы избежать конфликтов с unified в браузере
+    const matches = Array.from(content.matchAll(/^## (.*$)/gm));
+    return matches.map((m, index) => ({
+      text: m[1],
+      id: m[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '')
+    }));
   }, []);
 
   return (
@@ -33,8 +20,8 @@ const HomePage: React.FC = () => {
       <aside className={styles.toc}>
         <h3 style={{ marginTop: 0 }}>Содержание</h3>
         <ul>
-          {headings.map((h) => (
-            <li key={h.id}>
+          {headings.map((h, i) => (
+            <li key={i}>
               <a href={`#${h.id}`}>{h.text}</a>
             </li>
           ))}

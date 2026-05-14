@@ -1,28 +1,34 @@
 import api from '../api/apiClient';
 
 interface LoginResponse {
-  token: string;
+  username: string;
   role: 'STUDENT' | 'ADMIN';
 }
 
 export const authService = {
   login: async (credentials: { username: string; password: string }): Promise<LoginResponse> => {
-    // Временная заглушка: считаем, что авторизация успешна всегда
+    // Для Basic Auth нам нужно закодировать credentials в base64
+    const hash = btoa(`${credentials.username}:${credentials.password}`);
+    
+    // В реальном приложении мы бы отправили пробный запрос для проверки:
+    // const response = await api.get('/auth/login', {
+    //   headers: { Authorization: `Basic ${hash}` }
+    // });
+    
+    // Пока эмулируем успех
     return new Promise((resolve) => {
       setTimeout(() => {
         const mockRole = credentials.username === 'admin' ? 'ADMIN' : 'STUDENT';
+        localStorage.setItem('auth_hash', hash);
         resolve({
-          token: 'mock-jwt-token',
-          role: mockRole,
+          username: credentials.username,
+          role: mockRole as 'STUDENT' | 'ADMIN',
         });
       }, 500);
     });
-    // Позже заменить на:
-    // const response = await api.post<LoginResponse>('/auth/login', credentials);
-    // return response.data;
   },
   
   logout: () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('auth_hash');
   }
 };

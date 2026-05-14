@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
 import { useNotification } from '../../context/NotificationContext';
@@ -11,6 +11,9 @@ const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const { addError } = useNotification();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || (username === 'admin' ? '/admin' : '/student');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,12 +23,11 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('token', data.token);
       login(username, data.role);
 
-      navigate(data.role === 'ADMIN' ? '/admin' : '/student');
+      navigate(from, { replace: true });
     } catch (error) {
       addError('Ошибка входа: неверные данные');
     }
   };
-
   return (
     <div className="details-panel" style={{ maxWidth: '400px', margin: '40px auto' }}>
       <h2>Вход</h2>

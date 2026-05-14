@@ -1,20 +1,31 @@
-import axios from 'axios';
-// Мы не можем импортировать NotificationContext напрямую здесь, 
-// поэтому будем использовать коллбэк-обработчик или кастомное событие,
-// но для простоты здесь сделаем прямой вызов через window (не идеально, но для прототипа подойдет)
+import createClient from "openapi-fetch";
+import type { paths } from "./models/schema";
 
-const api = axios.create({
-  baseURL: '/api',
+const client = createClient<paths>({ 
+    baseUrl: "/api",
 });
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Глобальный обработчик ошибок
-    const message = error.response?.data?.message || error.message || 'Произошла ошибка';
-    window.dispatchEvent(new CustomEvent('global-error', { detail: message }));
-    return Promise.reject(error);
+// Мидлвар для авторизации и обработки ошибок
+client.use({
+  onRequest({ request }) {
+    const authHash = localStorage.getItem('auth_hash');
+    if (authHash) {
+      request.headers.set("Authorization", `Basic ${authHash}`);
+    }
+    return request;
+  },
+  onResponse({ response }) {
+    if (!response.ok) {
+        // Глобальный обработчик ошибок
+        response.json().then(data => {
+            const message = data.message || "Ошибка сервера";
+            window.dispatchEvent(new CustomEvent('global-error', { detail: message }));
+        }).catch(() => {
+            window.dispatchEvent(new CustomEvent('global-error', { detail: "Неизвестная ошибка" }));
+        });
+    }
+    return response;
   }
-);
+});
 
-export default api;
+export default client;

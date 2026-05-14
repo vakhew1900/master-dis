@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Network, DataSet } from 'vis-network/standalone';
-import type { components } from '../../api/models/schema';
-import { SEVERITY, SEVERITY_COLORS } from '../../api/models/constants';
+import type { components } from '../../../api/models/schema';
+import { SEVERITY, SEVERITY_COLORS } from '../../../api/models/constants';
 import styles from './GraphCanvas.module.css';
 
 type GitGraphDto = components["schemas"]["GitGraphDto"];

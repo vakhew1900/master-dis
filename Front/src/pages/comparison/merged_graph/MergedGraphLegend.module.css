@@ -1,0 +1,85 @@
+.legendDetails {
+    background: var(--panel-bg);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.legendSummary {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legendSummary::before {
+    content: '▶';
+    display: inline-block;
+    transition: transform 0.3s ease;
+    color: var(--nav-active);
+}
+
+.legendDetails[open] .legendSummary::before {
+    transform: rotate(90deg);
+}
+
+.legendContent {
+    padding: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.colorBox {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+}
+
+.label {
+    font-weight: 600;
+    font-size: 13px;
+    display: block;
+}
+
+.description {
+    font-size: 11px;
+    color: #888;
+    display: block;
+}
+
+/* Severity Colors for Legend */
+:global(.severity-IDENTICAL) { background-color: var(--severity-identical-bg); border-color: var(--severity-identical-border); }
+:global(.severity-MODIFIED) { background-color: var(--severity-modified-bg); border-color: var(--severity-modified-border); }
+:global(.severity-EXTRA) { 
+    background-color: var(--severity-extra-bg); 
+    border-color: var(--severity-extra-border); 
+    position: relative;
+}
+:global(.severity-EXTRA::after), :global(.severity-EXTRA::before) {
+    content: ''; position: absolute; top: 50%; left: -2px; right: -2px; height: 2px; background: #f44336;
+}
+:global(.severity-EXTRA::after) { transform: rotate(45deg); }
+:global(.severity-EXTRA::before) { transform: rotate(-45deg); }
+
+:global(.severity-MISSED) { 
+    background-color: var(--severity-missed-bg); 
+    border-color: var(--severity-missed-border); 
+}
+
+:global(.severity-MOVABLE_STUDENT) { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); }
+:global(.severity-MOVABLE_REFERENCE) { background-color: var(--severity-movable-reference); border-color: var(--severity-movable-reference-border); }

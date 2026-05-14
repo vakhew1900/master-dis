@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { components } from '../../api/models/schema';
+import type { components } from '../../../api/models/schema';
 import styles from './CommitDetailsPanel.module.css';
 
 type NodeDto = components["schemas"]["NodeDto"];

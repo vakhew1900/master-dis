@@ -1,0 +1,176 @@
+import React, { useEffect, useRef } from 'react';
+import { Network, DataSet } from 'vis-network/standalone';
+import type { components } from '../../../api/models/schema';
+import { SEVERITY, SEVERITY_COLORS } from '../../../api/models/constants';
+import styles from './GraphCanvas.module.css';
+
+type GitGraphDto = components["schemas"]["GitGraphDto"];
+type NodeDto = components["schemas"]["NodeDto"];
+
+interface GraphCanvasProps {
+  data: GitGraphDto;
+  title: string;
+  onNodeSelect: (nodeId: string | null) => void;
+  selectedNodeId: string | null;
+  activeMovablePair?: { from: string; to: string } | null;
+}
+
+const getCustomRenderer = (severity: string) => {
+  return ({ ctx, x, y, style }: any) => {
+    const { size = 16, color, borderColor, borderWidth = 2 } = style;
+    return {
+      drawNode() {
+        if (!ctx) return;
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = borderWidth;
+        ctx.stroke();
+        if (severity === SEVERITY.EXTRA) {
+          ctx.beginPath();
+          const crossSize = size * 0.7;
+          ctx.moveTo(x - crossSize, y - crossSize);
+          ctx.lineTo(x + crossSize, y + crossSize);
+          ctx.moveTo(x + crossSize, y - crossSize);
+          ctx.lineTo(x - crossSize, y + crossSize);
+          ctx.strokeStyle = '#ff4d4d';
+          ctx.lineWidth = 3;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+        }
+        ctx.restore();
+      },
+      nodeDimensions: { width: size * 2, height: size * 2 }
+    };
+  };
+};
+
+export const GraphCanvas: React.FC<GraphCanvasProps> = ({ 
+    data, title, onNodeSelect, selectedNodeId, activeMovablePair 
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const networkRef = useRef<Network | null>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !data.nodes) return;
+
+    const visNodes = new DataSet(
+      data.nodes.map((node: NodeDto) => {
+        let severityKey = node.severity || 'DEFAULT';
+        if (severityKey === SEVERITY.MOVABLE) {
+            severityKey = node.id?.startsWith('g1') ? 'MOVABLE_STUDENT' : 'MOVABLE_REFERENCE';
+        }
+        const color = SEVERITY_COLORS[severityKey as keyof typeof SEVERITY_COLORS] || SEVERITY_COLORS.DEFAULT;
+        return {
+          id: node.id,
+          label: node.hash?.includes('/') ? node.hash : node.hash?.substring(0, 7),
+          color: { background: color.bg, border: color.border, highlight: { background: color.border, border: '#ffffff' } },
+          font: { color: '#a9b7c6', size: 12 },
+          shape: 'custom',
+          ctxRenderer: getCustomRenderer(node.severity || ''),
+          size: 18
+        };
+      })
+    );
+
+    const visEdges = new DataSet(
+      data.links?.map(link => ({
+        from: link.source,
+        to: link.target,
+        arrows: { to: { enabled: true, scaleFactor: 0.8 } },
+        color: { color: '#555', highlight: '#4b6eaf' }
+      })) || []
+    );
+
+    const options = {
+      layout: {
+        hierarchical: {
+          enabled: true,
+          direction: 'DU',
+          sortMethod: 'directed',
+          levelSeparation: 60,
+          nodeSpacing: 50,
+          treeSpacing: 80
+        }
+      },
+      physics: { enabled: false },
+      interaction: { 
+        hover: true,
+        dragNodes: false,
+        multiselect: false,
+        zoomView: false,
+      },
+      autoResize: true
+    };
+
+    const network = new Network(containerRef.current, { nodes: visNodes, edges: visEdges }, options);
+    networkRef.current = network;
+
+    network.on("afterDrawing", (ctx) => {
+        if (activeMovablePair && networkRef.current) {
+            const positions = networkRef.current.getPositions([activeMovablePair.from, activeMovablePair.to]);
+            const pos1 = positions[activeMovablePair.from];
+            const pos2 = positions[activeMovablePair.to];
+            if (pos1 && pos2) {
+                ctx.strokeStyle = 'rgba(75, 110, 175, 0.7)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(pos1.x, pos1.y);
+                ctx.lineTo(pos2.x, pos2.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+    });
+
+    network.on('click', (params) => {
+      onNodeSelect(params.nodes.length > 0 ? params.nodes[0] : null);
+    });
+
+    const handleWheel = (e: WheelEvent) => {
+        if (e.ctrlKey && networkRef.current) {
+            networkRef.current.setOptions({ interaction: { zoomView: true } });
+        } else {
+            networkRef.current?.setOptions({ interaction: { zoomView: false } });
+        }
+    };
+    
+    containerRef.current.addEventListener('wheel', handleWheel, { passive: false });
+
+    const timeoutId = setTimeout(() => { if (networkRef.current) networkRef.current.fit(); }, 150);
+
+    return () => {
+      containerRef.current?.removeEventListener('wheel', handleWheel);
+      clearTimeout(timeoutId);
+      network.destroy();
+      networkRef.current = null;
+    };
+  }, [data]);
+
+  useEffect(() => {
+    if (networkRef.current) {
+      if (selectedNodeId) networkRef.current.selectNodes([selectedNodeId]);
+      else networkRef.current.unselectAll();
+    }
+  }, [selectedNodeId]);
+
+  useEffect(() => {
+    if (networkRef.current) networkRef.current.redraw();
+  }, [activeMovablePair]);
+
+  return (
+    <div className={styles.wrapper}>
+      <h3 className={styles.title}>{title}</h3>
+      <div ref={containerRef} className={styles.canvas} />
+    </div>
+  );
+};

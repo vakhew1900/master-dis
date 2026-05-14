@@ -15,7 +15,7 @@ interface GraphCanvasProps {
 }
 
 /**
- * Custom renderer to draw a cross over EXTRA/MISSED nodes.
+ * Custom renderer with volume (shadows) and cross for EXTRA.
  */
 const getCustomRenderer = (severity: string) => {
   return ({ ctx, x, y, style }: any) => {
@@ -25,28 +25,41 @@ const getCustomRenderer = (severity: string) => {
       drawNode() {
         if (!ctx) return;
         
-        // Draw the base circle
+        ctx.save();
+        
+        // Volume Effect (Shadow)
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+
+        // Base Circle
         ctx.beginPath();
         ctx.arc(x, y, size, 0, 2 * Math.PI, false);
         ctx.fillStyle = color;
         ctx.fill();
+        
+        // Remove shadow for border to keep it sharp
+        ctx.shadowColor = 'transparent';
         ctx.strokeStyle = borderColor;
         ctx.lineWidth = borderWidth;
         ctx.stroke();
 
-        // Draw the cross for EXTRA/MISSED
+        // Cross for EXTRA
         if (severity === SEVERITY.EXTRA || severity === 'MISSED') {
           ctx.beginPath();
-          const crossSize = size * 0.8;
+          const crossSize = size * 0.7;
           ctx.moveTo(x - crossSize, y - crossSize);
           ctx.lineTo(x + crossSize, y + crossSize);
           ctx.moveTo(x + crossSize, y - crossSize);
           ctx.lineTo(x - crossSize, y + crossSize);
-          ctx.strokeStyle = '#f44336';
+          ctx.strokeStyle = '#ff4d4d';
           ctx.lineWidth = 3;
           ctx.lineCap = 'round';
           ctx.stroke();
         }
+
+        ctx.restore();
       },
       nodeDimensions: { width: size * 2, height: size * 2 }
     };
@@ -111,7 +124,7 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({ data, title, onNodeSel
         hover: true,
         dragNodes: false,
         multiselect: false,
-        zoomView: true, // Включаем зум обратно
+        zoomView: false, // Отключаем по умолчанию (будем включать по Ctrl)
       },
       autoResize: true
     };
@@ -123,11 +136,28 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({ data, title, onNodeSel
       onNodeSelect(params.nodes.length > 0 ? params.nodes[0] : null);
     });
 
+    // Реализация зума только при зажатом Ctrl
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Control' && networkRef.current) {
+            networkRef.current.setOptions({ interaction: { zoomView: true } });
+        }
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+        if (e.key === 'Control' && networkRef.current) {
+            networkRef.current.setOptions({ interaction: { zoomView: false } });
+        }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
     const timeoutId = setTimeout(() => {
         if (networkRef.current) networkRef.current.fit();
     }, 100);
 
     return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
       clearTimeout(timeoutId);
       if (networkRef.current) {
           networkRef.current.destroy();

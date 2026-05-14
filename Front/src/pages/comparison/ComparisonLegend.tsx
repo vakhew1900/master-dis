@@ -1,4 +1,5 @@
 import React from 'react';
+import { SEVERITY } from '../../api/models/constants';
 import styles from './ComparisonLegend.module.css';
 
 interface LegendItemProps {
@@ -21,11 +22,11 @@ const LegendItem: React.FC<LegendItemProps> = ({ severity, label, description })
 
 export const ComparisonLegend: React.FC = () => {
   const items = [
-    { severity: 'IDENTICAL', label: 'IDENTICAL', description: 'Полное совпадение' },
-    { severity: 'MODIFIED', label: 'MODIFIED', description: 'Изменен (diff)' },
-    { severity: 'EXTRA', label: 'EXTRA', description: 'Лишний узел' },
-    { severity: 'MOVABLE_STUDENT', label: 'MOVABLE (S)', description: 'Перемещен (Студент)' },
-    { severity: 'MOVABLE_REFERENCE', label: 'MOVABLE (R)', description: 'Перемещен (Эталон)' },
+    { severity: SEVERITY.IDENTICAL, label: 'IDENTICAL', description: 'Полное совпадение' },
+    { severity: SEVERITY.MODIFIED, label: 'MODIFIED', description: 'Изменен (diff)' },
+    { severity: SEVERITY.EXTRA, label: 'EXTRA', description: 'Лишний узел' },
+    { severity: SEVERITY.MOVABLE_STUDENT, label: 'MOVABLE (S)', description: 'Перемещен (Студент)' },
+    { severity: SEVERITY.MOVABLE_REFERENCE, label: 'MOVABLE (R)', description: 'Перемещен (Эталон)' },
   ];
 
   return (

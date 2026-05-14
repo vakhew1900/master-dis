@@ -5,6 +5,13 @@ body {
     background-color: var(--bg-color);
     color: var(--text-main);
     line-height: 1.6;
+    /* Убираем мигающий курсор при клике на текст */
+    caret-color: transparent;
+}
+
+/* Возвращаем курсор только для полей ввода */
+input, textarea, [contenteditable="true"] {
+    caret-color: auto;
 }
 
 /* Scrollbar Styling */

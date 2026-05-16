@@ -20,7 +20,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 import { labService } from '../../services/labService';
 import type { LaboratoryWork } from '../../services/labService';
-import { AdminBreadcrumbs } from '../../components/common/AdminBreadcrumbs';
 import styles from './AdminLabsPage.module.css';
 
 const AdminLabsPage: React.FC = () => {
@@ -85,7 +84,6 @@ const AdminLabsPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <AdminBreadcrumbs />
       <div className={styles.header}>
         <Typography variant="h4" component="h1" gutterBottom>
           Лабораторные работы

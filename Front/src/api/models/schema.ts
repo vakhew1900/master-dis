@@ -93,23 +93,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/register": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Register a new user */
-        post: operations["register"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/auth/login": {
         parameters: {
             query?: never;
@@ -139,6 +122,24 @@ export interface paths {
         put?: never;
         /** Create a new task with reference repository */
         post: operations["createTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/students": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all students */
+        get: operations["getAllStudents"];
+        put?: never;
+        /** Create a new student */
+        post: operations["createStudent"];
         delete?: never;
         options?: never;
         head?: never;
@@ -197,15 +198,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/student/api/student/tasks": {
+    "/api/student/api/student/labs": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get all available tasks */
-        get: operations["getTasks"];
+        /** Get all laboratory works with assigned tasks for current student */
+        get: operations["getLabs"];
         put?: never;
         post?: never;
         delete?: never;
@@ -223,23 +224,6 @@ export interface paths {
         };
         /** Get current authenticated user info */
         get: operations["getCurrentUser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/students": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get all students */
-        get: operations["getAllStudents"];
         put?: never;
         post?: never;
         delete?: never;
@@ -294,6 +278,23 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/students/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete a user */
+        delete: operations["deleteUser"];
         options?: never;
         head?: never;
         patch?: never;
@@ -355,6 +356,9 @@ export interface components {
             id?: number;
             username?: string;
             password?: string;
+            firstName?: string;
+            lastName?: string;
+            middleName?: string;
             /** @enum {string} */
             role?: "ADMIN" | "STUDENT";
         };
@@ -420,6 +424,32 @@ export interface components {
             id?: number;
             username?: string;
             role?: string;
+            firstName?: string;
+            lastName?: string;
+            middleName?: string;
+            password?: string;
+        };
+        LaboratoryWorkDto: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int32 */
+            number?: number;
+            topic?: string;
+            description?: string;
+            tasks?: components["schemas"]["TaskDto"][];
+        };
+        TaskDto: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int32 */
+            number?: number;
+            description?: string;
+            /** Format: double */
+            grade?: number;
+            feedback?: string;
+            /** Format: date-time */
+            submittedAt?: string;
+            status?: string;
         };
     };
     responses: never;
@@ -658,30 +688,6 @@ export interface operations {
             };
         };
     };
-    register: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["User"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["User"];
-                };
-            };
-        };
-    };
     login: {
         parameters: {
             query?: never;
@@ -749,6 +755,50 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["Task"];
+                };
+            };
+        };
+    };
+    getAllStudents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["User"][];
+                };
+            };
+        };
+    };
+    createStudent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDto"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["User"];
                 };
             };
         };
@@ -845,7 +895,7 @@ export interface operations {
             };
         };
     };
-    getTasks: {
+    getLabs: {
         parameters: {
             query?: never;
             header?: never;
@@ -860,7 +910,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Task"][];
+                    "*/*": components["schemas"]["LaboratoryWorkDto"][];
                 };
             };
         };
@@ -881,26 +931,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["UserDto"];
-                };
-            };
-        };
-    };
-    getAllStudents: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["User"][];
                 };
             };
         };
@@ -966,6 +996,26 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["Task"][];
                 };
+            };
+        };
+    };
+    deleteUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

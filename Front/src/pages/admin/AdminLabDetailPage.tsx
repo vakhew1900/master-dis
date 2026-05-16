@@ -17,7 +17,6 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddIcon from '@mui/icons-material/Add';
 import { labService } from '../../services/labService';
 import type { LaboratoryWork } from '../../services/labService';
-import { AdminBreadcrumbs } from '../../components/common/AdminBreadcrumbs';
 import styles from './AdminLabDetailPage.module.css';
 
 const AdminLabDetailPage: React.FC = () => {
@@ -60,7 +59,6 @@ const AdminLabDetailPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <AdminBreadcrumbs />
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate('/admin/labs')}

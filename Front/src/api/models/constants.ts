@@ -8,6 +8,13 @@ export const SEVERITY = {
   MOVABLE_REFERENCE: 'MOVABLE_REFERENCE',
 } as const;
 
+export const USER_ROLES = {
+  ADMIN: 'ADMIN',
+  STUDENT: 'STUDENT',
+} as const;
+
+export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
+
 export const SEVERITY_COLORS = {
   [SEVERITY.IDENTICAL]: { bg: '#365939', border: '#496c4b' },
   [SEVERITY.MODIFIED]: { bg: '#5e5339', border: '#80714a' },

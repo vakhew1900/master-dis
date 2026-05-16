@@ -3,7 +3,6 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Typography, Button, Box, Paper, TextField } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FileField } from '../../components/common/FileField';
-import { AdminBreadcrumbs } from '../../components/common/AdminBreadcrumbs';
 
 const AdminTaskEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,7 +19,6 @@ const AdminTaskEditPage: React.FC = () => {
 
   return (
     <Box p={3} maxWidth={800} mx="auto">
-      <AdminBreadcrumbs />
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}

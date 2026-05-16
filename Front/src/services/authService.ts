@@ -1,8 +1,9 @@
 import api from '../api/apiClient';
+import { USER_ROLES, type UserRole } from '../api/models/constants';
 
 interface LoginResponse {
   username: string;
-  role: 'STUDENT' | 'ADMIN';
+  role: UserRole;
 }
 
 export const authService = {
@@ -18,11 +19,11 @@ export const authService = {
     // Пока эмулируем успех
     return new Promise((resolve) => {
       setTimeout(() => {
-        const mockRole = credentials.username === 'admin' ? 'ADMIN' : 'STUDENT';
+        const mockRole = credentials.username === 'admin' ? USER_ROLES.ADMIN : USER_ROLES.STUDENT;
         localStorage.setItem('auth_hash', hash);
         resolve({
           username: credentials.username,
-          role: mockRole as 'STUDENT' | 'ADMIN',
+          role: mockRole,
         });
       }, 500);
     });

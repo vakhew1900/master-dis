@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-type Role = 'STUDENT' | 'ADMIN' | null;
+import { type UserRole } from '../api/models/constants';
 
 interface AuthContextType {
-  user: { role: Role; username: string } | null;
-  login: (username: string, role: Role) => void;
+  user: { role: UserRole; username: string } | null;
+  login: (username: string, role: UserRole) => void;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -12,9 +11,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{ role: Role; username: string } | null>(null);
+  const [user, setUser] = useState<{ role: UserRole; username: string } | null>(null);
 
-  const login = (username: string, role: Role) => {
+  const login = (username: string, role: UserRole) => {
     setUser({ username, role });
   };
 

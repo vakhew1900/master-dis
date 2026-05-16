@@ -47,3 +47,22 @@
     background-color: var(--nav-active);
     color: white;
 }
+
+.logoutBtn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.logoutBtn:hover {
+    background-color: rgba(211, 47, 47, 0.1);
+    color: #f44336;
+    border-color: #f44336;
+}

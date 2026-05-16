@@ -1,0 +1,3043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Git Merged Graph Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+:root {
+    --bg-color: #1e1e1e;
+    --panel-bg: #2b2b2b;
+    --card-bg: #323232;
+    --border-color: #3f3f3f;
+    --text-main: #a9b7c6;
+    --text-header: #ffffff;
+    --font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --nav-active: #4b6eaf;
+    
+    --severity-identical-bg: #365939;
+    --severity-identical-border: #496c4b;
+    --severity-modified-bg: #5e5339;
+    --severity-modified-border: #80714a;
+    --severity-extra-bg: #593939;
+    --severity-extra-border: #804b4b;
+    --severity-missed-bg: #2b2b2b; /* Use solid background to match renderer */
+    --severity-missed-border: #804b4b;
+    --severity-movable-student: #384c67;
+    --severity-movable-student-border: #4b6a8e;
+    --severity-movable-reference: #4e3867;
+    --severity-movable-reference-border: #6a4b8e;
+    
+    --edge-color: #555555;
+    --edge-highlight: #4b6eaf;
+    
+    --diff-added-bg: #2d4436;
+    --diff-removed-bg: #482c2c;
+    --diff-text: #a9b7c6;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* Header Styling */
+.main-header {
+    background-color: var(--panel-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px 40px;
+    margin-bottom: 30px;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-header);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.nav-bar {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-link {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    transition: color 0.2s, background-color 0.2s;
+    padding: 8px 16px;
+    border-radius: 6px;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-header);
+}
+
+.nav-link.active {
+    background-color: var(--nav-active);
+    color: white;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.network {
+    flex: 1;
+    height: 100%;
+}
+
+.details-panel {
+    background: var(--panel-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    min-height: 200px;
+    border: 1px solid var(--border-color);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-main);
+    opacity: 0.8;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+.empty-state h3 {
+    margin: 10px 0;
+    color: var(--text-header);
+    font-weight: 600;
+}
+
+.empty-state p {
+    max-width: 500px;
+    margin: 0 auto 15px auto;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.empty-state-hint {
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+}
+
+.details-grid {
+    display: flex;
+    gap: 30px;
+}
+
+.details-column {
+    flex: 1;
+    padding: 15px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+.details-column h4 {
+    margin-top: 0;
+    color: var(--text-header);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+/* Collapsible Metadata */
+.commit-metadata-toggle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 8px 0;
+    transition: background 0.2s;
+}
+
+.commit-metadata-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.commit-metadata-toggle::after {
+    content: '▼';
+    font-size: 9px;
+    transition: transform 0.3s;
+}
+
+.commit-metadata-toggle.active::after {
+    transform: rotate(180deg);
+}
+
+.commit-metadata-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.commit-metadata-content.show {
+    max-height: 300px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.metadata-row {
+    margin: 3px 0;
+    font-size: 12px;
+    display: flex;
+}
+
+.metadata-label {
+    font-weight: 600;
+    min-width: 80px;
+    color: #888;
+}
+
+.metadata-value {
+    color: var(--text-main);
+}
+
+/* Severity Legend */
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    background: var(--panel-bg);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.color-box {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid;
+    position: relative; /* Needed for pseudo-element positioning */
+}
+
+.color-box.severity-EXTRA::before,
+.color-box.severity-EXTRA::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 110%;
+    height: 2.5px;
+    background-color: #f44336;
+    transform-origin: center;
+    border-radius: 1px;
+}
+
+.color-box.severity-EXTRA::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.color-box.severity-EXTRA::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.severity-IDENTICAL { background-color: var(--severity-identical-bg); border-color: var(--severity-identical-border); color: #5da063; }
+.severity-MODIFIED { background-color: var(--severity-modified-bg); border-color: var(--severity-modified-border); color: #a69664; }
+.severity-EXTRA { background-color: var(--severity-extra-bg); border-color: var(--severity-extra-border); color: #b26b6b; }
+.severity-MISSED { background-color: var(--severity-missed-bg); border-color: var(--severity-missed-border); color: #b26b6b; }
+.severity-MOVABLE { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); color: #6b90b2; }
+.severity-MOVABLE_STUDENT { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); color: #6b90b2; }
+.severity-MOVABLE_REFERENCE { background-color: var(--severity-movable-reference); border-color: var(--severity-movable-reference-border); color: #906bb2; }
+
+/* Status Text Colors */
+.text-severity-IDENTICAL { color: #5da063; }
+.text-severity-MODIFIED { color: #a69664; }
+.text-severity-EXTRA { color: #b26b6b; }
+.text-severity-MISSED { color: #b26b6b; }
+.text-severity-MOVABLE_STUDENT { color: #6b90b2; }
+.text-severity-MOVABLE_REFERENCE { color: #906bb2; }
+
+/* Collapsible Legend */
+.legend-details {
+    background: var(--panel-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.legend-summary {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style: none; /* Hide default arrow */
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.legend-details[open] .legend-summary {
+    border-bottom-color: var(--border-color);
+}
+
+.legend-summary::-webkit-details-marker {
+    display: none;
+}
+
+.legend-summary::before {
+    content: '\25B8';
+    display: inline-block;
+    transition: transform 0.3s ease;
+    color: var(--nav-active);
+}
+
+.legend-details[open] .legend-summary::before {
+    transform: rotate(90deg);
+}
+
+.legend-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.legend-details[open] .legend-wrapper {
+    grid-template-rows: 1fr;
+}
+
+.legend-content {
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, padding 0.3s ease;
+}
+
+.legend-details[open] .legend-content {
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px 20px;
+}
+
+/* Custom Tooltip Styling */
+div.vis-tooltip {
+    background-color: var(--panel-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-main) !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+    font-family: var(--font-family) !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    max-width: 450px !important;
+    pointer-events: none;
+}
+
+.tooltip-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: var(--text-header);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.tooltip-diff {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+/* Diff Styling */
+.diff-list {
+    max-height: 350px; 
+    overflow-y: auto; 
+    background: #121212; 
+    padding: 5px; 
+    border-radius: 6px;
+    list-style: none;
+    margin: 10px 0;
+    border: 1px solid var(--border-color);
+}
+
+.diff-line {
+    font-family: 'JetBrains Mono', 'Consolas', monospace; 
+    font-size: 11.5px;
+    padding: 2px 8px;
+    margin-bottom: 1px;
+    white-space: pre-wrap;
+    color: #cfd8dc;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.diff-line::before {
+    content: '';
+    display: inline-block;
+    min-width: 14px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.diff-line-added { background-color: var(--diff-added-bg); }
+.diff-line-removed { background-color: var(--diff-removed-bg); }
+
+/* Diff States */
+.state-CORRECT {
+    border-left: 3px solid #496c4b;
+}
+.state-CORRECT::before { content: '✓'; color: #5da063; }
+
+.state-MISSED {
+    opacity: 0.5;
+    border-left: 3px solid #804b4b;
+    background-color: rgba(128, 75, 75, 0.1);
+}
+.state-MISSED::before { content: '✗'; color: #b26b6b; }
+
+.state-EXTRACT {
+    border-left: 3px solid #cc7832;
+    background-color: rgba(204, 120, 50, 0.1);
+}
+.state-EXTRACT::before { content: '!'; color: #cc7832; }
+
+/* Footer Styling */
+.main-footer {
+    background-color: var(--panel-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 40px;
+    margin-top: 50px;
+    color: #777;
+    font-size: 14px;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-desc {
+    max-width: 600px;
+}
+
+.footer-desc strong {
+    color: #aaa;
+}
+
+.footer-copy {
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.main-content-layout {
+    flex-direction: row;
+    height: 750px;
+    align-items: stretch;
+}
+
+.left-panel {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.graph-container {
+    flex: 1;
+    background: var(--panel-bg);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.graph-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #bbb;
+}
+
+.details-panel {
+    padding: 20px;
+}
+
+.details-column {
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">GIT MERGED GRAPH REPORT</div>
+            <nav class="nav-bar">
+                <a href="#" class="nav-link">Главная</a>
+                <a href="#" class="nav-link active">Объединенный граф</a>
+                <a href="#" class="nav-link">Отчеты</a>
+                <a href="#" class="nav-link">Список заданий</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container main-content-layout">
+        <div class="left-panel">
+            <details class="legend-details" open>
+                <summary class="legend-summary">Легенда графа</summary>
+                <div class="legend-wrapper">
+                    <div class="legend-content">
+                        <div class="legend-item text-severity-IDENTICAL"><div class="color-box severity-IDENTICAL"></div> Идентичен</div>
+                        <div class="legend-item text-severity-MODIFIED"><div class="color-box severity-MODIFIED"></div> Изменен</div>
+                        <div class="legend-item text-severity-EXTRA"><div class="color-box severity-EXTRA"></div> Лишний (нет в эталоне)</div>
+                        <div class="legend-item text-severity-MISSED"><div class="color-box severity-MISSED"></div> Пропущен (нет в работе)</div>
+                        <div class="legend-item text-severity-MOVABLE_STUDENT"><div class="color-box severity-MOVABLE_STUDENT"></div> Перемещен (студент)</div>
+                        <div class="legend-item text-severity-MOVABLE_REFERENCE"><div class="color-box severity-MOVABLE_REFERENCE"></div> Перемещен (эталон)</div>
+                    </div>
+                </div>
+            </details>
+            
+            <div class="graph-container">
+                <div class="graph-header">Объединенная история <span id="node-count"></span></div>
+                <div id="network" class="network"></div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="legend" style="margin-bottom: 15px; font-size: 12px; padding: 8px 15px;">
+                <div class="legend-item" style="color: #888; font-weight: 600; text-transform: uppercase; font-size: 10px;">Изменения:</div>
+                <div class="legend-item"><span style="color: #5da063; font-weight: bold;">✓</span> Верно</div>
+                <div class="legend-item"><span style="color: #b26b6b; font-weight: bold;">✗</span> Пропущено</div>
+                <div class="legend-item"><span style="color: #cc7832; font-weight: bold;">!</span> Лишнее</div>
+            </div>
+
+            <div id="details" class="details-panel" style="height: calc(100% - 60px); overflow-y: auto;">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🖱️</div>
+                    <h3>Детали коммита</h3>
+                    <p>Выберите узел на графе слева, чтобы просмотреть объединенную информацию и изменения.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-desc">
+                <strong>JServer MCTS Analysis Tool</strong><br>
+                Merged view approach for visualizing common transitive subgraphs.
+            </div>
+            <div class="footer-copy">
+                &copy; Chupinin Anton 2026
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/javascript">
+/**
+ * Common JavaScript logic for Git Graph Reports.
+ */
+
+const SEVERITY_COLORS = {
+    'IDENTICAL': { 
+        background: '#365939', 
+        border: '#496c4b', 
+        highlight: { background: '#496c4b', border: '#5da063' } 
+    },
+    'MODIFIED': { 
+        background: '#5e5339', 
+        border: '#80714a', 
+        highlight: { background: '#80714a', border: '#a69664' } 
+    },
+    'EXTRA': { 
+        background: '#593939', 
+        border: '#804b4b', 
+        highlight: { background: '#804b4b', border: '#b26b6b' } 
+    },
+    'MISSED': { 
+        background: '#2b2b2b', 
+        border: '#804b4b', 
+        highlight: { background: '#3c3f41', border: '#b26b6b' } /* Opaque highlight */
+    },
+    'MOVABLE': { 
+        background: '#384c67', 
+        border: '#4b6a8e', 
+        highlight: { background: '#4b6a8e', border: '#6b90b2' } 
+    },
+    'MOVABLE_STUDENT': { 
+        background: '#384c67', 
+        border: '#4b6a8e', 
+        highlight: { background: '#4b6a8e', border: '#6b90b2' } 
+    },
+    'MOVABLE_REFERENCE': { 
+        background: '#4e3867', 
+        border: '#6a4b8e', 
+        highlight: { background: '#6a4b8e', border: '#906bb2' } 
+    }
+};
+
+const SEVERITY_NAMES = {
+    'IDENTICAL': 'Идентичен',
+    'MODIFIED': 'Изменен',
+    'EXTRA': 'Лишний (нет в эталоне)',
+    'MISSED': 'Пропущен (нет в работе)',
+    'MOVABLE': 'Перемещен',
+    'MOVABLE_STUDENT': 'Перемещен (студент)',
+    'MOVABLE_REFERENCE': 'Перемещен (эталон)'
+};
+
+/**
+ * Returns the color configuration for a given severity.
+ */
+function getSeverityColor(severity, graphType) {
+    if (severity === 'MOVABLE' && graphType) {
+        return SEVERITY_COLORS[graphType === 'student' ? 'MOVABLE_STUDENT' : 'MOVABLE_REFERENCE'];
+    }
+    return SEVERITY_COLORS[severity] || { background: '#3c3f41', border: '#4b4b4b' };
+}
+
+/**
+ * Returns the localized name for a given severity.
+ */
+function getSeverityName(severity) {
+    return SEVERITY_NAMES[severity] || severity;
+}
+
+/**
+ * Returns a shortened hash (max 7 chars).
+ */
+function getShortHash(hash) {
+    if (!hash) return '';
+    // For merged nodes, shorten each part to keep the label manageable
+    if (hash.includes('/')) {
+        return hash.split('/').map(h => h.trim().substring(0, 4)).join(' / ');
+    }
+    return hash.substring(0, 7);
+}
+
+/**
+ * Creates a rich HTML tooltip for a node as a DOM element.
+ */
+function createTooltip(node) {
+    const div = document.createElement('div');
+    const shortHash = getShortHash(node.hash);
+    const msg = node.message.length > 50 ? node.message.substring(0, 47) + '...' : node.message;
+    
+    // Determine status color class using hash for logical matching against CompareResultDto
+    let colorClass = `text-severity-${node.severity}`;
+    if (node.severity === 'MOVABLE') {
+        const studentHashes = (comparisonData.compare_result && comparisonData.compare_result.matched_hashes_1_to_2) ? Object.keys(comparisonData.compare_result.matched_hashes_1_to_2) : [];
+        colorClass = studentHashes.includes(node.hash) ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+    }
+
+    let html = `
+        <div class="tooltip-header">${shortHash} | ${msg}</div>
+        <div style="margin-bottom: 5px;"><strong>Статус:</strong> <span class="${colorClass}">${getSeverityName(node.severity)}</span></div>
+    `;
+
+    if (node.diffs && node.diffs.length > 0) {
+        html += `<div class="tooltip-diff">`;
+        const limit = 4;
+        const displayDiffs = node.diffs.slice(0, limit);
+        displayDiffs.forEach(d => {
+            const val = d.value.length > 60 ? d.value.substring(0, 57) + '...' : d.value;
+            const color = d.value.startsWith('+') ? '#5da063' : (d.value.startsWith('-') ? '#b26b6b' : '#a9b7c6');
+            html += `<div style="color: ${color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${val.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+        });
+        if (node.diffs.length > limit) {
+            html += `<div style="color: #888; font-style: italic; margin-top: 2px;">... и еще ${node.diffs.length - limit} строк</div>`;
+        }
+        html += `</div>`;
+    }
+    
+    div.innerHTML = html;
+    return div;
+}
+
+/**
+ * Custom renderer for nodes.
+ */
+function getCustomRenderer(severity) {
+    return function({ ctx, x, y, state: { selected, hover }, style, label }) {
+        const {
+            color = '#97C2FC',      // заливка узла
+            borderColor = '#2B7CE9',
+            borderWidth = 1,
+            size = 20,
+            shadow = false,
+            shadowColor = 'rgba(0,0,0,0.3)',
+            shadowSize = 5,
+            shadowX = 2,
+            shadowY = 2
+        } = style;
+
+        const currentSeverity = (severity || '').trim().toUpperCase();
+
+        return {
+            drawNode() {
+                if (typeof x !== 'number' || typeof y !== 'number' || !ctx?.beginPath) return;
+
+                // 🔹 Тень (если включена)
+                if (shadow) {
+                    ctx.save();
+                    ctx.shadowColor = shadowColor;
+                    ctx.shadowBlur = shadowSize;
+                    ctx.shadowOffsetX = shadowX;
+                    ctx.shadowOffsetY = shadowY;
+                }
+
+                // 🔹 Основной круг
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+                ctx.fillStyle = color;  // ← правильно: style.color, не background
+                ctx.fill();
+
+                // 🔹 Сброс тени для границы (чтобы не размывалась)
+                if (shadow) {
+                    ctx.shadowBlur = 0;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                }
+
+                // 🔹 Граница
+                ctx.strokeStyle = borderColor;
+                ctx.lineWidth = borderWidth;
+                ctx.stroke();
+
+                // 🔹 Восстанавливаем контекст после тени
+                if (shadow) ctx.restore();
+
+                // 🔹 Красный крест для EXTRA / MISSED
+                if (currentSeverity === 'EXTRA' || currentSeverity === 'MISSED') {
+                    ctx.beginPath();
+                    const crossSize = size * 0.8;
+                    ctx.moveTo(x - crossSize, y - crossSize);
+                    ctx.lineTo(x + crossSize, y + crossSize);
+                    ctx.moveTo(x + crossSize, y - crossSize);
+                    ctx.lineTo(x - crossSize, y + crossSize);
+                    ctx.strokeStyle = '#f44336';
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                }
+            },
+
+            drawExternalLabel() {
+                if (label?.text && ctx?.fillText) {
+                    ctx.font = style.font || '14px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = style.fontFill || '#000';
+                    ctx.fillText(label.text, x, y + size + 18);
+                }
+            },
+
+            nodeDimensions: {
+                width: size * 2,
+                height: size * 2
+            }
+        };
+    };
+}
+
+
+function nodeToId(hash, nodeList) {
+    const node = nodeList.find(n => n.hash === hash || n.id === hash);
+    return node ? node.id : hash;
+}
+
+/**
+ * Toggles visibility of commit metadata.
+ */
+function toggleMetadata(button) {
+    button.classList.toggle('active');
+    const content = button.nextElementSibling;
+    content.classList.toggle('show');
+}
+
+/**
+ * Renders a list of diffs/labels with syntax highlighting.
+ */
+function renderDiffs(diffs) {
+    if (!diffs || diffs.length === 0) return '';
+    
+    return `
+        <ul class="diff-list">
+            ${diffs.map(d => {
+                const escapedValue = d.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                let className = 'diff-line';
+                
+                // Add highlighting based on prefix
+                if (escapedValue.startsWith('+')) className += ' diff-line-added';
+                else if (escapedValue.startsWith('-')) className += ' diff-line-removed';
+                
+                // Add state class (CORRECT, MISSED, EXTRACT)
+                if (d.state) className += ' state-' + d.state;
+                
+                return `<li class="${className}" title="Status: ${d.state || 'unknown'}">${escapedValue}</li>`;
+            }).join('')}
+        </ul>
+    `;
+}
+// Constants for element IDs
+const IDS = {
+    DETAILS_PANEL: 'details',
+    NETWORK: 'network',
+    NODE_COUNT: 'node-count'
+};
+
+let network = null;
+let comparisonData = null;
+let activeMovablePair = null; // Store pair for canvas drawing
+
+/**
+ * Initializes the report.
+ */
+function init() {
+    try {
+        comparisonData = {
+  "merged_graph": {
+    "nodes": [
+      {
+        "id": "g1_0",
+        "number": 0,
+        "hash": "4fa25ea68f04c34c2ee8ddec7fd409b45033fd28",
+        "message": "conf-3: line 127 on branch-2 (changed function name)",
+        "commitDate": "2025-04-21T13:42:40Z",
+        "authorDate": "2025-04-20T15:52:28Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "+\u003c\u003c\u003c\u003c\u003c\u003c\u003c HEAD\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+\u003d\u003d\u003d\u003d\u003d\u003d\u003d\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsIntoMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+\u003e\u003e\u003e\u003e\u003e\u003e\u003e 35741ab (conf-3: line 127 on branch-2 (changed function name))\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+\u003c\u003c\u003c\u003c\u003c\u003c\u003c HEAD\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+\u003d\u003d\u003d\u003d\u003d\u003d\u003d\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsIntoMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+\u003e\u003e\u003e\u003e\u003e\u003e\u003e 35741ab (conf-3: line 127 on branch-2 (changed function name))\r",
+            "state": "EXTRACT"
+          }
+        ],
+        "severity": "EXTRA"
+      },
+      {
+        "id": "g1_1",
+        "number": 1,
+        "hash": "445ff4af826e874bf25d366bc24e20ec58b29c36",
+        "message": "no conf: line 96 on branch-2 (added exclamation point)",
+        "commitDate": "2025-04-21T13:37:53Z",
+        "authorDate": "2025-04-20T15:49:59Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-            return \u0027Вы уже авторизованы\u0027;\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+            return \u0027Вы уже авторизованы!\u0027;\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "-            return \u0027Вы уже авторизованы\u0027;\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+            return \u0027Вы уже авторизованы!\u0027;\r",
+            "state": "EXTRACT"
+          }
+        ],
+        "severity": "EXTRA"
+      },
+      {
+        "id": "g1_2",
+        "number": 2,
+        "hash": "df0d80da4e89751bc26ef4600b25b43edcaa1371",
+        "message": "no conf: line 50 on main (changed function name)",
+        "commitDate": "2025-04-20T16:00:34Z",
+        "authorDate": "2025-04-20T16:00:34Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-            \u0027vk\u0027 \u003d\u003e \u0027validateVk\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027vk\u0027 \u003d\u003e \u0027validateVK\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            \u0027vk\u0027 \u003d\u003e \u0027validateVk\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027vk\u0027 \u003d\u003e \u0027validateVK\u0027,\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_3",
+        "number": 3,
+        "hash": "933289cb8a4300a08ee7e79e2535248489ac5c42",
+        "message": "no conf: line 107 on main (changed message)",
+        "commitDate": "2025-04-20T15:58:45Z",
+        "authorDate": "2025-04-20T15:58:45Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-            return \u0027Пользователь с таким email не найден\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Пользователь с такой почтой не найден\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            return \u0027Пользователь с таким email не найден\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Пользователь с такой почтой не найден\u0027;\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_4",
+        "number": 4,
+        "hash": "274560b7c44214ac7f04022e2b0cfc02cee089e3",
+        "message": "no conf: line 22 on branch-2 (changed return type)",
+        "commitDate": "2025-04-20T15:57:00Z",
+        "authorDate": "2025-04-20T15:57:00Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-    ) : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ) : ?mixed\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    ) : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ) : ?mixed\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_5",
+        "number": 5,
+        "hash": "35741abf426100577dc3270dd24c604871196730",
+        "message": "conf-3: line 127 on branch-2 (changed function name)",
+        "commitDate": "2025-04-20T15:52:28Z",
+        "authorDate": "2025-04-20T15:52:28Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsToMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsIntoMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsToMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsIntoMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_6",
+        "number": 6,
+        "hash": "2d1fb29401a85643a6abaccc2899b6cc4fa5dc58",
+        "message": "no conf: line 96 on branch-2 (added exclamation point)",
+        "commitDate": "2025-04-20T15:49:59Z",
+        "authorDate": "2025-04-20T15:49:59Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-            return \u0027Вы уже авторизованы\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Вы уже авторизованы!\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            return \u0027Вы уже авторизованы\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Вы уже авторизованы!\u0027;\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_7",
+        "number": 7,
+        "hash": "7c42b27b113fbf7bf0161318ead83e3e602060e4",
+        "message": "no conf: line 2 on branch-1 (changed required file name)",
+        "commitDate": "2025-04-20T15:43:10Z",
+        "authorDate": "2025-04-20T15:43:10Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/user_table.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/user_tables.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/user_table.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/user_tables.php\u0027);\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_8",
+        "number": 8,
+        "hash": "d7b878c870af50c63f2b681bf4c2f433f01700dd",
+        "message": "conf-3: line 127 on main (changed function name)",
+        "commitDate": "2025-04-20T15:41:52Z",
+        "authorDate": "2025-04-20T15:41:52Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsToMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsToMinutesAndSeconds(LoginAttemptsLogic::timeUntilNextAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsToMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsToMinutesAndSeconds(LoginAttemptsLogic::timeUntilNextAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_9",
+        "number": 9,
+        "hash": "7c59c3bbc255e89b878f804549ce4eb365263a47",
+        "message": "no conf: line 112 on main (changed function name)",
+        "commitDate": "2025-04-20T15:09:42Z",
+        "authorDate": "2025-04-20T15:09:42Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-        $time_until_attempt \u003d LoginAttemptsLogic::timeUntilAllowedAttempt($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $time_until_attempt \u003d LoginAttemptsLogic::timeUntilNextAllowedAttempt($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-        $time_until_attempt \u003d LoginAttemptsLogic::timeUntilAllowedAttempt($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $time_until_attempt \u003d LoginAttemptsLogic::timeUntilNextAllowedAttempt($user_id);\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_10",
+        "number": 10,
+        "hash": "5c0b165c8364cfade655e54a33ed5ec33df7e21f",
+        "message": "conf-2: line 141 on branch-2 (changed function name)",
+        "commitDate": "2025-04-20T14:45:39Z",
+        "authorDate": "2025-04-20T14:45:39Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-    public static function current() : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function currentUser() : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    public static function current() : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function currentUser() : ?array\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_11",
+        "number": 11,
+        "hash": "79067485f2319ab89c486793c62a11072083c23d",
+        "message": "no conf: line 40 on branch-1 (changed message)",
+        "commitDate": "2025-04-20T14:38:08Z",
+        "authorDate": "2025-04-20T14:38:08Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-                $errors[\u0027email\u0027] \u003d \u0027Пользователь с таким email уже существует\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                $errors[\u0027email\u0027] \u003d \u0027Пользователь с такой почтой уже существует\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-                $errors[\u0027email\u0027] \u003d \u0027Пользователь с таким email уже существует\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                $errors[\u0027email\u0027] \u003d \u0027Пользователь с такой почтой уже существует\u0027;\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_12",
+        "number": 12,
+        "hash": "6359a60cd9661578fd074c51cb895db6d9999ae7",
+        "message": "conf-2: line 141 on branch-2 (changed return type)",
+        "commitDate": "2025-04-20T14:33:06Z",
+        "authorDate": "2025-04-20T14:33:06Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-    public static function current() : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function current() : ?mixed\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    public static function current() : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function current() : ?mixed\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_13",
+        "number": 13,
+        "hash": "4bb575c0c99e82a8f9e2138d0388cf70754c3ea6",
+        "message": "no conf: line 86 on main (changed key name)",
+        "commitDate": "2025-04-20T14:26:15Z",
+        "authorDate": "2025-04-20T14:26:15Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-            $errors[\u0027other\u0027] \u003d \u0027Ошибка добавления пользователя (обратитесь в поддержку)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027others\u0027] \u003d \u0027Ошибка добавления пользователя (обратитесь в поддержку)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            $errors[\u0027other\u0027] \u003d \u0027Ошибка добавления пользователя (обратитесь в поддержку)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027others\u0027] \u003d \u0027Ошибка добавления пользователя (обратитесь в поддержку)\u0027;\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_14",
+        "number": 14,
+        "hash": "e09abeb3320f0ac0f7b8b0701cc0fd043bf9bfa3",
+        "message": "conf-1: line 27 on main (changed key name)",
+        "commitDate": "2025-04-20T14:23:28Z",
+        "authorDate": "2025-04-20T14:23:28Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-            $errors[\u0027other\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027others\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            $errors[\u0027other\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027others\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу)\u0027;\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_15",
+        "number": 15,
+        "hash": "a0ce617e784f7421f9a22c0f14ed56dbc625f2a4",
+        "message": "conf-1: line 27 on branch-1 (added fullstop)",
+        "commitDate": "2025-04-20T14:23:04Z",
+        "authorDate": "2025-04-20T14:23:04Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-            $errors[\u0027other\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027other\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу).\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            $errors[\u0027other\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027other\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу).\u0027;\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_16",
+        "number": 16,
+        "hash": "a6bdd7f4f5200e0b16e6efd829718164418c13dc",
+        "message": "no conf: line 18 on main (removed extra spaces)",
+        "commitDate": "2025-04-20T14:21:30Z",
+        "authorDate": "2025-04-20T14:21:30Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "-        ?int    $blood_type,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?int $blood_type,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-        ?int    $blood_type,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?int $blood_type,\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_17",
+        "number": 17,
+        "hash": "db77d094f38c4005f56e2c4ebc7ab33fadea2437",
+        "message": "feat: initial commit",
+        "commitDate": "2025-04-20T13:32:17Z",
+        "authorDate": "2025-04-20T13:32:17Z",
+        "author": {
+          "name": "Nuriev Ilyas",
+          "email": "www.urnurii@gmail.com"
+        },
+        "diffs": [
+          {
+            "value": "+\u003c?php\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/user_table.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/login_attempts_logic.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/validator.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/.helpers/safe_string.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/.helpers/authorization.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+class UserLogic\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+{\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function signUp(\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $email,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $full_name,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $birthday,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $address,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $gender,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $interests,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $vk,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?int    $blood_type,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $factor,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $password_1,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $password_2\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ) : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $errors \u003d [];\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (Authorization::isAuthorized()) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027other\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $errors;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $email \u003d Validator::sanitizeEmail($email);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if ($error \u003d Validator::validateEmail($email)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027email\u0027] \u003d $error;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $user \u003d UserTable::getByEmail($email ?? null);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if ($user) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                $errors[\u0027email\u0027] \u003d \u0027Пользователь с таким email уже существует\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $fields \u003d [\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027full_name\u0027 \u003d\u003e \u0027validateName\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027birthday\u0027 \u003d\u003e \u0027validateBirthday\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027address\u0027 \u003d\u003e \u0027validateAddress\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027gender\u0027 \u003d\u003e \u0027validateGender\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027interests\u0027 \u003d\u003e \u0027validateInterests\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027vk\u0027 \u003d\u003e \u0027validateVk\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027blood_type\u0027 \u003d\u003e \u0027validateBloodType\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027factor\u0027 \u003d\u003e \u0027validateFactor\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027password_1\u0027 \u003d\u003e \u0027validatePassword\u0027\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ];\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        foreach ($fields as $field \u003d\u003e $validator) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if ($error \u003d Validator::$validator($$field)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                $errors[\"$field\"] \u003d $error;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if ($password_error \u003d Validator::validatePasswordMatch($password_1, $password_2)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027password_2\u0027] \u003d $password_error;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (count($errors)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $errors;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $hashed_password \u003d password_hash($password_1, PASSWORD_BCRYPT);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $user \u003d UserTable::create(\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $email,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $full_name,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $birthday,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $address,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $gender,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $interests,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $vk,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $blood_type,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $factor,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $hashed_password\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        );\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (!$user) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027other\u0027] \u003d \u0027Ошибка добавления пользователя (обратитесь в поддержку)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $errors;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return null;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function logIn(string $email, string $password) : ?string\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (Authorization::isAuthorized()) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Вы уже авторизованы\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $email \u003d Validator::sanitizeEmail($email);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if ($error \u003d Validator::validateEmail($email)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $error;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $user_data \u003d UserTable::getByEmail($email);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (null \u003d\u003d $user_data) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Пользователь с таким email не найден\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $user_id \u003d $user_data[\u0027id\u0027];\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $time_until_attempt \u003d LoginAttemptsLogic::timeUntilAllowedAttempt($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (0 !\u003d\u003d $time_until_attempt) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Превышено количество попыток входа в течение часа.\u0027 . \u0027\u003cbr\u003e\u0027\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                . \u0027Попробуйте еще раз через \u0027 . SafeString::secondsToMinutesAndSeconds($time_until_attempt);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $max_attempts \u003d LoginAttemptsLogic::$MAX_ATTEMPTS;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (!password_verify($password, $user_data[\u0027password\u0027])) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            LoginAttemptsLogic::addAttempt($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $attempts \u003d LoginAttemptsLogic::countAttempts($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $max_attempts - $attempts \u003e 0\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                ? \u0027Неверно указан пароль. Осталось попыток: \u0027 . ($max_attempts - $attempts) . \u0027.\u0027\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsToMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        LoginAttemptsLogic::resetAttempts($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        Authorization::setSessionUserId($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return null;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function logOut() : void\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        Authorization::unsetSessionUserId();\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function current() : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $user_id \u003d Authorization::getSessionUserId();\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (null \u003d\u003d $user_id) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return null;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return UserTable::getById($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+}",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c?php\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/user_table.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/login_attempts_logic.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/user/validator.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/.helpers/safe_string.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+require_once($_SERVER[\u0027DOCUMENT_ROOT\u0027] . \u0027/.core/.helpers/authorization.php\u0027);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+class UserLogic\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+{\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function signUp(\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $email,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $full_name,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $birthday,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $address,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $gender,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $interests,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $vk,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?int    $blood_type,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $factor,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $password_1,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ?string $password_2\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ) : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $errors \u003d [];\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (Authorization::isAuthorized()) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027other\u0027] \u003d \u0027Вы уже авторизованы (перезагрузите страницу)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $errors;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $email \u003d Validator::sanitizeEmail($email);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if ($error \u003d Validator::validateEmail($email)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027email\u0027] \u003d $error;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $user \u003d UserTable::getByEmail($email ?? null);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if ($user) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                $errors[\u0027email\u0027] \u003d \u0027Пользователь с таким email уже существует\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $fields \u003d [\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027full_name\u0027 \u003d\u003e \u0027validateName\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027birthday\u0027 \u003d\u003e \u0027validateBirthday\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027address\u0027 \u003d\u003e \u0027validateAddress\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027gender\u0027 \u003d\u003e \u0027validateGender\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027interests\u0027 \u003d\u003e \u0027validateInterests\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027vk\u0027 \u003d\u003e \u0027validateVk\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027blood_type\u0027 \u003d\u003e \u0027validateBloodType\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027factor\u0027 \u003d\u003e \u0027validateFactor\u0027,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u0027password_1\u0027 \u003d\u003e \u0027validatePassword\u0027\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ];\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        foreach ($fields as $field \u003d\u003e $validator) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if ($error \u003d Validator::$validator($$field)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                $errors[\"$field\"] \u003d $error;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if ($password_error \u003d Validator::validatePasswordMatch($password_1, $password_2)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027password_2\u0027] \u003d $password_error;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (count($errors)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $errors;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $hashed_password \u003d password_hash($password_1, PASSWORD_BCRYPT);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $user \u003d UserTable::create(\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $email,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $full_name,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $birthday,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $address,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $gender,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $interests,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $vk,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $blood_type,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $factor,\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $hashed_password\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        );\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (!$user) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $errors[\u0027other\u0027] \u003d \u0027Ошибка добавления пользователя (обратитесь в поддержку)\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $errors;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return null;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function logIn(string $email, string $password) : ?string\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (Authorization::isAuthorized()) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Вы уже авторизованы\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $email \u003d Validator::sanitizeEmail($email);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if ($error \u003d Validator::validateEmail($email)) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $error;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $user_data \u003d UserTable::getByEmail($email);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (null \u003d\u003d $user_data) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Пользователь с таким email не найден\u0027;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $user_id \u003d $user_data[\u0027id\u0027];\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $time_until_attempt \u003d LoginAttemptsLogic::timeUntilAllowedAttempt($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (0 !\u003d\u003d $time_until_attempt) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return \u0027Превышено количество попыток входа в течение часа.\u0027 . \u0027\u003cbr\u003e\u0027\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                . \u0027Попробуйте еще раз через \u0027 . SafeString::secondsToMinutesAndSeconds($time_until_attempt);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $max_attempts \u003d LoginAttemptsLogic::$MAX_ATTEMPTS;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (!password_verify($password, $user_data[\u0027password\u0027])) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            LoginAttemptsLogic::addAttempt($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            $attempts \u003d LoginAttemptsLogic::countAttempts($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return $max_attempts - $attempts \u003e 0\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                ? \u0027Неверно указан пароль. Осталось попыток: \u0027 . ($max_attempts - $attempts) . \u0027.\u0027\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                : \u0027Неверно указан пароль.\u0027 . \u0027\u003cbr\u003e\u0027 . \u0027Попробуйте еще раз через \u0027 .  SafeString::secondsToMinutesAndSeconds(LoginAttemptsLogic::timeUntilAllowedAttempt($user_id));\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        LoginAttemptsLogic::resetAttempts($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        Authorization::setSessionUserId($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return null;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function logOut() : void\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        Authorization::unsetSessionUserId();\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    public static function current() : ?array\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        $user_id \u003d Authorization::getSessionUserId();\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (null \u003d\u003d $user_id) {\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return null;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return UserTable::getById($user_id);\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    }\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+}",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      }
+    ],
+    "links": [
+      {
+        "source": "g1_13",
+        "target": "g1_12"
+      },
+      {
+        "source": "g1_8",
+        "target": "g1_1"
+      },
+      {
+        "source": "g1_13",
+        "target": "g1_9"
+      },
+      {
+        "source": "g1_14",
+        "target": "g1_13"
+      },
+      {
+        "source": "g1_12",
+        "target": "g1_6"
+      },
+      {
+        "source": "g1_3",
+        "target": "g1_2"
+      },
+      {
+        "source": "g1_16",
+        "target": "g1_15"
+      },
+      {
+        "source": "g1_15",
+        "target": "g1_11"
+      },
+      {
+        "source": "g1_1",
+        "target": "g1_0"
+      },
+      {
+        "source": "g1_8",
+        "target": "g1_3"
+      },
+      {
+        "source": "g1_9",
+        "target": "g1_8"
+      },
+      {
+        "source": "g1_17",
+        "target": "g1_16"
+      },
+      {
+        "source": "g1_6",
+        "target": "g1_5"
+      },
+      {
+        "source": "g1_16",
+        "target": "g1_14"
+      },
+      {
+        "source": "g1_11",
+        "target": "g1_10"
+      },
+      {
+        "source": "g1_10",
+        "target": "g1_7"
+      },
+      {
+        "source": "g1_5",
+        "target": "g1_4"
+      }
+    ]
+  },
+  "compare_result": {
+    "matched_hashes_1_to_2": {
+      "7c42b27b113fbf7bf0161318ead83e3e602060e4": "7c42b27b113fbf7bf0161318ead83e3e602060e4",
+      "7c59c3bbc255e89b878f804549ce4eb365263a47": "7c59c3bbc255e89b878f804549ce4eb365263a47",
+      "274560b7c44214ac7f04022e2b0cfc02cee089e3": "274560b7c44214ac7f04022e2b0cfc02cee089e3",
+      "5c0b165c8364cfade655e54a33ed5ec33df7e21f": "5c0b165c8364cfade655e54a33ed5ec33df7e21f",
+      "e09abeb3320f0ac0f7b8b0701cc0fd043bf9bfa3": "e09abeb3320f0ac0f7b8b0701cc0fd043bf9bfa3",
+      "db77d094f38c4005f56e2c4ebc7ab33fadea2437": "db77d094f38c4005f56e2c4ebc7ab33fadea2437",
+      "d7b878c870af50c63f2b681bf4c2f433f01700dd": "d7b878c870af50c63f2b681bf4c2f433f01700dd",
+      "4bb575c0c99e82a8f9e2138d0388cf70754c3ea6": "4bb575c0c99e82a8f9e2138d0388cf70754c3ea6",
+      "79067485f2319ab89c486793c62a11072083c23d": "79067485f2319ab89c486793c62a11072083c23d",
+      "2d1fb29401a85643a6abaccc2899b6cc4fa5dc58": "2d1fb29401a85643a6abaccc2899b6cc4fa5dc58",
+      "a0ce617e784f7421f9a22c0f14ed56dbc625f2a4": "a0ce617e784f7421f9a22c0f14ed56dbc625f2a4",
+      "6359a60cd9661578fd074c51cb895db6d9999ae7": "6359a60cd9661578fd074c51cb895db6d9999ae7",
+      "a6bdd7f4f5200e0b16e6efd829718164418c13dc": "a6bdd7f4f5200e0b16e6efd829718164418c13dc",
+      "df0d80da4e89751bc26ef4600b25b43edcaa1371": "df0d80da4e89751bc26ef4600b25b43edcaa1371",
+      "933289cb8a4300a08ee7e79e2535248489ac5c42": "933289cb8a4300a08ee7e79e2535248489ac5c42",
+      "35741abf426100577dc3270dd24c604871196730": "35741abf426100577dc3270dd24c604871196730"
+    }
+  }
+};
+        if (!comparisonData || !comparisonData.merged_graph) {
+            console.error("No valid comparison data found.");
+            return;
+        }
+
+        renderNetwork(comparisonData.merged_graph);
+    } catch (e) {
+        console.error("Initialization failed:", e);
+    }
+}
+
+/**
+ * Renders the merged graph network.
+ */
+function renderNetwork(graphDto) {
+    const studentHashes = Object.keys(comparisonData.compare_result.matched_hashes_1_to_2);
+    
+    const nodes = new vis.DataSet(graphDto.nodes.map(node => {
+        let label = getShortHash(node.hash);
+        
+        let graphType = null;
+        if (node.severity === 'MOVABLE') {
+            graphType = studentHashes.includes(node.id) ? 'student' : 'reference';
+        }
+
+        const colorConfig = getSeverityColor(node.severity, graphType);
+
+        return {
+            id: node.id,
+            label: label,
+            title: createTooltip(node),
+            color: colorConfig,
+            shape: (node.severity === 'EXTRA')? 'custom': 'dot',
+            ctxRenderer: getCustomRenderer(node.severity)
+        };
+    }));
+
+    const edges = new vis.DataSet(graphDto.links.map(link => ({
+        from: link.source,
+        to: link.target,
+        arrows: 'to',
+        color: { color: '#555', highlight: '#4b6eaf' },
+        width: 2
+    })));
+
+    const container = document.getElementById(IDS.NETWORK);
+    const data = { nodes, edges };
+    const options = {
+        nodes: {
+            size: 13,
+            font: { color: '#a9b7c6', size: 12, face: 'Inter' },
+            borderWidth: 2
+        },
+        edges: {
+            smooth: { 
+                type: 'curvedCW', 
+                roundness: 0.2 
+            }
+        },
+        layout: {
+            hierarchical: {
+                direction: 'DU', // Flipped: Down to Up
+                shakeTowards: 'roots',
+                sortMethod: 'directed',
+                treeSpacing: 400,
+                nodeSpacing: 80,
+                levelSeparation: 80,
+                edgeMinimization: true,
+                parentCentralization: true,
+                blockShifting: true
+            }
+        },
+        physics: {
+            enabled: false
+        },
+        interaction: { 
+            hover: true, 
+            selectConnectedEdges: false,
+            dragNodes: false
+        }
+    };
+
+    network = new vis.Network(container, data, options);
+    document.getElementById(IDS.NODE_COUNT).textContent = `(${graphDto.nodes.length} узлов)`;
+
+    // Prevent view dragging when a drag starts on a node
+    network.on("dragStart", function (params) {
+        if (params.nodes.length > 0) {
+            network.setOptions({ interaction: { dragView: false } });
+        }
+    });
+    network.on("dragEnd", function () {
+        network.setOptions({ interaction: { dragView: true } });
+    });
+
+    // DRAW dashed line manually on canvas to avoid layout shifts
+    network.on("afterDrawing", function (ctx) {
+        if (activeMovablePair) {
+            const pos1 = network.getPositions([activeMovablePair.from])[activeMovablePair.from];
+            const pos2 = network.getPositions([activeMovablePair.to])[activeMovablePair.to];
+            if (pos1 && pos2) {
+                ctx.strokeStyle = 'rgba(75, 110, 175, 0.7)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(pos1.x, pos1.y);
+                ctx.lineTo(pos2.x, pos2.y);
+                ctx.stroke();
+                ctx.setLineDash([]); // reset for other drawings
+            }
+        }
+    });
+
+    network.on("dragEnd", function (params) {
+        network.setOptions({ interaction: { dragView: true } });
+        // If we just finished dragging a node (and didn't drag it far), treat it as a click
+        if (params.nodes.length > 0) {
+            handleNodeClick(params.nodes[0]);
+        }
+    });
+
+    // This handler now only fires for true clicks, not drags
+    network.on("click", function (params) {
+        if (params.nodes.length > 0) {
+            handleNodeClick(params.nodes[0]);
+        }
+    });
+}
+
+/**
+ * Handles all logic for when a node is clicked or selected via drag-release.
+ * @param {string} nodeId The ID of the selected node.
+ */
+function handleNodeClick(nodeId) {
+    // Reset any active movable pair drawings
+    activeMovablePair = null;
+    
+    const node = comparisonData.merged_graph.nodes.find(n => n.id === nodeId);
+    if (!node) return;
+
+    // Special handling for MOVABLE nodes to select and detail both
+    if (node.severity === 'MOVABLE') {
+        const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
+        let counterpartId = mapping[node.id]; // Try as student
+        if (!counterpartId) {
+            // Try as reference
+            counterpartId = Object.keys(mapping).find(key => mapping[key] === node.id);
+        }
+        
+        if (counterpartId) {
+            network.selectNodes([node.id, counterpartId]);
+            activeMovablePair = { from: node.id, to: counterpartId };
+            showMovableDetails(node.id, counterpartId);
+            network.redraw(); // Trigger redraw for the dashed line
+            return;
+        }
+    }
+    
+    // Default action: select the single node and show its details
+    network.selectNodes([nodeId]);
+    showDetails(nodeId);
+    network.redraw();
+}
+
+/**
+ * Displays details for the selected node.
+ */
+function showDetails(nodeId) {
+    const node = comparisonData.merged_graph.nodes.find(n => n.id === nodeId);
+    if (!node) return;
+
+    let colorClass = `text-severity-${node.severity}`;
+    let circleClass = `severity-${node.severity}`;
+    if (node.severity === 'MOVABLE') {
+        const studentHashes = Object.keys(comparisonData.compare_result.matched_hashes_1_to_2);
+        const isStudent = studentHashes.includes(node.id);
+        colorClass = isStudent ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+        circleClass = isStudent ? 'severity-MOVABLE_STUDENT' : 'severity-MOVABLE_REFERENCE';
+    }
+
+    const html = `
+        <div class="details-column">
+            <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
+          <div style="margin-bottom: 5px;">
+        <div style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+            <strong style="color: #888;">Статус:</strong> 
+           
+            <div class="${colorClass}" style="display:flex; align-items: center; gap: 6px; font-weight: bold;">
+                <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0; border-radius: 50%;"></div> 
+                ${getSeverityName(node.severity)}
+            </div>
+            </div>
+        </div>
+            <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">
+                Commit Details
+            </button>
+            <div class="commit-metadata-content">
+                <div class="metadata-row">
+                    <div class="metadata-label">Message:</div>
+                    <div class="metadata-value" style="color: #6a8759; font-style: italic;">"${node.message}"</div>
+                </div>
+                <div class="metadata-row">
+                    <div class="metadata-label">Author:</div>
+                    <div class="metadata-value">${node.author ? node.author.name : 'N/A'}</div>
+                </div>
+                <div class="metadata-row">
+                    <div class="metadata-label">Date:</div>
+                    <div class="metadata-value" style="color: #cc7832">${node.commitDate}</div>
+                </div>
+            </div>
+
+            ${node.diffs && node.diffs.length > 0 ? '<h5 style="margin: 10px 0 5px 0; font-size: 12px; color: #888; text-transform: uppercase;">Объединенные изменения:</h5>' + renderDiffs(node.diffs) : ''}
+        </div>
+    `;
+    document.getElementById(IDS.DETAILS_PANEL).innerHTML = html;
+}
+
+/**
+ * Displays details for two movable nodes side-by-side.
+ */
+function showMovableDetails(id1, id2) {
+    const node1 = comparisonData.merged_graph.nodes.find(n => n.id === id1);
+    const node2 = comparisonData.merged_graph.nodes.find(n => n.id === id2);
+    if (!node1 || !node2) return;
+
+    // Ensure student is first (hash lookup)
+    const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
+    const student = mapping[node1.id] ? node1 : node2;
+    const reference = student === node1 ? node2 : node1;
+
+    const html = `
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="details-column" style="border-left: 3px solid #6b90b2; padding-left: 10px; background: rgba(107, 144, 178, 0.05);">
+                <h4 style="color:#6b90b2; margin: 0 0 5px 0;">СТУДЕНТ (Перемещен)</h4>
+                ${renderNodeSummary(student)}
+            </div>
+            <div class="details-column" style="border-left: 3px solid #4e3867; padding-left: 10px; background: rgba(78, 56, 103, 0.05);">
+                <h4 style="color:#906bb2; margin: 0 0 5px 0;">ЭТАЛОН (Перемещен)</h4>
+                ${renderNodeSummary(reference)}
+            </div>
+        </div>
+    `;
+    document.getElementById(IDS.DETAILS_PANEL).innerHTML = html;
+}
+
+function renderNodeSummary(node) {
+    let colorClass = `text-severity-${node.severity}`;
+    let circleClass = `severity-${node.severity}`;
+    if (node.severity === 'MOVABLE') {
+        const studentHashes = Object.keys(comparisonData.compare_result.matched_hashes_1_to_2);
+        const isStudent = studentHashes.includes(node.id);
+        colorClass = isStudent ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+        circleClass = isStudent ? 'severity-MOVABLE_STUDENT' : 'severity-MOVABLE_REFERENCE';
+    }
+
+    return `
+        <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
+      <div style="margin-bottom: 5px;">
+    <div style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+        <strong style="color: #888;">Статус:</strong> 
+        <div class="${colorClass}" style="display:flex; align-items: center; gap: 6px; font-weight: bold;">
+            <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0; border-radius: 50%;"></div> 
+            ${getSeverityName(node.severity)}
+            </div>
+        </div>
+        </div>
+        <div class="metadata-row">
+            <div class="metadata-label">Message:</div>
+            <div class="metadata-value" style="color: #6a8759;">"${node.message}"</div>
+        </div>
+        <div class="metadata-row">
+            <div class="metadata-label">Author:</div>
+            <div class="metadata-value">${node.author ? node.author.name : 'N/A'}</div>
+        </div>
+        <div class="metadata-row">
+            <div class="metadata-label">Date:</div>
+            <div class="metadata-value" style="color: #cc7832">${node.commitDate}</div>
+        </div>
+        ${node.diffs && node.diffs.length > 0 ? renderDiffs(node.diffs) : ''}
+    `;
+}
+
+if (document.readyState === 'complete') init();
+else window.addEventListener('load', init);
+    </script>
+</body>
+</html>

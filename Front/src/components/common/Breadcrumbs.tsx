@@ -1,25 +1,36 @@
 import React from 'react';
-import { Breadcrumbs, Link, Typography, Box } from '@mui/material';
+import { Breadcrumbs as MUIBreadcrumbs, Link, Typography, Box } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
+// Карта статических путей
 const breadcrumbNameMap: { [key: string]: string } = {
   '/admin': 'Панель администратора',
   '/admin/labs': 'Лабораторные работы',
   '/admin/students': 'Студенты',
+  '/admin/tasks': 'Задания',
   '/admin/tasks/new': 'Новое задание',
+  '/student': 'Личный кабинет студента',
+  '/comparison': 'Сравнение графов',
+  '/comparison-result': 'Результат сравнения',
+  '/login': 'Вход',
 };
 
-export const AdminBreadcrumbs: React.FC = () => {
+export const Breadcrumbs: React.FC = () => {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter((x) => x);
 
+  // Не показываем крошки на главной странице
+  if (pathnames.length === 0) {
+    return null;
+  }
+
   return (
-    <Box sx={{ mb: 2 }}>
-      <Breadcrumbs 
+    <Box sx={{ mb: 2, mt: 1 }}>
+      <MUIBreadcrumbs 
         separator={<NavigateNextIcon fontSize="small" />} 
         aria-label="breadcrumb"
-        sx={{ color: 'text.secondary' }}
+        sx={{ color: 'text.secondary', fontSize: '0.875rem' }}
       >
         <Link 
           component={RouterLink} 
@@ -33,16 +44,18 @@ export const AdminBreadcrumbs: React.FC = () => {
           const last = index === pathnames.length - 1;
           const to = `/${pathnames.slice(0, index + 1).join('/')}`;
 
-          // Handle dynamic IDs (like /admin/labs/1)
+          // Логика определения имени для динамических путей
           let name = breadcrumbNameMap[to];
           if (!name) {
-             if (pathnames[index - 1] === 'labs') name = `Работа №${value}`;
-             else if (pathnames[index - 1] === 'tasks') name = `Задание №${value}`;
-             else name = value;
+             const prevPart = pathnames[index - 1];
+             if (prevPart === 'labs') name = `Работа №${value}`;
+             else if (prevPart === 'tasks') name = `Задание №${value}`;
+             else if (prevPart === 'students') name = `Студент №${value}`;
+             else name = value.charAt(0).toUpperCase() + value.slice(1);
           }
 
           return last ? (
-            <Typography color="text.primary" key={to}>
+            <Typography color="text.primary" key={to} sx={{ fontSize: '0.875rem' }}>
               {name}
             </Typography>
           ) : (
@@ -57,7 +70,7 @@ export const AdminBreadcrumbs: React.FC = () => {
             </Link>
           );
         })}
-      </Breadcrumbs>
+      </MUIBreadcrumbs>
     </Box>
   );
 };

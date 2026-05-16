@@ -1,461 +1,564 @@
 {
-    "openapi": "3.0.1",
-    "info": {
-      "title": "OpenAPI definition",
-      "version": "v0"
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Admin Student Management",
+      "description": "Endpoints for teachers to manage students and their assignments"
     },
-    "servers": [
-      {
-        "url": "http://localhost:8080",
-        "description": "Generated server url"
-      }
-    ],
-    "tags": [
-      {
-        "name": "Admin Student Management",
-        "description": "Endpoints for teachers to manage students and their assignments"
-      },
-      {
-        "name": "Authentication",
-        "description": "Endpoints for user registration and login"
-      },
-      {
-        "name": "Comparison Operations",
-        "description": "Endpoints for direct repository comparison via file uploads"
-      },
-      {
-        "name": "Student Operations",
-        "description": "Endpoints for students to view tasks and submit work"
-      },
-      {
-        "name": "Admin Lab Management",
-        "description": "Endpoints for teachers to manage laboratory works"
-      },
-      {
-        "name": "Admin Task Management",
-        "description": "Endpoints for teachers to manage tasks"
-      }
-    ],
-    "paths": {
-      "/api/admin/tasks/{id}": {
-        "get": {
-          "tags": [
-            "Admin Task Management"
-          ],
-          "summary": "Get task by ID",
-          "operationId": "getTaskById",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Task"
-                  }
-                }
-              }
+    {
+      "name": "Student Lab Operations",
+      "description": "Endpoints for students to view laboratory works and assignments"
+    },
+    {
+      "name": "Comparison Operations",
+      "description": "Endpoints for direct repository comparison via file uploads"
+    },
+    {
+      "name": "Student Submission Operations",
+      "description": "Endpoints for students to submit and check work"
+    },
+    {
+      "name": "Admin Lab Management",
+      "description": "Endpoints for teachers to manage laboratory works"
+    },
+    {
+      "name": "Admin Task Management",
+      "description": "Endpoints for teachers to manage tasks"
+    },
+    {
+      "name": "Authentication",
+      "description": "Endpoints for user login and information"
+    }
+  ],
+  "paths": {
+    "/api/admin/tasks/{id}": {
+      "get": {
+        "tags": [
+          "Admin Task Management"
+        ],
+        "summary": "Get task by ID",
+        "operationId": "getTaskById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             }
           }
-        },
-        "put": {
-          "tags": [
-            "Admin Task Management"
-          ],
-          "summary": "Update a task and optionally its reference repository",
-          "operationId": "updateTask",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            },
-            {
-              "name": "number",
-              "in": "query",
-              "required": false,
-              "schema": {
-                "type": "integer",
-                "format": "int32"
-              }
-            },
-            {
-              "name": "description",
-              "in": "query",
-              "required": false,
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
             "content": {
-              "application/json": {
+              "*/*": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "file": {
-                      "type": "string",
-                      "format": "binary"
-                    }
-                  }
+                  "$ref": "#/components/schemas/Task"
                 }
               }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Task"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "delete": {
-          "tags": [
-            "Admin Task Management"
-          ],
-          "summary": "Delete a task and its reference repository",
-          "operationId": "deleteTask",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
             }
           }
         }
       },
-      "/api/admin/labs/{id}": {
-        "get": {
-          "tags": [
-            "Admin Lab Management"
-          ],
-          "summary": "Get laboratory work by ID",
-          "operationId": "getLabById",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
+      "put": {
+        "tags": [
+          "Admin Task Management"
+        ],
+        "summary": "Update a task and optionally its reference repository",
+        "operationId": "updateTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/LaboratoryWork"
+          },
+          {
+            "name": "number",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
             }
           }
         },
-        "put": {
-          "tags": [
-            "Admin Lab Management"
-          ],
-          "summary": "Update a laboratory work",
-          "operationId": "updateLab",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
               }
             }
-          ],
-          "requestBody": {
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin Task Management"
+        ],
+        "summary": "Delete a task and its reference repository",
+        "operationId": "deleteTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/labs/{id}": {
+      "get": {
+        "tags": [
+          "Admin Lab Management"
+        ],
+        "summary": "Get laboratory work by ID",
+        "operationId": "getLabById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
             "content": {
-              "application/json": {
+              "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/LaboratoryWork"
                 }
               }
-            },
-            "required": true
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin Lab Management"
+        ],
+        "summary": "Update a laboratory work",
+        "operationId": "updateLab",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LaboratoryWork"
+              }
+            }
           },
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/LaboratoryWork"
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LaboratoryWork"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin Lab Management"
+        ],
+        "summary": "Delete a laboratory work",
+        "operationId": "deleteLab",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/student/{id}/upload": {
+      "post": {
+        "tags": [
+          "Student Submission Operations"
+        ],
+        "summary": "Upload task solution (ZIP)",
+        "operationId": "uploadSolution",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
             }
           }
         },
-        "delete": {
-          "tags": [
-            "Admin Lab Management"
-          ],
-          "summary": "Delete a laboratory work",
-          "operationId": "deleteLab",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentSubmission"
+                }
               }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
             }
           }
         }
-      },
-      "/api/student/{id}/upload": {
-        "post": {
-          "tags": [
-            "Student Operations"
-          ],
-          "summary": "Upload task solution (ZIP)",
-          "operationId": "uploadSolution",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          ],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "required": [
-                    "file"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "file": {
-                      "type": "string",
-                      "format": "binary"
-                    }
-                  }
-                }
-              }
+      }
+    },
+    "/api/student/{id}/check": {
+      "post": {
+        "tags": [
+          "Student Submission Operations"
+        ],
+        "summary": "Check own solution",
+        "operationId": "checkSolution",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             }
           },
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/StudentSubmission"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/student/{id}/check": {
-        "post": {
-          "tags": [
-            "Student Operations"
-          ],
-          "summary": "Check own solution",
-          "operationId": "checkSolution",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            },
-            {
-              "name": "reportType",
-              "in": "query",
-              "required": false,
-              "schema": {
-                "type": "string",
-                "default": "MERGED_GRAPH",
-                "enum": [
-                  "TWO_GRAPH",
-                  "MERGED_GRAPH"
-                ]
-              }
-            },
-            {
-              "name": "method",
-              "in": "query",
-              "required": false,
-              "schema": {
-                "type": "string",
-                "default": "BRANCH",
-                "enum": [
-                  "BRANCH",
-                  "BRUTE_FORCE",
-                  "DP",
-                  "UNIQUE_LABEL"
-                ]
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/GitComparisonResultDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/comparison/compare-files": {
-        "post": {
-          "tags": [
-            "Comparison Operations"
-          ],
-          "summary": "Compare two Git repositories provided as ZIP files",
-          "operationId": "compareFiles",
-          "parameters": [
-            {
-              "name": "reportType",
-              "in": "query",
-              "required": false,
-              "schema": {
-                "type": "string",
-                "default": "MERGED_GRAPH",
-                "enum": [
-                  "TWO_GRAPH",
-                  "MERGED_GRAPH"
-                ]
-              }
-            },
-            {
-              "name": "method",
-              "in": "query",
-              "required": false,
-              "schema": {
-                "type": "string",
-                "default": "BRANCH",
-                "enum": [
-                  "BRANCH",
-                  "BRUTE_FORCE",
-                  "DP",
-                  "UNIQUE_LABEL"
-                ]
-              }
-            }
-          ],
-          "requestBody": {
-            "content": {
-              "multipart/form-data": {
-                "schema": {
-                  "required": [
-                    "reference",
-                    "student"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "reference": {
-                      "type": "string",
-                      "format": "binary"
-                    },
-                    "student": {
-                      "type": "string",
-                      "format": "binary"
-                    }
-                  }
-                }
-              }
+          {
+            "name": "reportType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "MERGED_GRAPH",
+              "enum": [
+                "TWO_GRAPH",
+                "MERGED_GRAPH"
+              ]
             }
           },
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/GitComparisonResultDto"
+          {
+            "name": "method",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "BRANCH",
+              "enum": [
+                "BRANCH",
+                "BRUTE_FORCE",
+                "DP",
+                "UNIQUE_LABEL"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitComparisonResultDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/comparison/compare-files": {
+      "post": {
+        "tags": [
+          "Comparison Operations"
+        ],
+        "summary": "Compare two Git repositories provided as ZIP files",
+        "operationId": "compareFiles",
+        "parameters": [
+          {
+            "name": "reportType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "MERGED_GRAPH",
+              "enum": [
+                "TWO_GRAPH",
+                "MERGED_GRAPH"
+              ]
+            }
+          },
+          {
+            "name": "method",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "BRANCH",
+              "enum": [
+                "BRANCH",
+                "BRUTE_FORCE",
+                "DP",
+                "UNIQUE_LABEL"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "reference",
+                  "student"
+                ],
+                "type": "object",
+                "properties": {
+                  "reference": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "student": {
+                    "type": "string",
+                    "format": "binary"
                   }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitComparisonResultDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login user (Basic Auth verification)",
+        "operationId": "login",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/tasks": {
+      "get": {
+        "tags": [
+          "Admin Task Management"
+        ],
+        "summary": "Get all tasks",
+        "operationId": "getAllTasks",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
                 }
               }
             }
           }
         }
       },
-      "/api/auth/register": {
-        "post": {
-          "tags": [
-            "Authentication"
-          ],
-          "summary": "Register a new user",
-          "operationId": "register",
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
+      "post": {
+        "tags": [
+          "Admin Task Management"
+        ],
+        "summary": "Create a new task with reference repository",
+        "operationId": "createTask",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "labId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
                 }
               }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/students": {
+      "get": {
+        "tags": [
+          "Admin Student Management"
+        ],
+        "summary": "Get all students",
+        "operationId": "getAllStudents",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
                     "$ref": "#/components/schemas/User"
                   }
                 }
@@ -464,248 +567,141 @@
           }
         }
       },
-      "/api/auth/login": {
-        "post": {
-          "tags": [
-            "Authentication"
-          ],
-          "summary": "Login user (Basic Auth verification)",
-          "operationId": "login",
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UserDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/admin/tasks": {
-        "get": {
-          "tags": [
-            "Admin Task Management"
-          ],
-          "summary": "Get all tasks",
-          "operationId": "getAllTasks",
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "post": {
-          "tags": [
-            "Admin Task Management"
-          ],
-          "summary": "Create a new task with reference repository",
-          "operationId": "createTask",
-          "parameters": [
-            {
-              "name": "number",
-              "in": "query",
-              "required": true,
+      "post": {
+        "tags": [
+          "Admin Student Management"
+        ],
+        "summary": "Create a new student",
+        "operationId": "createStudent",
+        "requestBody": {
+          "content": {
+            "application/json": {
               "schema": {
-                "type": "integer",
-                "format": "int32"
-              }
-            },
-            {
-              "name": "description",
-              "in": "query",
-              "required": true,
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "labId",
-              "in": "query",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          ],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "required": [
-                    "file"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "file": {
-                      "type": "string",
-                      "format": "binary"
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/UserDto"
               }
             }
           },
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Task"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/admin/students/{studentId}/assign/{taskId}": {
-        "post": {
-          "tags": [
-            "Admin Student Management"
-          ],
-          "summary": "Assign task to student",
-          "operationId": "assignTask",
-          "parameters": [
-            {
-              "name": "studentId",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            },
-            {
-              "name": "taskId",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/StudentSubmission"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/admin/students/submissions/{submissionId}/grade": {
-        "post": {
-          "tags": [
-            "Admin Student Management"
-          ],
-          "summary": "Grade student submission",
-          "operationId": "gradeSubmission",
-          "parameters": [
-            {
-              "name": "submissionId",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            },
-            {
-              "name": "grade",
-              "in": "query",
-              "required": true,
-              "schema": {
-                "type": "number",
-                "format": "double"
-              }
-            },
-            {
-              "name": "feedback",
-              "in": "query",
-              "required": false,
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/StudentSubmission"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/admin/labs": {
-        "get": {
-          "tags": [
-            "Admin Lab Management"
-          ],
-          "summary": "Get all laboratory works",
-          "operationId": "getAllLabs",
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/LaboratoryWork"
-                    }
-                  }
-                }
-              }
-            }
-          }
+          "required": true
         },
-        "post": {
-          "tags": [
-            "Admin Lab Management"
-          ],
-          "summary": "Create a new laboratory work",
-          "operationId": "createLab",
-          "requestBody": {
+        "responses": {
+          "200": {
+            "description": "OK",
             "content": {
-              "application/json": {
+              "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/LaboratoryWork"
+                  "$ref": "#/components/schemas/User"
                 }
               }
-            },
-            "required": true
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/students/{studentId}/assign/{taskId}": {
+      "post": {
+        "tags": [
+          "Admin Student Management"
+        ],
+        "summary": "Assign task to student",
+        "operationId": "assignTask",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           },
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentSubmission"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/students/submissions/{submissionId}/grade": {
+      "post": {
+        "tags": [
+          "Admin Student Management"
+        ],
+        "summary": "Grade student submission",
+        "operationId": "gradeSubmission",
+        "parameters": [
+          {
+            "name": "submissionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "feedback",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentSubmission"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/labs": {
+      "get": {
+        "tags": [
+          "Admin Lab Management"
+        ],
+        "summary": "Get all laboratory works",
+        "operationId": "getAllLabs",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
                     "$ref": "#/components/schemas/LaboratoryWork"
                   }
                 }
@@ -714,470 +710,577 @@
           }
         }
       },
-      "/api/student/api/student/tasks": {
-        "get": {
-          "tags": [
-            "Student Operations"
-          ],
-          "summary": "Get all available tasks",
-          "operationId": "getTasks",
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/Task"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/auth/me": {
-        "get": {
-          "tags": [
-            "Authentication"
-          ],
-          "summary": "Get current authenticated user info",
-          "operationId": "getCurrentUser",
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UserDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/admin/students": {
-        "get": {
-          "tags": [
-            "Admin Student Management"
-          ],
-          "summary": "Get all students",
-          "operationId": "getAllStudents",
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/User"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/admin/students/{studentId}/submissions": {
-        "get": {
-          "tags": [
-            "Admin Student Management"
-          ],
-          "summary": "Get all submissions for a specific student",
-          "operationId": "getStudentSubmissions",
-          "parameters": [
-            {
-              "name": "studentId",
-              "in": "path",
-              "required": true,
+      "post": {
+        "tags": [
+          "Admin Lab Management"
+        ],
+        "summary": "Create a new laboratory work",
+        "operationId": "createLab",
+        "requestBody": {
+          "content": {
+            "application/json": {
               "schema": {
-                "type": "integer",
-                "format": "int64"
+                "$ref": "#/components/schemas/LaboratoryWork"
               }
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/StudentSubmission"
-                    }
-                  }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LaboratoryWork"
                 }
               }
-            }
-          }
-        }
-      },
-      "/api/admin/students/submissions": {
-        "get": {
-          "tags": [
-            "Admin Student Management"
-          ],
-          "summary": "Get all student submissions",
-          "operationId": "getAllSubmissions",
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/StudentSubmission"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/admin/labs/{id}/tasks": {
-        "get": {
-          "tags": [
-            "Admin Lab Management"
-          ],
-          "summary": "Get all tasks for a specific laboratory work",
-          "operationId": "getTasksByLabId",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "*/*": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/Task"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/admin/students/submissions/{submissionId}": {
-        "delete": {
-          "tags": [
-            "Admin Student Management"
-          ],
-          "summary": "Remove task assignment/submission and its file",
-          "operationId": "removeAssignment",
-          "parameters": [
-            {
-              "name": "submissionId",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
             }
           }
         }
       }
     },
-    "components": {
-      "schemas": {
-        "LaboratoryWork": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "number": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "topic": {
-              "type": "string"
-            },
-            "description": {
-              "type": "string"
-            },
-            "tasks": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Task"
+    "/api/student/api/student/labs": {
+      "get": {
+        "tags": [
+          "Student Lab Operations"
+        ],
+        "summary": "Get all laboratory works with assigned tasks for current student",
+        "operationId": "getLabs",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LaboratoryWorkDto"
+                  }
+                }
               }
             }
           }
-        },
-        "Task": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "number": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "description": {
-              "type": "string"
-            },
-            "referenceRepoPath": {
-              "type": "string"
-            },
-            "lab": {
-              "$ref": "#/components/schemas/LaboratoryWork"
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get current authenticated user info",
+        "operationId": "getCurrentUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
             }
           }
-        },
-        "StudentSubmission": {
-          "type": "object",
-          "properties": {
-            "id": {
+        }
+      }
+    },
+    "/api/admin/students/{studentId}/submissions": {
+      "get": {
+        "tags": [
+          "Admin Student Management"
+        ],
+        "summary": "Get all submissions for a specific student",
+        "operationId": "getStudentSubmissions",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "required": true,
+            "schema": {
               "type": "integer",
               "format": "int64"
-            },
-            "task": {
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentSubmission"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/students/submissions": {
+      "get": {
+        "tags": [
+          "Admin Student Management"
+        ],
+        "summary": "Get all student submissions",
+        "operationId": "getAllSubmissions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentSubmission"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/labs/{id}/tasks": {
+      "get": {
+        "tags": [
+          "Admin Lab Management"
+        ],
+        "summary": "Get all tasks for a specific laboratory work",
+        "operationId": "getTasksByLabId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/students/{id}": {
+      "delete": {
+        "tags": [
+          "Admin Student Management"
+        ],
+        "summary": "Delete a user",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/students/submissions/{submissionId}": {
+      "delete": {
+        "tags": [
+          "Admin Student Management"
+        ],
+        "summary": "Remove task assignment/submission and its file",
+        "operationId": "removeAssignment",
+        "parameters": [
+          {
+            "name": "submissionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LaboratoryWork": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
               "$ref": "#/components/schemas/Task"
-            },
-            "student": {
-              "$ref": "#/components/schemas/User"
-            },
-            "studentRepoPath": {
-              "type": "string"
-            },
-            "grade": {
-              "type": "number",
-              "format": "double"
-            },
-            "feedback": {
-              "type": "string"
-            },
-            "submittedAt": {
-              "type": "string",
-              "format": "date-time"
             }
           }
-        },
-        "User": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "username": {
+        }
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string"
+          },
+          "referenceRepoPath": {
+            "type": "string"
+          },
+          "lab": {
+            "$ref": "#/components/schemas/LaboratoryWork"
+          }
+        }
+      },
+      "StudentSubmission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "task": {
+            "$ref": "#/components/schemas/Task"
+          },
+          "student": {
+            "$ref": "#/components/schemas/User"
+          },
+          "studentRepoPath": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "number",
+            "format": "double"
+          },
+          "feedback": {
+            "type": "string"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "STUDENT"
+            ]
+          }
+        }
+      },
+      "AuthorDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "CompareResultDto": {
+        "type": "object",
+        "properties": {
+          "matchedHashes1To2": {
+            "type": "object",
+            "additionalProperties": {
               "type": "string"
-            },
-            "password": {
-              "type": "string"
-            },
-            "role": {
-              "type": "string",
-              "enum": [
-                "ADMIN",
-                "STUDENT"
-              ]
             }
           }
-        },
-        "AuthorDto": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "email": {
-              "type": "string"
-            }
+        }
+      },
+      "DiffDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "GitComparisonResultDto": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
           }
         },
-        "CompareResultDto": {
-          "type": "object",
-          "properties": {
-            "matchedHashes1To2": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            }
-          }
+        "discriminator": {
+          "propertyName": "type"
         },
-        "DiffDto": {
-          "type": "object",
-          "properties": {
-            "value": {
-              "type": "string"
-            },
-            "state": {
-              "type": "string"
-            }
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/TwoGraphComparisonResultDto"
+          },
+          {
+            "$ref": "#/components/schemas/MergedGraphComparisonResultDto"
           }
-        },
-        "GitComparisonResultDto": {
-          "required": [
-            "type"
-          ],
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string"
+        ]
+      },
+      "GitGraphDto": {
+        "type": "object",
+        "properties": {
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NodeDto"
             }
           },
-          "discriminator": {
-            "propertyName": "type"
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkDto"
+            }
+          }
+        }
+      },
+      "LinkDto": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
           },
-          "oneOf": [
-            {
-              "$ref": "#/components/schemas/TwoGraphComparisonResultDto"
-            },
-            {
-              "$ref": "#/components/schemas/MergedGraphComparisonResultDto"
-            }
-          ]
-        },
-        "GitGraphDto": {
-          "type": "object",
-          "properties": {
-            "nodes": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/NodeDto"
-              }
-            },
-            "links": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/LinkDto"
+          "target": {
+            "type": "string"
+          }
+        }
+      },
+      "MergedGraphComparisonResultDto": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GitComparisonResultDto"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "mergedGraph": {
+                "$ref": "#/components/schemas/GitGraphDto"
+              },
+              "compareResult": {
+                "$ref": "#/components/schemas/CompareResultDto"
               }
             }
           }
-        },
-        "LinkDto": {
-          "type": "object",
-          "properties": {
-            "source": {
-              "type": "string"
-            },
-            "target": {
-              "type": "string"
+        ]
+      },
+      "NodeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "commitDate": {
+            "type": "string"
+          },
+          "authorDate": {
+            "type": "string"
+          },
+          "author": {
+            "$ref": "#/components/schemas/AuthorDto"
+          },
+          "diffs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiffDto"
+            }
+          },
+          "severity": {
+            "type": "string"
+          }
+        }
+      },
+      "TwoGraphComparisonResultDto": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GitComparisonResultDto"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "firstGraph": {
+                "$ref": "#/components/schemas/GitGraphDto"
+              },
+              "secondGraph": {
+                "$ref": "#/components/schemas/GitGraphDto"
+              },
+              "compareResult": {
+                "$ref": "#/components/schemas/CompareResultDto"
+              }
             }
           }
-        },
-        "MergedGraphComparisonResultDto": {
-          "type": "object",
-          "allOf": [
-            {
-              "$ref": "#/components/schemas/GitComparisonResultDto"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "mergedGraph": {
-                  "$ref": "#/components/schemas/GitGraphDto"
-                },
-                "compareResult": {
-                  "$ref": "#/components/schemas/CompareResultDto"
-                }
-              }
-            }
-          ]
-        },
-        "NodeDto": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            },
-            "number": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "hash": {
-              "type": "string"
-            },
-            "message": {
-              "type": "string"
-            },
-            "commitDate": {
-              "type": "string"
-            },
-            "authorDate": {
-              "type": "string"
-            },
-            "author": {
-              "$ref": "#/components/schemas/AuthorDto"
-            },
-            "diffs": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/DiffDto"
-              }
-            },
-            "severity": {
-              "type": "string"
+        ]
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "LaboratoryWorkDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskDto"
             }
           }
-        },
-        "TwoGraphComparisonResultDto": {
-          "type": "object",
-          "allOf": [
-            {
-              "$ref": "#/components/schemas/GitComparisonResultDto"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "firstGraph": {
-                  "$ref": "#/components/schemas/GitGraphDto"
-                },
-                "secondGraph": {
-                  "$ref": "#/components/schemas/GitGraphDto"
-                },
-                "compareResult": {
-                  "$ref": "#/components/schemas/CompareResultDto"
-                }
-              }
-            }
-          ]
-        },
-        "UserDto": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "username": {
-              "type": "string"
-            },
-            "role": {
-              "type": "string"
-            }
+        }
+      },
+      "TaskDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "number",
+            "format": "double"
+          },
+          "feedback": {
+            "type": "string"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
           }
         }
       }
     }
   }
+}

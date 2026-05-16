@@ -9,6 +9,7 @@ import LoginPage from './pages/auth/LoginPage';
 import ComparisonPage from './pages/ComparisonPage';
 import ComparisonResultPage from './pages/ComparisonResultPage';
 import { ProtectedRoute } from './components/routing/ProtectedRoute';
+import { USER_ROLES } from './api/models/constants';
 import AdminLabsPage from './pages/admin/AdminLabsPage';
 import AdminLabDetailPage from './pages/admin/AdminLabDetailPage';
 import AdminTaskEditPage from './pages/admin/AdminTaskEditPage';
@@ -24,7 +25,7 @@ function App() {
             <Route 
               path="comparison" 
               element={
-                <ProtectedRoute role="STUDENT">
+                <ProtectedRoute roles={[USER_ROLES.STUDENT, USER_ROLES.ADMIN]}>
                   <ComparisonPage />
                 </ProtectedRoute>
               } 
@@ -32,7 +33,7 @@ function App() {
             <Route 
               path="comparison-result" 
               element={
-                <ProtectedRoute role="STUDENT">
+                <ProtectedRoute roles={[USER_ROLES.STUDENT, USER_ROLES.ADMIN]}>
                   <ComparisonResultPage />
                 </ProtectedRoute>
               } 
@@ -42,7 +43,7 @@ function App() {
             <Route 
               path="admin" 
               element={
-                <ProtectedRoute role="ADMIN">
+                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
                   <AdminPage />
                 </ProtectedRoute>
               } 
@@ -50,7 +51,7 @@ function App() {
             <Route 
               path="admin/labs" 
               element={
-                <ProtectedRoute role="ADMIN">
+                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
                   <AdminLabsPage />
                 </ProtectedRoute>
               } 
@@ -58,7 +59,7 @@ function App() {
             <Route 
               path="admin/labs/:id" 
               element={
-                <ProtectedRoute role="ADMIN">
+                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
                   <AdminLabDetailPage />
                 </ProtectedRoute>
               } 
@@ -66,7 +67,7 @@ function App() {
             <Route 
               path="admin/tasks/new" 
               element={
-                <ProtectedRoute role="ADMIN">
+                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
                   <AdminTaskEditPage />
                 </ProtectedRoute>
               } 
@@ -74,7 +75,7 @@ function App() {
             <Route 
               path="admin/tasks/:id/edit" 
               element={
-                <ProtectedRoute role="ADMIN">
+                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
                   <AdminTaskEditPage />
                 </ProtectedRoute>
               } 

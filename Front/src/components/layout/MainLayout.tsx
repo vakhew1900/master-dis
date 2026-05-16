@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import { Breadcrumbs } from '../common/Breadcrumbs';
 import styles from './MainLayout.module.css';
 
 const MainLayout: React.FC = () => {
@@ -9,6 +10,7 @@ const MainLayout: React.FC = () => {
     <div className={styles.layoutContainer}>
       <Header />
       <main className={styles.mainContent}>
+        <Breadcrumbs />
         <Outlet />
       </main>
       <Footer />

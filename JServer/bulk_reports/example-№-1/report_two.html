@@ -1,0 +1,4463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Git Graph Comparison Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+:root {
+    --bg-color: #1e1e1e;
+    --panel-bg: #2b2b2b;
+    --card-bg: #323232;
+    --border-color: #3f3f3f;
+    --text-main: #a9b7c6;
+    --text-header: #ffffff;
+    --font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --nav-active: #4b6eaf;
+    
+    --severity-identical-bg: #365939;
+    --severity-identical-border: #496c4b;
+    --severity-modified-bg: #5e5339;
+    --severity-modified-border: #80714a;
+    --severity-extra-bg: #593939;
+    --severity-extra-border: #804b4b;
+    --severity-missed-bg: #2b2b2b; /* Use solid background to match renderer */
+    --severity-missed-border: #804b4b;
+    --severity-movable-student: #384c67;
+    --severity-movable-student-border: #4b6a8e;
+    --severity-movable-reference: #4e3867;
+    --severity-movable-reference-border: #6a4b8e;
+    
+    --edge-color: #555555;
+    --edge-highlight: #4b6eaf;
+    
+    --diff-added-bg: #2d4436;
+    --diff-removed-bg: #482c2c;
+    --diff-text: #a9b7c6;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* Header Styling */
+.main-header {
+    background-color: var(--panel-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px 40px;
+    margin-bottom: 30px;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-header);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.nav-bar {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-link {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    transition: color 0.2s, background-color 0.2s;
+    padding: 8px 16px;
+    border-radius: 6px;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-header);
+}
+
+.nav-link.active {
+    background-color: var(--nav-active);
+    color: white;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.network {
+    flex: 1;
+    height: 100%;
+}
+
+.details-panel {
+    background: var(--panel-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    min-height: 200px;
+    border: 1px solid var(--border-color);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-main);
+    opacity: 0.8;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+.empty-state h3 {
+    margin: 10px 0;
+    color: var(--text-header);
+    font-weight: 600;
+}
+
+.empty-state p {
+    max-width: 500px;
+    margin: 0 auto 15px auto;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.empty-state-hint {
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+}
+
+.details-grid {
+    display: flex;
+    gap: 30px;
+}
+
+.details-column {
+    flex: 1;
+    padding: 15px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+.details-column h4 {
+    margin-top: 0;
+    color: var(--text-header);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+/* Collapsible Metadata */
+.commit-metadata-toggle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 8px 0;
+    transition: background 0.2s;
+}
+
+.commit-metadata-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.commit-metadata-toggle::after {
+    content: '▼';
+    font-size: 9px;
+    transition: transform 0.3s;
+}
+
+.commit-metadata-toggle.active::after {
+    transform: rotate(180deg);
+}
+
+.commit-metadata-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.commit-metadata-content.show {
+    max-height: 300px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.metadata-row {
+    margin: 3px 0;
+    font-size: 12px;
+    display: flex;
+}
+
+.metadata-label {
+    font-weight: 600;
+    min-width: 80px;
+    color: #888;
+}
+
+.metadata-value {
+    color: var(--text-main);
+}
+
+/* Severity Legend */
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    background: var(--panel-bg);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.color-box {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid;
+    position: relative; /* Needed for pseudo-element positioning */
+}
+
+.color-box.severity-EXTRA::before,
+.color-box.severity-EXTRA::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 110%;
+    height: 2.5px;
+    background-color: #f44336;
+    transform-origin: center;
+    border-radius: 1px;
+}
+
+.color-box.severity-EXTRA::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.color-box.severity-EXTRA::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.severity-IDENTICAL { background-color: var(--severity-identical-bg); border-color: var(--severity-identical-border); color: #5da063; }
+.severity-MODIFIED { background-color: var(--severity-modified-bg); border-color: var(--severity-modified-border); color: #a69664; }
+.severity-EXTRA { background-color: var(--severity-extra-bg); border-color: var(--severity-extra-border); color: #b26b6b; }
+.severity-MISSED { background-color: var(--severity-missed-bg); border-color: var(--severity-missed-border); color: #b26b6b; }
+.severity-MOVABLE { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); color: #6b90b2; }
+.severity-MOVABLE_STUDENT { background-color: var(--severity-movable-student); border-color: var(--severity-movable-student-border); color: #6b90b2; }
+.severity-MOVABLE_REFERENCE { background-color: var(--severity-movable-reference); border-color: var(--severity-movable-reference-border); color: #906bb2; }
+
+/* Status Text Colors */
+.text-severity-IDENTICAL { color: #5da063; }
+.text-severity-MODIFIED { color: #a69664; }
+.text-severity-EXTRA { color: #b26b6b; }
+.text-severity-MISSED { color: #b26b6b; }
+.text-severity-MOVABLE_STUDENT { color: #6b90b2; }
+.text-severity-MOVABLE_REFERENCE { color: #906bb2; }
+
+/* Collapsible Legend */
+.legend-details {
+    background: var(--panel-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.legend-summary {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style: none; /* Hide default arrow */
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.legend-details[open] .legend-summary {
+    border-bottom-color: var(--border-color);
+}
+
+.legend-summary::-webkit-details-marker {
+    display: none;
+}
+
+.legend-summary::before {
+    content: '\25B8';
+    display: inline-block;
+    transition: transform 0.3s ease;
+    color: var(--nav-active);
+}
+
+.legend-details[open] .legend-summary::before {
+    transform: rotate(90deg);
+}
+
+.legend-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.legend-details[open] .legend-wrapper {
+    grid-template-rows: 1fr;
+}
+
+.legend-content {
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, padding 0.3s ease;
+}
+
+.legend-details[open] .legend-content {
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px 20px;
+}
+
+/* Custom Tooltip Styling */
+div.vis-tooltip {
+    background-color: var(--panel-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-main) !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+    font-family: var(--font-family) !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    max-width: 450px !important;
+    pointer-events: none;
+}
+
+.tooltip-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: var(--text-header);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.tooltip-diff {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+/* Diff Styling */
+.diff-list {
+    max-height: 350px; 
+    overflow-y: auto; 
+    background: #121212; 
+    padding: 5px; 
+    border-radius: 6px;
+    list-style: none;
+    margin: 10px 0;
+    border: 1px solid var(--border-color);
+}
+
+.diff-line {
+    font-family: 'JetBrains Mono', 'Consolas', monospace; 
+    font-size: 11.5px;
+    padding: 2px 8px;
+    margin-bottom: 1px;
+    white-space: pre-wrap;
+    color: #cfd8dc;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.diff-line::before {
+    content: '';
+    display: inline-block;
+    min-width: 14px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.diff-line-added { background-color: var(--diff-added-bg); }
+.diff-line-removed { background-color: var(--diff-removed-bg); }
+
+/* Diff States */
+.state-CORRECT {
+    border-left: 3px solid #496c4b;
+}
+.state-CORRECT::before { content: '✓'; color: #5da063; }
+
+.state-MISSED {
+    opacity: 0.5;
+    border-left: 3px solid #804b4b;
+    background-color: rgba(128, 75, 75, 0.1);
+}
+.state-MISSED::before { content: '✗'; color: #b26b6b; }
+
+.state-EXTRACT {
+    border-left: 3px solid #cc7832;
+    background-color: rgba(204, 120, 50, 0.1);
+}
+.state-EXTRACT::before { content: '!'; color: #cc7832; }
+
+/* Footer Styling */
+.main-footer {
+    background-color: var(--panel-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 40px;
+    margin-top: 50px;
+    color: #777;
+    font-size: 14px;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-desc {
+    max-width: 600px;
+}
+
+.footer-desc strong {
+    color: #aaa;
+}
+
+.footer-copy {
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.graphs-wrapper {
+    display: flex;
+    gap: 20px;
+    height: 650px;
+}
+
+.graph-container {
+    flex: 1;
+    background: var(--panel-bg);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.graph-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #bbb;
+}
+
+.details-panel {
+    margin-bottom: 40px;
+}
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">GIT COMPARISON REPORT</div>
+            <nav class="nav-bar">
+                <a href="#" class="nav-link">Главная</a>
+                <a href="#" class="nav-link active">Сравнение графов</a>
+                <a href="#" class="nav-link">Отчеты</a>
+                <a href="#" class="nav-link">Список заданий</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <details class="legend-details" open>
+            <summary class="legend-summary">Легенда графа</summary>
+            <div class="legend-wrapper">
+                <div class="legend-content">
+                    <div class="legend-item text-severity-IDENTICAL"><div class="color-box severity-IDENTICAL"></div> Идентичен</div>
+                    <div class="legend-item text-severity-MODIFIED"><div class="color-box severity-MODIFIED"></div> Изменен</div>
+                    <div class="legend-item text-severity-EXTRA"><div class="color-box severity-EXTRA"></div> Лишний (нет в эталоне)</div>
+                    <div class="legend-item text-severity-MISSED"><div class="color-box severity-MISSED"></div> Пропущен (нет в работе)</div>
+                    <div class="legend-item text-severity-MOVABLE_STUDENT"><div class="color-box severity-MOVABLE_STUDENT"></div> Перемещен (студент)</div>
+                    <div class="legend-item text-severity-MOVABLE_REFERENCE"><div class="color-box severity-MOVABLE_REFERENCE"></div> Перемещен (эталон)</div>
+                </div>
+            </div>
+        </details>
+
+        <div class="graphs-wrapper">
+            <div class="graph-container">
+                <div class="graph-header">Текущий граф <span id="student-count"></span></div>
+                <div id="student-network" class="network"></div>
+            </div>
+            <div class="graph-container">
+                <div class="graph-header">Ожидаемый результат <span id="reference-count"></span></div>
+                <div id="reference-network" class="network"></div>
+            </div>
+        </div>
+
+        <div class="legend" style="margin-bottom: -15px; opacity: 0.9; font-size: 13px;">
+            <div class="legend-item" style="color: #888; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Строки изменений:</div>
+            <div class="legend-item"><span style="color: #5da063; font-weight: bold; width: 14px; text-align: center;">✓</span> Правильно</div>
+            <div class="legend-item"><span style="color: #b26b6b; font-weight: bold; width: 14px; text-align: center;">✗</span> Пропущено</div>
+            <div class="legend-item"><span style="color: #cc7832; font-weight: bold; width: 14px; text-align: center;">!</span> Лишнее</div>
+        </div>
+
+        <div id="details" class="details-panel">
+            <div class="empty-state">
+                <div class="empty-state-icon">🔍</div>
+                <h3>Сравнение коммитов</h3>
+                <p>Выберите узел на любом из графов, чтобы увидеть детальное сравнение содержимого коммитов и метаданных.</p>
+                <div class="empty-state-hint">Узлы подсвечиваются автоматически в обоих графах при наличии соответствия.</div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-desc">
+                <strong>JServer MCTS Analysis Tool</strong><br>
+                Experimental system for Maximum Common Transitive Subgraph comparison in Git repositories.
+                Designed for automated grading and structural analysis of version control history.
+            </div>
+            <div class="footer-copy">
+                &copy; Chupinin Anton 2026
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/javascript">
+/**
+ * Common JavaScript logic for Git Graph Reports.
+ */
+
+const SEVERITY_COLORS = {
+    'IDENTICAL': { 
+        background: '#365939', 
+        border: '#496c4b', 
+        highlight: { background: '#496c4b', border: '#5da063' } 
+    },
+    'MODIFIED': { 
+        background: '#5e5339', 
+        border: '#80714a', 
+        highlight: { background: '#80714a', border: '#a69664' } 
+    },
+    'EXTRA': { 
+        background: '#593939', 
+        border: '#804b4b', 
+        highlight: { background: '#804b4b', border: '#b26b6b' } 
+    },
+    'MISSED': { 
+        background: '#2b2b2b', 
+        border: '#804b4b', 
+        highlight: { background: '#3c3f41', border: '#b26b6b' } /* Opaque highlight */
+    },
+    'MOVABLE': { 
+        background: '#384c67', 
+        border: '#4b6a8e', 
+        highlight: { background: '#4b6a8e', border: '#6b90b2' } 
+    },
+    'MOVABLE_STUDENT': { 
+        background: '#384c67', 
+        border: '#4b6a8e', 
+        highlight: { background: '#4b6a8e', border: '#6b90b2' } 
+    },
+    'MOVABLE_REFERENCE': { 
+        background: '#4e3867', 
+        border: '#6a4b8e', 
+        highlight: { background: '#6a4b8e', border: '#906bb2' } 
+    }
+};
+
+const SEVERITY_NAMES = {
+    'IDENTICAL': 'Идентичен',
+    'MODIFIED': 'Изменен',
+    'EXTRA': 'Лишний (нет в эталоне)',
+    'MISSED': 'Пропущен (нет в работе)',
+    'MOVABLE': 'Перемещен',
+    'MOVABLE_STUDENT': 'Перемещен (студент)',
+    'MOVABLE_REFERENCE': 'Перемещен (эталон)'
+};
+
+/**
+ * Returns the color configuration for a given severity.
+ */
+function getSeverityColor(severity, graphType) {
+    if (severity === 'MOVABLE' && graphType) {
+        return SEVERITY_COLORS[graphType === 'student' ? 'MOVABLE_STUDENT' : 'MOVABLE_REFERENCE'];
+    }
+    return SEVERITY_COLORS[severity] || { background: '#3c3f41', border: '#4b4b4b' };
+}
+
+/**
+ * Returns the localized name for a given severity.
+ */
+function getSeverityName(severity) {
+    return SEVERITY_NAMES[severity] || severity;
+}
+
+/**
+ * Returns a shortened hash (max 7 chars).
+ */
+function getShortHash(hash) {
+    if (!hash) return '';
+    // For merged nodes, shorten each part to keep the label manageable
+    if (hash.includes('/')) {
+        return hash.split('/').map(h => h.trim().substring(0, 4)).join(' / ');
+    }
+    return hash.substring(0, 7);
+}
+
+/**
+ * Creates a rich HTML tooltip for a node as a DOM element.
+ */
+function createTooltip(node) {
+    const div = document.createElement('div');
+    const shortHash = getShortHash(node.hash);
+    const msg = node.message.length > 50 ? node.message.substring(0, 47) + '...' : node.message;
+    
+    // Determine status color class using hash for logical matching against CompareResultDto
+    let colorClass = `text-severity-${node.severity}`;
+    if (node.severity === 'MOVABLE') {
+        const studentHashes = (comparisonData.compare_result && comparisonData.compare_result.matched_hashes_1_to_2) ? Object.keys(comparisonData.compare_result.matched_hashes_1_to_2) : [];
+        colorClass = studentHashes.includes(node.hash) ? 'text-severity-MOVABLE_STUDENT' : 'text-severity-MOVABLE_REFERENCE';
+    }
+
+    let html = `
+        <div class="tooltip-header">${shortHash} | ${msg}</div>
+        <div style="margin-bottom: 5px;"><strong>Статус:</strong> <span class="${colorClass}">${getSeverityName(node.severity)}</span></div>
+    `;
+
+    if (node.diffs && node.diffs.length > 0) {
+        html += `<div class="tooltip-diff">`;
+        const limit = 4;
+        const displayDiffs = node.diffs.slice(0, limit);
+        displayDiffs.forEach(d => {
+            const val = d.value.length > 60 ? d.value.substring(0, 57) + '...' : d.value;
+            const color = d.value.startsWith('+') ? '#5da063' : (d.value.startsWith('-') ? '#b26b6b' : '#a9b7c6');
+            html += `<div style="color: ${color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${val.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+        });
+        if (node.diffs.length > limit) {
+            html += `<div style="color: #888; font-style: italic; margin-top: 2px;">... и еще ${node.diffs.length - limit} строк</div>`;
+        }
+        html += `</div>`;
+    }
+    
+    div.innerHTML = html;
+    return div;
+}
+
+/**
+ * Custom renderer for nodes.
+ */
+function getCustomRenderer(severity) {
+    return function({ ctx, x, y, state: { selected, hover }, style, label }) {
+        const {
+            color = '#97C2FC',      // заливка узла
+            borderColor = '#2B7CE9',
+            borderWidth = 1,
+            size = 20,
+            shadow = false,
+            shadowColor = 'rgba(0,0,0,0.3)',
+            shadowSize = 5,
+            shadowX = 2,
+            shadowY = 2
+        } = style;
+
+        const currentSeverity = (severity || '').trim().toUpperCase();
+
+        return {
+            drawNode() {
+                if (typeof x !== 'number' || typeof y !== 'number' || !ctx?.beginPath) return;
+
+                // 🔹 Тень (если включена)
+                if (shadow) {
+                    ctx.save();
+                    ctx.shadowColor = shadowColor;
+                    ctx.shadowBlur = shadowSize;
+                    ctx.shadowOffsetX = shadowX;
+                    ctx.shadowOffsetY = shadowY;
+                }
+
+                // 🔹 Основной круг
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+                ctx.fillStyle = color;  // ← правильно: style.color, не background
+                ctx.fill();
+
+                // 🔹 Сброс тени для границы (чтобы не размывалась)
+                if (shadow) {
+                    ctx.shadowBlur = 0;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                }
+
+                // 🔹 Граница
+                ctx.strokeStyle = borderColor;
+                ctx.lineWidth = borderWidth;
+                ctx.stroke();
+
+                // 🔹 Восстанавливаем контекст после тени
+                if (shadow) ctx.restore();
+
+                // 🔹 Красный крест для EXTRA / MISSED
+                if (currentSeverity === 'EXTRA' || currentSeverity === 'MISSED') {
+                    ctx.beginPath();
+                    const crossSize = size * 0.8;
+                    ctx.moveTo(x - crossSize, y - crossSize);
+                    ctx.lineTo(x + crossSize, y + crossSize);
+                    ctx.moveTo(x + crossSize, y - crossSize);
+                    ctx.lineTo(x - crossSize, y + crossSize);
+                    ctx.strokeStyle = '#f44336';
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                }
+            },
+
+            drawExternalLabel() {
+                if (label?.text && ctx?.fillText) {
+                    ctx.font = style.font || '14px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = style.fontFill || '#000';
+                    ctx.fillText(label.text, x, y + size + 18);
+                }
+            },
+
+            nodeDimensions: {
+                width: size * 2,
+                height: size * 2
+            }
+        };
+    };
+}
+
+
+function nodeToId(hash, nodeList) {
+    const node = nodeList.find(n => n.hash === hash || n.id === hash);
+    return node ? node.id : hash;
+}
+
+/**
+ * Toggles visibility of commit metadata.
+ */
+function toggleMetadata(button) {
+    button.classList.toggle('active');
+    const content = button.nextElementSibling;
+    content.classList.toggle('show');
+}
+
+/**
+ * Renders a list of diffs/labels with syntax highlighting.
+ */
+function renderDiffs(diffs) {
+    if (!diffs || diffs.length === 0) return '';
+    
+    return `
+        <ul class="diff-list">
+            ${diffs.map(d => {
+                const escapedValue = d.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                let className = 'diff-line';
+                
+                // Add highlighting based on prefix
+                if (escapedValue.startsWith('+')) className += ' diff-line-added';
+                else if (escapedValue.startsWith('-')) className += ' diff-line-removed';
+                
+                // Add state class (CORRECT, MISSED, EXTRACT)
+                if (d.state) className += ' state-' + d.state;
+                
+                return `<li class="${className}" title="Status: ${d.state || 'unknown'}">${escapedValue}</li>`;
+            }).join('')}
+        </ul>
+    `;
+}
+// Constants for element IDs
+const IDS = {
+    DETAILS_PANEL: 'details',
+    STUDENT_NETWORK: 'student-network',
+    REFERENCE_NETWORK: 'reference-network',
+    STUDENT_COUNT: 'student-count',
+    REFERENCE_COUNT: 'reference-count'
+};
+
+let studentNetwork = null;
+let referenceNetwork = null;
+let comparisonData = null;
+
+/**
+ * Initializes the report.
+ */
+function init() {
+    try {
+        comparisonData = {
+  "first_graph": {
+    "nodes": [
+      {
+        "id": "9c7897e4803959f2de7b331e54287ac9be0047f0",
+        "number": 0,
+        "hash": "9c7897e4803959f2de7b331e54287ac9be0047f0",
+        "message": "add variable a",
+        "commitDate": "2024-04-22T11:12:34Z",
+        "authorDate": "2024-04-08T10:18:03Z",
+        "author": {
+          "name": "slavaPanfilov29",
+          "email": "s_panfil290502@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "+a \u003d 5\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+a \u003d 5\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "e30bd769483157811fe39eb8dff29047356d273c",
+        "number": 1,
+        "hash": "e30bd769483157811fe39eb8dff29047356d273c",
+        "message": "NEW COMMIT",
+        "commitDate": "2024-04-22T11:11:19Z",
+        "authorDate": "2024-04-22T11:11:19Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "-## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## NEW COMMENT\r",
+            "state": "EXTRACT"
+          },
+          {
+            "value": "+## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT6\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## NEW COMMENT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT6\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "MODIFIED"
+      },
+      {
+        "id": "54bce3c2b3d5c67f75b0252bba6004918a59e418",
+        "number": 2,
+        "hash": "54bce3c2b3d5c67f75b0252bba6004918a59e418",
+        "message": "2.3",
+        "commitDate": "2024-04-08T10:15:02Z",
+        "authorDate": "2024-04-08T10:15:02Z",
+        "author": {
+          "name": "VladTeslenkov",
+          "email": "teslenkov@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-import pygame\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import pygame ## Библиотека для создания игр\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-import pygame\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import pygame ## Библиотека для создания игр\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62",
+        "number": 3,
+        "hash": "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62",
+        "message": "3.4",
+        "commitDate": "2024-04-08T10:14:24Z",
+        "authorDate": "2024-04-08T10:14:24Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "-supportedExtensions \u003d {\".cpp; .c; .h; .hpp\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+supportedExtensions \u003d {\".cpp; .c; .h; .hpps\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    a++;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d [1, 2, 3, 4]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## СМЕНА ФАЙЛА       \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## СМЕНА ФАЙЛА  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## File change     \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-supportedExtensions \u003d {\".cpp; .c; .h; .hpp\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+supportedExtensions \u003d {\".cpp; .c; .h; .hpps\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    a++;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d [1, 2, 3, 4]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## СМЕНА ФАЙЛА       \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## СМЕНА ФАЙЛА  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## File change     \r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3",
+        "number": 4,
+        "hash": "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3",
+        "message": "3.3",
+        "commitDate": "2024-04-08T10:13:44Z",
+        "authorDate": "2024-04-08T10:13:44Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                if (currIndex - prevIndex \u003d\u003d 1):        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            row \u003d row.replace(row[0 : row.find(\u0027:\u0027, 3) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                if (currIndex - prevIndex \u003d\u003d 1):        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            row \u003d row.replace(row[0 : row.find(\u0027:\u0027, 3) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503",
+        "number": 5,
+        "hash": "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503",
+        "message": "3.2",
+        "commitDate": "2024-04-08T10:13:09Z",
+        "authorDate": "2024-04-08T10:13:09Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "+    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"ag\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-C\" + str(ui.rowCountSpinBox.value())) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-s\" if ui.useRegister.isChecked() else \"-i\") \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-sys.exit(app.exec())",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## Programm exiting\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sys.exit(app.exec())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+closeProgramm(True)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"ag\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-C\" + str(ui.rowCountSpinBox.value())) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-s\" if ui.useRegister.isChecked() else \"-i\") \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-sys.exit(app.exec())",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## Programm exiting\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sys.exit(app.exec())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+closeProgramm(True)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "65155e36262a4692580998dd6fce95263c48f127",
+        "number": 6,
+        "hash": "65155e36262a4692580998dd6fce95263c48f127",
+        "message": "2.2",
+        "commitDate": "2024-04-08T10:10:18Z",
+        "authorDate": "2024-04-08T10:10:18Z",
+        "author": {
+          "name": "VladTeslenkov",
+          "email": "teslenkov@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "+## IMPORTS\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import pygame\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## IMPORTS\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import pygame\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "58a490275c81ad78d6f4f5665b11e05672f0bfec",
+        "number": 7,
+        "hash": "58a490275c81ad78d6f4f5665b11e05672f0bfec",
+        "message": "3.1 Number printer",
+        "commitDate": "2024-04-08T10:10:03Z",
+        "authorDate": "2024-04-08T10:10:03Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "+## Используй это если хочешь подключить qt\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ## Printing numbers\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for i in range(1, 99):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## Используй это если хочешь подключить qt\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ## Printing numbers\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for i in range(1, 99):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "2dac9a28737fd1ccf88dfbe4e396247373a12df9",
+        "number": 8,
+        "hash": "2dac9a28737fd1ccf88dfbe4e396247373a12df9",
+        "message": "2.1",
+        "commitDate": "2024-04-08T10:08:48Z",
+        "authorDate": "2024-04-08T10:08:48Z",
+        "author": {
+          "name": "VladTeslenkov",
+          "email": "teslenkov@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "+## NEW COMMENT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## NEW COMMENT\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "401ca29b832c14d9455025377d514222b80ebc3b",
+        "number": 9,
+        "hash": "401ca29b832c14d9455025377d514222b80ebc3b",
+        "message": "Add files via upload",
+        "commitDate": "2024-04-08T10:05:53Z",
+        "authorDate": "2024-04-08T10:05:53Z",
+        "author": {
+          "name": "VladTeslenkov",
+          "email": "134106086+VladTeslenkov@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "+import sys\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import os\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import subprocess\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5.QtWidgets import QApplication, QMessageBox, QMainWindow\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5.Qt import *\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5 import QtWidgets\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from ui_imagedialog import Ui_MainWindow\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+#python -m PyQt5.uic.pyuic -x ui_imagedialog.ui -o ui_imagedialog.py\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+supportedExtensions \u003d {\".cpp; .c; .h; .hpp\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".php\" : \"--php\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".json\" : \"--json\",\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".java; .properties\" : \"--java\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".py\" : \"--python\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".ipynb\" : \"--ipython\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".htm; .html; .shtml; .xhtml\" : \"--html\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \"Все расширения\" : \"all\"}\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+filePreviews \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+startDirectory \u003d \"\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+textToFind \u003d \"\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+app \u003d QApplication(sys.argv)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+window \u003d QMainWindow()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui \u003d Ui_MainWindow()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.setupUi(window)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+window.show()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ДОБАВЛЯЕМ ТИПЫ ФАЙЛОВ В COMBOBOX\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.extensionSelect.clear()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+for i in supportedExtensions.keys():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ui.extensionSelect.addItem(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ФУНКЦИЯ ВЫЧЛИНЕНИЯ ИЗ ВЫВОДА ФАЙЛА НУЖНЫХ ДАННЫХ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def makePreviewText(s):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ui.fileSelect.clear()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    filePreviews.clear()    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    rows \u003d s.split(\u0027\\n\u0027)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for i in reversed(range(len(rows))):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (rows[i].find(startDirectory) \u003d\u003d -1):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            rows.pop(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (len(rows) \u003d\u003d 0): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Ничего не найдено.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    prevIndex \u003d -1\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for row in rows:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if not ui.searchInName.isChecked():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d row[0 : row.find(\u0027:\u0027, 3)]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d file.replace(startDirectory + \"/\", \"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            row \u003d row.replace(row[0 : row.find(\u0027:\u0027, 3) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if (row.find(\u0027-\u0027) \u003d\u003d -1 or row.find(\u0027:\u0027) !\u003d -1 and row.find(\u0027:\u0027) \u003c row.find(\u0027-\u0027)):  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                currIndex \u003d int(row[0 : row.find(\u0027:\u0027)])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                row \u003d row.replace(row[0 : row.find(\u0027:\u0027) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            else:                                                                               \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                currIndex \u003d int(row[0 : row.find(\u0027-\u0027)])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                row \u003d row.replace(row[0 : row.find(\u0027-\u0027) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if (ui.fileSelect.findText(file) \u003d\u003d -1):    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                filePreviews.append(row + \"\\n\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                if (currIndex - prevIndex \u003d\u003d 1):        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                else:                                   \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d \"\\n\\n\\n\" + row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            prevIndex \u003d currIndex\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d row\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d file.replace(startDirectory + \"/\", \"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (ui.fileSelect.findText(file) \u003d\u003d -1):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            ui.fileSelect.addItem(file)  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ГЛАВНАЯ ФУНКЦИЯ ПОИСКА, ВЫЗЫВАЕТСЯ ПРИ НАЖАТИИ НА КНОПКУ НАЙТИ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onFindButtonClick():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    selectedExtension \u003d supportedExtensions.get(ui.extensionSelect.currentText())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    textToFind \u003d ui.textToFind.toPlainText()    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (textToFind \u003d\u003d \"\"): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Введите искомый текст.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (startDirectory \u003d\u003d \"\"): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Выберите директорию поиска.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"ag\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-C\" + str(ui.rowCountSpinBox.value())) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-s\" if ui.useRegister.isChecked() else \"-i\") \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (ui.fullFindCheckBox.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(\"-w\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (ui.searchInName.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(\"-g\" + textToFind)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (selectedExtension !\u003d \"all\"):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(selectedExtension) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (not ui.searchInName.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(textToFind) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(startDirectory) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    rawOutput \u003d subprocess.Popen(params, encoding\u003d\u0027utf-8\u0027, stdout\u003dsubprocess.PIPE).communicate()[0]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    makePreviewText(rawOutput)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    onFileSelectChange()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## СМЕНА ФАЙЛА       \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onFileSelectChange():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (len(filePreviews) \u003e 0):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.filePreview.setText(filePreviews[ui.fileSelect.currentIndex()])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.filePreview.setText(\"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ВЫБРАТЬ ДИРЕКТОРИЮ ДЛЯ НАЧАЛА ПОИСКА\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onDirectoryClick():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    global startDirectory\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    buffDirectory \u003d QtWidgets.QFileDialog.getExistingDirectory(ui.selectDirectoryButton, \u0027Выберите директорию\u0027, os.getenv(\u0027HOME\u0027), QtWidgets.QFileDialog.ShowDirsOnly)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if buffDirectory !\u003d \"\":\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        startDirectory \u003d buffDirectory\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.selectDirectoryButton.setText(startDirectory)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ОТКРЫТЬ ВЫБРАННЫЙ ФАЙЛ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onOpenFileButtonClicked():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    os.startfile(startDirectory + \"/\" + ui.fileSelect.currentText())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.findButton.clicked.connect(onFindButtonClick)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.fileSelect.currentIndexChanged.connect(onFileSelectChange)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.selectDirectoryButton.clicked.connect(onDirectoryClick)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.openFileButton.clicked.connect(onOpenFileButtonClicked)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sys.exit(app.exec())",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import sys\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import os\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import subprocess\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5.QtWidgets import QApplication, QMessageBox, QMainWindow\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5.Qt import *\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5 import QtWidgets\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from ui_imagedialog import Ui_MainWindow\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+#python -m PyQt5.uic.pyuic -x ui_imagedialog.ui -o ui_imagedialog.py\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+supportedExtensions \u003d {\".cpp; .c; .h; .hpp\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".php\" : \"--php\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".json\" : \"--json\",\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".java; .properties\" : \"--java\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".py\" : \"--python\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".ipynb\" : \"--ipython\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".htm; .html; .shtml; .xhtml\" : \"--html\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \"Все расширения\" : \"all\"}\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+filePreviews \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+startDirectory \u003d \"\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+textToFind \u003d \"\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+app \u003d QApplication(sys.argv)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+window \u003d QMainWindow()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui \u003d Ui_MainWindow()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.setupUi(window)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+window.show()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ДОБАВЛЯЕМ ТИПЫ ФАЙЛОВ В COMBOBOX\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.extensionSelect.clear()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+for i in supportedExtensions.keys():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ui.extensionSelect.addItem(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ФУНКЦИЯ ВЫЧЛИНЕНИЯ ИЗ ВЫВОДА ФАЙЛА НУЖНЫХ ДАННЫХ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def makePreviewText(s):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ui.fileSelect.clear()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    filePreviews.clear()    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    rows \u003d s.split(\u0027\\n\u0027)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for i in reversed(range(len(rows))):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (rows[i].find(startDirectory) \u003d\u003d -1):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            rows.pop(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (len(rows) \u003d\u003d 0): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Ничего не найдено.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    prevIndex \u003d -1\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for row in rows:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if not ui.searchInName.isChecked():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d row[0 : row.find(\u0027:\u0027, 3)]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d file.replace(startDirectory + \"/\", \"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            row \u003d row.replace(row[0 : row.find(\u0027:\u0027, 3) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if (row.find(\u0027-\u0027) \u003d\u003d -1 or row.find(\u0027:\u0027) !\u003d -1 and row.find(\u0027:\u0027) \u003c row.find(\u0027-\u0027)):  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                currIndex \u003d int(row[0 : row.find(\u0027:\u0027)])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                row \u003d row.replace(row[0 : row.find(\u0027:\u0027) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            else:                                                                               \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                currIndex \u003d int(row[0 : row.find(\u0027-\u0027)])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                row \u003d row.replace(row[0 : row.find(\u0027-\u0027) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if (ui.fileSelect.findText(file) \u003d\u003d -1):    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                filePreviews.append(row + \"\\n\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                if (currIndex - prevIndex \u003d\u003d 1):        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                else:                                   \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d \"\\n\\n\\n\" + row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            prevIndex \u003d currIndex\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d row\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d file.replace(startDirectory + \"/\", \"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (ui.fileSelect.findText(file) \u003d\u003d -1):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            ui.fileSelect.addItem(file)  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ГЛАВНАЯ ФУНКЦИЯ ПОИСКА, ВЫЗЫВАЕТСЯ ПРИ НАЖАТИИ НА КНОПКУ НАЙТИ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onFindButtonClick():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    selectedExtension \u003d supportedExtensions.get(ui.extensionSelect.currentText())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    textToFind \u003d ui.textToFind.toPlainText()    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (textToFind \u003d\u003d \"\"): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Введите искомый текст.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (startDirectory \u003d\u003d \"\"): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Выберите директорию поиска.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"ag\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-C\" + str(ui.rowCountSpinBox.value())) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-s\" if ui.useRegister.isChecked() else \"-i\") \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (ui.fullFindCheckBox.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(\"-w\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (ui.searchInName.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(\"-g\" + textToFind)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (selectedExtension !\u003d \"all\"):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(selectedExtension) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (not ui.searchInName.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(textToFind) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(startDirectory) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    rawOutput \u003d subprocess.Popen(params, encoding\u003d\u0027utf-8\u0027, stdout\u003dsubprocess.PIPE).communicate()[0]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    makePreviewText(rawOutput)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    onFileSelectChange()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## СМЕНА ФАЙЛА       \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onFileSelectChange():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (len(filePreviews) \u003e 0):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.filePreview.setText(filePreviews[ui.fileSelect.currentIndex()])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.filePreview.setText(\"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ВЫБРАТЬ ДИРЕКТОРИЮ ДЛЯ НАЧАЛА ПОИСКА\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onDirectoryClick():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    global startDirectory\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    buffDirectory \u003d QtWidgets.QFileDialog.getExistingDirectory(ui.selectDirectoryButton, \u0027Выберите директорию\u0027, os.getenv(\u0027HOME\u0027), QtWidgets.QFileDialog.ShowDirsOnly)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if buffDirectory !\u003d \"\":\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        startDirectory \u003d buffDirectory\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.selectDirectoryButton.setText(startDirectory)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ОТКРЫТЬ ВЫБРАННЫЙ ФАЙЛ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onOpenFileButtonClicked():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    os.startfile(startDirectory + \"/\" + ui.fileSelect.currentText())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.findButton.clicked.connect(onFindButtonClick)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.fileSelect.currentIndexChanged.connect(onFileSelectChange)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.selectDirectoryButton.clicked.connect(onDirectoryClick)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.openFileButton.clicked.connect(onOpenFileButtonClicked)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sys.exit(app.exec())",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      }
+    ],
+    "links": [
+      {
+        "source": "54bce3c2b3d5c67f75b0252bba6004918a59e418",
+        "target": "9c7897e4803959f2de7b331e54287ac9be0047f0"
+      },
+      {
+        "source": "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62",
+        "target": "e30bd769483157811fe39eb8dff29047356d273c"
+      },
+      {
+        "source": "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3",
+        "target": "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62"
+      },
+      {
+        "source": "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503",
+        "target": "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3"
+      },
+      {
+        "source": "65155e36262a4692580998dd6fce95263c48f127",
+        "target": "54bce3c2b3d5c67f75b0252bba6004918a59e418"
+      },
+      {
+        "source": "58a490275c81ad78d6f4f5665b11e05672f0bfec",
+        "target": "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503"
+      },
+      {
+        "source": "2dac9a28737fd1ccf88dfbe4e396247373a12df9",
+        "target": "65155e36262a4692580998dd6fce95263c48f127"
+      },
+      {
+        "source": "401ca29b832c14d9455025377d514222b80ebc3b",
+        "target": "58a490275c81ad78d6f4f5665b11e05672f0bfec"
+      },
+      {
+        "source": "401ca29b832c14d9455025377d514222b80ebc3b",
+        "target": "2dac9a28737fd1ccf88dfbe4e396247373a12df9"
+      }
+    ]
+  },
+  "second_graph": {
+    "nodes": [
+      {
+        "id": "2c7b7c276241bb5d39a7f264096947bbdca61951",
+        "number": 0,
+        "hash": "2c7b7c276241bb5d39a7f264096947bbdca61951",
+        "message": "add variable a",
+        "commitDate": "2024-04-22T11:36:24Z",
+        "authorDate": "2024-04-08T10:18:03Z",
+        "author": {
+          "name": "slavaPanfilov29",
+          "email": "s_panfil290502@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "+a \u003d 5\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+a \u003d 5\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "fcaf6259bf2f6e0a0b98e200567f59693a3846c8",
+        "number": 1,
+        "hash": "fcaf6259bf2f6e0a0b98e200567f59693a3846c8",
+        "message": "2.4",
+        "commitDate": "2024-04-22T11:35:26Z",
+        "authorDate": "2024-04-22T11:35:26Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "-## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT6\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT6\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "54bce3c2b3d5c67f75b0252bba6004918a59e418",
+        "number": 2,
+        "hash": "54bce3c2b3d5c67f75b0252bba6004918a59e418",
+        "message": "2.3",
+        "commitDate": "2024-04-08T10:15:02Z",
+        "authorDate": "2024-04-08T10:15:02Z",
+        "author": {
+          "name": "VladTeslenkov",
+          "email": "teslenkov@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-import pygame\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import pygame ## Библиотека для создания игр\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-import pygame\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import pygame ## Библиотека для создания игр\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62",
+        "number": 3,
+        "hash": "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62",
+        "message": "3.4",
+        "commitDate": "2024-04-08T10:14:24Z",
+        "authorDate": "2024-04-08T10:14:24Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "-supportedExtensions \u003d {\".cpp; .c; .h; .hpp\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+supportedExtensions \u003d {\".cpp; .c; .h; .hpps\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    a++;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d [1, 2, 3, 4]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## СМЕНА ФАЙЛА       \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## СМЕНА ФАЙЛА  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## File change     \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-supportedExtensions \u003d {\".cpp; .c; .h; .hpp\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+supportedExtensions \u003d {\".cpp; .c; .h; .hpps\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    a++;\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d [1, 2, 3, 4]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-## СМЕНА ФАЙЛА       \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## СМЕНА ФАЙЛА  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## File change     \r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3",
+        "number": 4,
+        "hash": "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3",
+        "message": "3.3",
+        "commitDate": "2024-04-08T10:13:44Z",
+        "authorDate": "2024-04-08T10:13:44Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                if (currIndex - prevIndex \u003d\u003d 1):        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            row \u003d row.replace(row[0 : row.find(\u0027:\u0027, 3) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                if (currIndex - prevIndex \u003d\u003d 1):        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-            row \u003d row.replace(row[0 : row.find(\u0027:\u0027, 3) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503",
+        "number": 5,
+        "hash": "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503",
+        "message": "3.2",
+        "commitDate": "2024-04-08T10:13:09Z",
+        "authorDate": "2024-04-08T10:13:09Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "+    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"ag\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-C\" + str(ui.rowCountSpinBox.value())) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-s\" if ui.useRegister.isChecked() else \"-i\") \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-sys.exit(app.exec())",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## Programm exiting\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sys.exit(app.exec())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+closeProgramm(True)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"ag\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-C\" + str(ui.rowCountSpinBox.value())) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-s\" if ui.useRegister.isChecked() else \"-i\") \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-sys.exit(app.exec())",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## Programm exiting\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sys.exit(app.exec())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+closeProgramm(True)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "65155e36262a4692580998dd6fce95263c48f127",
+        "number": 6,
+        "hash": "65155e36262a4692580998dd6fce95263c48f127",
+        "message": "2.2",
+        "commitDate": "2024-04-08T10:10:18Z",
+        "authorDate": "2024-04-08T10:10:18Z",
+        "author": {
+          "name": "VladTeslenkov",
+          "email": "teslenkov@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "+## IMPORTS\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import pygame\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## IMPORTS\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import pygame\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "58a490275c81ad78d6f4f5665b11e05672f0bfec",
+        "number": 7,
+        "hash": "58a490275c81ad78d6f4f5665b11e05672f0bfec",
+        "message": "3.1 Number printer",
+        "commitDate": "2024-04-08T10:10:03Z",
+        "authorDate": "2024-04-08T10:10:03Z",
+        "author": {
+          "name": "pol1waew",
+          "email": "cook1eee@bk.ru"
+        },
+        "diffs": [
+          {
+            "value": "+## Используй это если хочешь подключить qt\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ## Printing numbers\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for i in range(1, 99):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## Используй это если хочешь подключить qt\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ## Printing numbers\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for i in range(1, 99):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "2dac9a28737fd1ccf88dfbe4e396247373a12df9",
+        "number": 8,
+        "hash": "2dac9a28737fd1ccf88dfbe4e396247373a12df9",
+        "message": "2.1",
+        "commitDate": "2024-04-08T10:08:48Z",
+        "authorDate": "2024-04-08T10:08:48Z",
+        "author": {
+          "name": "VladTeslenkov",
+          "email": "teslenkov@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "+## NEW COMMENT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## NEW COMMENT\r",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "401ca29b832c14d9455025377d514222b80ebc3b",
+        "number": 9,
+        "hash": "401ca29b832c14d9455025377d514222b80ebc3b",
+        "message": "Add files via upload",
+        "commitDate": "2024-04-08T10:05:53Z",
+        "authorDate": "2024-04-08T10:05:53Z",
+        "author": {
+          "name": "VladTeslenkov",
+          "email": "134106086+VladTeslenkov@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "+import sys\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import os\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import subprocess\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5.QtWidgets import QApplication, QMessageBox, QMainWindow\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5.Qt import *\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5 import QtWidgets\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from ui_imagedialog import Ui_MainWindow\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+#python -m PyQt5.uic.pyuic -x ui_imagedialog.ui -o ui_imagedialog.py\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+supportedExtensions \u003d {\".cpp; .c; .h; .hpp\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".php\" : \"--php\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".json\" : \"--json\",\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".java; .properties\" : \"--java\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".py\" : \"--python\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".ipynb\" : \"--ipython\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".htm; .html; .shtml; .xhtml\" : \"--html\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \"Все расширения\" : \"all\"}\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+filePreviews \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+startDirectory \u003d \"\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+textToFind \u003d \"\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+app \u003d QApplication(sys.argv)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+window \u003d QMainWindow()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui \u003d Ui_MainWindow()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.setupUi(window)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+window.show()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ДОБАВЛЯЕМ ТИПЫ ФАЙЛОВ В COMBOBOX\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.extensionSelect.clear()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+for i in supportedExtensions.keys():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ui.extensionSelect.addItem(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ФУНКЦИЯ ВЫЧЛИНЕНИЯ ИЗ ВЫВОДА ФАЙЛА НУЖНЫХ ДАННЫХ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def makePreviewText(s):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ui.fileSelect.clear()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    filePreviews.clear()    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    rows \u003d s.split(\u0027\\n\u0027)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for i in reversed(range(len(rows))):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (rows[i].find(startDirectory) \u003d\u003d -1):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            rows.pop(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (len(rows) \u003d\u003d 0): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Ничего не найдено.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    prevIndex \u003d -1\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for row in rows:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if not ui.searchInName.isChecked():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d row[0 : row.find(\u0027:\u0027, 3)]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d file.replace(startDirectory + \"/\", \"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            row \u003d row.replace(row[0 : row.find(\u0027:\u0027, 3) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if (row.find(\u0027-\u0027) \u003d\u003d -1 or row.find(\u0027:\u0027) !\u003d -1 and row.find(\u0027:\u0027) \u003c row.find(\u0027-\u0027)):  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                currIndex \u003d int(row[0 : row.find(\u0027:\u0027)])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                row \u003d row.replace(row[0 : row.find(\u0027:\u0027) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            else:                                                                               \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                currIndex \u003d int(row[0 : row.find(\u0027-\u0027)])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                row \u003d row.replace(row[0 : row.find(\u0027-\u0027) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if (ui.fileSelect.findText(file) \u003d\u003d -1):    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                filePreviews.append(row + \"\\n\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                if (currIndex - prevIndex \u003d\u003d 1):        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                else:                                   \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d \"\\n\\n\\n\" + row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            prevIndex \u003d currIndex\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d row\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d file.replace(startDirectory + \"/\", \"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (ui.fileSelect.findText(file) \u003d\u003d -1):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            ui.fileSelect.addItem(file)  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ГЛАВНАЯ ФУНКЦИЯ ПОИСКА, ВЫЗЫВАЕТСЯ ПРИ НАЖАТИИ НА КНОПКУ НАЙТИ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onFindButtonClick():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    selectedExtension \u003d supportedExtensions.get(ui.extensionSelect.currentText())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    textToFind \u003d ui.textToFind.toPlainText()    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (textToFind \u003d\u003d \"\"): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Введите искомый текст.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (startDirectory \u003d\u003d \"\"): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Выберите директорию поиска.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"ag\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-C\" + str(ui.rowCountSpinBox.value())) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-s\" if ui.useRegister.isChecked() else \"-i\") \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (ui.fullFindCheckBox.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(\"-w\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (ui.searchInName.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(\"-g\" + textToFind)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (selectedExtension !\u003d \"all\"):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(selectedExtension) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (not ui.searchInName.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(textToFind) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(startDirectory) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    rawOutput \u003d subprocess.Popen(params, encoding\u003d\u0027utf-8\u0027, stdout\u003dsubprocess.PIPE).communicate()[0]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    makePreviewText(rawOutput)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    onFileSelectChange()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## СМЕНА ФАЙЛА       \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onFileSelectChange():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (len(filePreviews) \u003e 0):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.filePreview.setText(filePreviews[ui.fileSelect.currentIndex()])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.filePreview.setText(\"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ВЫБРАТЬ ДИРЕКТОРИЮ ДЛЯ НАЧАЛА ПОИСКА\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onDirectoryClick():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    global startDirectory\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    buffDirectory \u003d QtWidgets.QFileDialog.getExistingDirectory(ui.selectDirectoryButton, \u0027Выберите директорию\u0027, os.getenv(\u0027HOME\u0027), QtWidgets.QFileDialog.ShowDirsOnly)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if buffDirectory !\u003d \"\":\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        startDirectory \u003d buffDirectory\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.selectDirectoryButton.setText(startDirectory)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ОТКРЫТЬ ВЫБРАННЫЙ ФАЙЛ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onOpenFileButtonClicked():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    os.startfile(startDirectory + \"/\" + ui.fileSelect.currentText())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.findButton.clicked.connect(onFindButtonClick)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.fileSelect.currentIndexChanged.connect(onFileSelectChange)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.selectDirectoryButton.clicked.connect(onDirectoryClick)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.openFileButton.clicked.connect(onOpenFileButtonClicked)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sys.exit(app.exec())",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import sys\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import os\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import subprocess\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ЕСЛИ НЕ РАБОТАЕТ, ПОМЕНЯЙ ВЕРСИЮ PYQT\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5.QtWidgets import QApplication, QMessageBox, QMainWindow\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5.Qt import *\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from PyQt5 import QtWidgets\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+from ui_imagedialog import Ui_MainWindow\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+#python -m PyQt5.uic.pyuic -x ui_imagedialog.ui -o ui_imagedialog.py\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+supportedExtensions \u003d {\".cpp; .c; .h; .hpp\" : \"--cpp\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".php\" : \"--php\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".json\" : \"--json\",\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".java; .properties\" : \"--java\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".py\" : \"--python\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".ipynb\" : \"--ipython\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \".htm; .html; .shtml; .xhtml\" : \"--html\", \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                       \"Все расширения\" : \"all\"}\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+filePreviews \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+startDirectory \u003d \"\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+textToFind \u003d \"\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ПЕРВОНАЧАЛЬНАЯ НАСТРОЙКА, ЛУЧШЕ НЕ ТРОГАЙ - УБЬЕТ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+app \u003d QApplication(sys.argv)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+window \u003d QMainWindow()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui \u003d Ui_MainWindow()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.setupUi(window)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+window.show()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ДОБАВЛЯЕМ ТИПЫ ФАЙЛОВ В COMBOBOX\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.extensionSelect.clear()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+for i in supportedExtensions.keys():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ui.extensionSelect.addItem(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ФУНКЦИЯ ВЫЧЛИНЕНИЯ ИЗ ВЫВОДА ФАЙЛА НУЖНЫХ ДАННЫХ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def makePreviewText(s):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ui.fileSelect.clear()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    filePreviews.clear()    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    rows \u003d s.split(\u0027\\n\u0027)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for i in reversed(range(len(rows))):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (rows[i].find(startDirectory) \u003d\u003d -1):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            rows.pop(i)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (len(rows) \u003d\u003d 0): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Ничего не найдено.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    prevIndex \u003d -1\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    for row in rows:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if not ui.searchInName.isChecked():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d row[0 : row.find(\u0027:\u0027, 3)]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d file.replace(startDirectory + \"/\", \"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            row \u003d row.replace(row[0 : row.find(\u0027:\u0027, 3) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if (row.find(\u0027-\u0027) \u003d\u003d -1 or row.find(\u0027:\u0027) !\u003d -1 and row.find(\u0027:\u0027) \u003c row.find(\u0027-\u0027)):  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                currIndex \u003d int(row[0 : row.find(\u0027:\u0027)])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                row \u003d row.replace(row[0 : row.find(\u0027:\u0027) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            else:                                                                               \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                currIndex \u003d int(row[0 : row.find(\u0027-\u0027)])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                row \u003d row.replace(row[0 : row.find(\u0027-\u0027) + 1], \"\", 1)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            if (ui.fileSelect.findText(file) \u003d\u003d -1):    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                filePreviews.append(row + \"\\n\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                if (currIndex - prevIndex \u003d\u003d 1):        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                else:                                   \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+                    filePreviews[len(filePreviews) - 1] +\u003d \"\\n\\n\\n\" + row + \"\\n\"\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            prevIndex \u003d currIndex\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d row\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            file \u003d file.replace(startDirectory + \"/\", \"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if (ui.fileSelect.findText(file) \u003d\u003d -1):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            ui.fileSelect.addItem(file)  \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ГЛАВНАЯ ФУНКЦИЯ ПОИСКА, ВЫЗЫВАЕТСЯ ПРИ НАЖАТИИ НА КНОПКУ НАЙТИ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onFindButtonClick():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    selectedExtension \u003d supportedExtensions.get(ui.extensionSelect.currentText())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    textToFind \u003d ui.textToFind.toPlainText()    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (textToFind \u003d\u003d \"\"): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Введите искомый текст.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (startDirectory \u003d\u003d \"\"): \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox \u003d QMessageBox()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.setText(\"Выберите директорию поиска.\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        messageBox.exec()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params \u003d []\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"ag\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-C\" + str(ui.rowCountSpinBox.value())) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(\"-s\" if ui.useRegister.isChecked() else \"-i\") \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (ui.fullFindCheckBox.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(\"-w\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (ui.searchInName.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(\"-g\" + textToFind)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (selectedExtension !\u003d \"all\"):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(selectedExtension) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (not ui.searchInName.isChecked()):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        params.append(textToFind) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    params.append(startDirectory) \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    rawOutput \u003d subprocess.Popen(params, encoding\u003d\u0027utf-8\u0027, stdout\u003dsubprocess.PIPE).communicate()[0]\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    makePreviewText(rawOutput)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    onFileSelectChange()\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## СМЕНА ФАЙЛА       \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onFileSelectChange():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if (len(filePreviews) \u003e 0):\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.filePreview.setText(filePreviews[ui.fileSelect.currentIndex()])\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.filePreview.setText(\"\")\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ВЫБРАТЬ ДИРЕКТОРИЮ ДЛЯ НАЧАЛА ПОИСКА\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onDirectoryClick():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    global startDirectory\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    buffDirectory \u003d QtWidgets.QFileDialog.getExistingDirectory(ui.selectDirectoryButton, \u0027Выберите директорию\u0027, os.getenv(\u0027HOME\u0027), QtWidgets.QFileDialog.ShowDirsOnly)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if buffDirectory !\u003d \"\":\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        startDirectory \u003d buffDirectory\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        ui.selectDirectoryButton.setText(startDirectory)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+## ОТКРЫТЬ ВЫБРАННЫЙ ФАЙЛ\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def onOpenFileButtonClicked():\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    os.startfile(startDirectory + \"/\" + ui.fileSelect.currentText())\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.findButton.clicked.connect(onFindButtonClick)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.fileSelect.currentIndexChanged.connect(onFileSelectChange)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.selectDirectoryButton.clicked.connect(onDirectoryClick)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ui.openFileButton.clicked.connect(onOpenFileButtonClicked)\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\r",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sys.exit(app.exec())",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      }
+    ],
+    "links": [
+      {
+        "source": "54bce3c2b3d5c67f75b0252bba6004918a59e418",
+        "target": "2c7b7c276241bb5d39a7f264096947bbdca61951"
+      },
+      {
+        "source": "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62",
+        "target": "fcaf6259bf2f6e0a0b98e200567f59693a3846c8"
+      },
+      {
+        "source": "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3",
+        "target": "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62"
+      },
+      {
+        "source": "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503",
+        "target": "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3"
+      },
+      {
+        "source": "65155e36262a4692580998dd6fce95263c48f127",
+        "target": "54bce3c2b3d5c67f75b0252bba6004918a59e418"
+      },
+      {
+        "source": "58a490275c81ad78d6f4f5665b11e05672f0bfec",
+        "target": "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503"
+      },
+      {
+        "source": "2dac9a28737fd1ccf88dfbe4e396247373a12df9",
+        "target": "65155e36262a4692580998dd6fce95263c48f127"
+      },
+      {
+        "source": "401ca29b832c14d9455025377d514222b80ebc3b",
+        "target": "58a490275c81ad78d6f4f5665b11e05672f0bfec"
+      },
+      {
+        "source": "401ca29b832c14d9455025377d514222b80ebc3b",
+        "target": "2dac9a28737fd1ccf88dfbe4e396247373a12df9"
+      }
+    ]
+  },
+  "compare_result": {
+    "matched_hashes_1_to_2": {
+      "54bce3c2b3d5c67f75b0252bba6004918a59e418": "54bce3c2b3d5c67f75b0252bba6004918a59e418",
+      "58a490275c81ad78d6f4f5665b11e05672f0bfec": "58a490275c81ad78d6f4f5665b11e05672f0bfec",
+      "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503": "ad6fda78b8503d1eaf7b533d4ba84ed73aa4d503",
+      "401ca29b832c14d9455025377d514222b80ebc3b": "401ca29b832c14d9455025377d514222b80ebc3b",
+      "2dac9a28737fd1ccf88dfbe4e396247373a12df9": "2dac9a28737fd1ccf88dfbe4e396247373a12df9",
+      "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62": "d0bedb4ecdd9686736df0f4ba77c19fe0d022a62",
+      "e30bd769483157811fe39eb8dff29047356d273c": "fcaf6259bf2f6e0a0b98e200567f59693a3846c8",
+      "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3": "c06447cc0b70612c8bafdc1ea2ab9c051a3377b3",
+      "65155e36262a4692580998dd6fce95263c48f127": "65155e36262a4692580998dd6fce95263c48f127",
+      "9c7897e4803959f2de7b331e54287ac9be0047f0": "2c7b7c276241bb5d39a7f264096947bbdca61951"
+    }
+  }
+};
+        if (!comparisonData) {
+            console.error("No valid comparison data found.");
+            return;
+        }
+
+        renderNetwork(comparisonData.first_graph, IDS.STUDENT_NETWORK, 'student');
+        renderNetwork(comparisonData.second_graph, IDS.REFERENCE_NETWORK, 'reference');
+        
+        document.getElementById(IDS.STUDENT_COUNT).textContent = `(${comparisonData.first_graph.nodes.length} узлов)`;
+        document.getElementById(IDS.REFERENCE_COUNT).textContent = `(${comparisonData.second_graph.nodes.length} узлов)`;
+    } catch (e) {
+        console.error("Initialization failed:", e);
+    }
+}
+
+/**
+ * Renders a specific graph network.
+ */
+function renderNetwork(graphDto, containerId, graphType) {
+    const data = createNetworkData(graphDto, graphType);
+    const container = document.getElementById(containerId);
+    
+    const options = {
+        layout: {
+            hierarchical: {
+                enabled: true,
+                shakeTowards: 'roots',
+                treeSpacing: 400,
+                direction: 'DU', // Bottom-up direction
+                sortMethod: 'directed',
+                levelSeparation: 80,
+                nodeSpacing: 80,
+                edgeMinimization: true,
+                parentCentralization: true,
+                blockShifting: true
+            }
+        },
+        nodes: {
+            size: 16,
+            font: {
+                color: '#a9b7c6',
+                size: 13,
+                face: 'Inter, Segoe UI',
+                multi: true,
+                bold: { color: '#ffffff' }
+            },
+            borderWidth: 2,
+            shadow: {
+                enabled: true,
+                color: 'rgba(0,0,0,0.3)',
+                size: 5,
+                x: 2,
+                y: 2
+            }
+        },
+        edges: {
+            arrows: {
+                to: { enabled: true, scaleFactor: 1.0 }
+            },
+            color: { color: '#555', highlight: '#4b6eaf', hover: '#888' },
+            width: 2,
+            selectionWidth: 3,
+            hoverWidth: 3,
+            smooth: {
+                enabled: true,
+                type: 'curvedCW',
+                roundness: 0.2
+            }
+        },
+        physics: { enabled: false },
+        interaction: {
+            hover: true,
+            tooltipDelay: 200,
+            hideEdgesOnDrag: false,
+            dragNodes: false
+        }
+    };
+
+    const network = new vis.Network(container, data, options);
+    
+    if (graphType === 'student') studentNetwork = network;
+    else referenceNetwork = network;
+
+    // Prevent view dragging when a drag starts on a node
+    network.on("dragStart", function (params) {
+        if (params.nodes.length > 0) {
+            network.setOptions({ interaction: { dragView: false } });
+        }
+    });
+
+    // On drag end, re-enable view dragging and handle it as a selection event
+    network.on("dragEnd", function (params) {
+        network.setOptions({ interaction: { dragView: true } });
+        if (params.nodes.length > 0) {
+            handleNodeSelection(params.nodes[0], graphType);
+        }
+    });
+
+    // This handler now only fires for true clicks (no dragging)
+    network.on("click", function (params) {
+        if (params.nodes.length > 0) {
+            handleNodeSelection(params.nodes[0], graphType);
+        }
+    });
+
+    return network;
+}
+
+/**
+ * Synchronizes selection between student and reference graphs.
+ */
+function handleNodeSelection(nodeId, sourceGraphType) {
+    const mapping = comparisonData.compare_result.matched_hashes_1_to_2;
+    let counterpartId = null;
+
+    if (sourceGraphType === 'student') {
+        counterpartId = mapping[nodeId];
+        if (counterpartId) referenceNetwork.selectNodes([counterpartId]);
+        else referenceNetwork.unselectAll();
+    } else {
+        counterpartId = Object.keys(mapping).find(key => mapping[key] === nodeId);
+        if (counterpartId) studentNetwork.selectNodes([counterpartId]);
+        else studentNetwork.unselectAll();
+    }
+
+    showDetails(nodeId, counterpartId, sourceGraphType);
+}
+
+/**
+ * Creates the DataSet for a specific graph.
+ */
+function createNetworkData(graphDto, graphType) {
+    if (!graphDto || !graphDto.nodes) return { nodes: new vis.DataSet([]), edges: new vis.DataSet([]) };
+    
+    const nodes = graphDto.nodes.map(node => {
+        let label = getShortHash(node.hash);
+        
+        const colorConfig = getSeverityColor(node.severity, graphType);
+        console.log(node.severity)
+        return {
+            id: node.id,
+            label: label,
+            title: createTooltip(node),
+            color: colorConfig,
+            shape: (node.severity === 'EXTRA')? 'custom': 'dot',
+            ctxRenderer: getCustomRenderer(node.severity)
+        };
+    });
+
+    const edges = graphDto.links.map(link => ({
+        from: nodeToId(link.source, graphDto.nodes),
+        to: nodeToId(link.target, graphDto.nodes),
+        arrows: 'to'
+    }));
+
+    return {
+        nodes: new vis.DataSet(nodes),
+        edges: new vis.DataSet(edges)
+    };
+}
+
+/**
+ * Displays details for selected node(s).
+ */
+function showDetails(nodeId, counterpartId, sourceGraphType) {
+    const studentNode = sourceGraphType === 'student' ? 
+        comparisonData.first_graph.nodes.find(n => n.id === nodeId) :
+        (counterpartId ? comparisonData.first_graph.nodes.find(n => n.id === counterpartId) : null);
+    
+    const referenceNode = sourceGraphType === 'reference' ? 
+        comparisonData.second_graph.nodes.find(n => n.id === nodeId) :
+        (counterpartId ? comparisonData.second_graph.nodes.find(n => n.id === counterpartId) : null);
+
+    const html = `
+        <div class="details-grid">
+            <div class="details-column">
+                <h4>Текущая версия</h4>
+                ${studentNode ? renderNodeInfo(studentNode) : '<div class="empty-state">No matching commit</div>'}
+            </div>
+            <div class="details-column">
+                <h4>Целевая версия</h4>
+                ${referenceNode ? renderNodeInfo(referenceNode) : '<div class="empty-state">No matching commit</div>'}
+            </div>
+        </div>
+    `;
+    
+    document.getElementById(IDS.DETAILS_PANEL).innerHTML = html;
+}
+
+/**
+ * Renders HTML for a single node's metadata and diffs.
+ */
+function renderNodeInfo(node) {
+    let colorClass = `text-severity-${node.severity}`;
+    if (node.severity === 'MOVABLE') {
+        // In comparison report, graphType is already known from column, but we keep it safe
+        colorClass = 'text-severity-MOVABLE_STUDENT'; // placeholder
+    }
+
+    return `
+        <h3 style="color:#ffffff; margin: 0 0 5px 0; font-size: 14px; font-family: 'JetBrains Mono', monospace;">[${node.number}] ${node.hash}</h3>
+       <div style="margin-bottom: 5px;">
+        <!-- Заменили <p> на <div> для лучшей семантики интерфейса -->
+        <div style="margin: 2px 0; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+        <strong style="color: #888;">Статус:</strong> 
+        
+        <!-- Заменили <span> на <div>, так как внутри есть блочные элементы и flex -->
+        <div class="${colorClass}" style="display:flex; align-items: center; gap: 6px; font-weight: bold;">
+            <!-- Внутренний элемент тоже лучше сделать span или div, но div допустим внутри div -->
+            <div class="color-box severity-${node.severity}" style="width:10px; height:10px; margin: 0; border-radius: 50%;"></div> 
+            ${getSeverityName(node.severity)}
+        </div>
+    </div>
+        </div>
+        <button class="commit-metadata-toggle" onclick="toggleMetadata(this)">Commit Details</button>
+        <div class="commit-metadata-content">
+            <div class="metadata-row">
+                <div class="metadata-label">Message:</div>
+                <div class="metadata-value" style="color: #6a8759; font-style: italic;">"${node.message}"</div>
+            </div>
+            <div class="metadata-row">
+                <div class="metadata-label">Author:</div>
+                <div class="metadata-value">${node.author ? node.author.name : 'N/A'}</div>
+            </div>
+            <div class="metadata-row">
+                <div class="metadata-label">Date:</div>
+                <div class="metadata-value" style="color: #cc7832">${node.commitDate}</div>
+            </div>
+        </div>
+        ${node.diffs && node.diffs.length > 0 ? '<h5 style=\"margin: 10px 0 5px 0; font-size: 12px; color: #888; text-transform: uppercase;\">Changes:</h5>' + renderDiffs(node.diffs) : ''}
+    `;
+}
+
+if (document.readyState === 'complete') init();
+else window.addEventListener('load', init);
+    </script>
+</body>
+</html>

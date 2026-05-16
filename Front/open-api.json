@@ -687,6 +687,66 @@
         }
       }
     },
+    "/api/admin/students/submissions/{submissionId}/check": {
+      "post": {
+        "tags": [
+          "Admin Student Management"
+        ],
+        "summary": "Check submission solution (Admin)",
+        "operationId": "checkSubmission",
+        "parameters": [
+          {
+            "name": "submissionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "reportType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "MERGED_GRAPH",
+              "enum": [
+                "TWO_GRAPH",
+                "MERGED_GRAPH"
+              ]
+            }
+          },
+          {
+            "name": "method",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "BRANCH",
+              "enum": [
+                "BRANCH",
+                "BRUTE_FORCE",
+                "DP",
+                "UNIQUE_LABEL"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitComparisonResultDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/labs": {
       "get": {
         "tags": [

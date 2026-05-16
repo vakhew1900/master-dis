@@ -180,6 +180,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/students/submissions/{submissionId}/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check submission solution (Admin) */
+        post: operations["checkSubmission"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/labs": {
         parameters: {
             query?: never;
@@ -866,6 +883,31 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["StudentSubmission"];
+                };
+            };
+        };
+    };
+    checkSubmission: {
+        parameters: {
+            query?: {
+                reportType?: "TWO_GRAPH" | "MERGED_GRAPH";
+                method?: "BRANCH" | "BRUTE_FORCE" | "DP" | "UNIQUE_LABEL";
+            };
+            header?: never;
+            path: {
+                submissionId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GitComparisonResultDto"];
                 };
             };
         };

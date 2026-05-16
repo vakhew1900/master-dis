@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.master.diploma.backend.config.Constants;
+import org.master.diploma.backend.dto.user.UserCreateDto;
+import org.master.diploma.backend.dto.user.UserResponseDto;
 import org.master.diploma.backend.entity.StudentSubmission;
 import org.master.diploma.backend.entity.Task;
 import org.master.diploma.backend.entity.User;
@@ -30,7 +32,7 @@ public class AdminStudentController {
 
     @GetMapping
     @Operation(summary = "Get all students with their submissions")
-    public List<org.master.diploma.backend.dto.UserDto> getAllStudents() {
+    public List<UserResponseDto> getAllStudents() {
         return userService.getAllStudentsWithSubmissions();
     }
 
@@ -54,7 +56,7 @@ public class AdminStudentController {
 
     @PostMapping
     @Operation(summary = "Create a new student")
-    public ResponseEntity<User> createStudent(@RequestBody org.master.diploma.backend.dto.UserDto userDto) {
+    public ResponseEntity<UserResponseDto> createStudent(@RequestBody UserCreateDto userDto) {
         User student = User.builder()
                 .username(userDto.getUsername())
                 .password(passwordEncoder.encode(userDto.getPassword()))
@@ -63,7 +65,7 @@ public class AdminStudentController {
                 .middleName(userDto.getMiddleName())
                 .role(User.Role.STUDENT)
                 .build();
-        return ResponseEntity.ok(userRepository.save(student));
+        return ResponseEntity.ok(UserResponseDto.from(userRepository.save(student)));
     }
 
     @DeleteMapping("/{id}")

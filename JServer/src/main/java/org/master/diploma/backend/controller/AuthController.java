@@ -4,15 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.master.diploma.backend.config.Constants;
-import org.master.diploma.backend.entity.User;
+import org.master.diploma.backend.dto.user.UserResponseDto;
 import org.master.diploma.backend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
-import org.master.diploma.backend.dto.UserDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Constants.Routes.AUTH)
@@ -23,21 +20,20 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "Login user (Basic Auth verification)")
-    public ResponseEntity<UserDto> login() {
-        // Spring Security handles the check. If we are here, auth is successful.
+    public ResponseEntity<UserResponseDto> login() {
         return getCurrentUser();
     }
 
     @GetMapping("/me")
     @Operation(summary = "Get current authenticated user info")
-    public ResponseEntity<UserDto> getCurrentUser() {
+    public ResponseEntity<UserResponseDto> getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
             return ResponseEntity.status(401).build();
         }
 
         return userRepository.findByUsername(auth.getName())
-                .map(user -> ResponseEntity.ok(UserDto.builder()
+                .map(user -> ResponseEntity.ok(UserResponseDto.builder()
                         .id(user.getId())
                         .username(user.getUsername())
                         .role(user.getRole().name())

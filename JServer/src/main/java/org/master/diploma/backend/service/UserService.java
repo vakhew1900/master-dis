@@ -2,10 +2,9 @@ package org.master.diploma.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.master.diploma.backend.dto.SubmissionDto;
-import org.master.diploma.backend.dto.UserDto;
+import org.master.diploma.backend.dto.user.UserResponseDto;
 import org.master.diploma.backend.entity.LaboratoryWork;
 import org.master.diploma.backend.entity.StudentSubmission;
-import org.master.diploma.backend.entity.Task;
 import org.master.diploma.backend.entity.User;
 import org.master.diploma.backend.repository.LaboratoryWorkRepository;
 import org.master.diploma.backend.repository.StudentSubmissionRepository;
@@ -24,7 +23,7 @@ public class UserService {
     private final LaboratoryWorkRepository laboratoryWorkRepository;
     private final StudentSubmissionRepository submissionRepository;
 
-    public List<UserDto> getAllStudentsWithSubmissions() {
+    public List<UserResponseDto> getAllStudentsWithSubmissions() {
         List<User> students = userRepository.findByRole(User.Role.STUDENT);
         List<LaboratoryWork> allLabs = laboratoryWorkRepository.findAll();
         List<StudentSubmission> allSubmissions = submissionRepository.findAll();
@@ -66,7 +65,7 @@ public class UserService {
                 }
             }
 
-            return UserDto.builder()
+            return UserResponseDto.builder()
                     .id(student.getId())
                     .username(student.getUsername())
                     .firstName(student.getFirstName())

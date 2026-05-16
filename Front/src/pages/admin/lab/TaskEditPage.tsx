@@ -1,24 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Typography, Button, Box, Paper, TextField } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FileField } from '../../../components/common/FileField';
+import { labService } from '../../../services/labService';
 
 const AdminTaskEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  const [number, setNumber] = useState('');
+  const [description, setDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   const isNew = !id;
   const labId = location.state?.labId;
+
+  useEffect(() => {
+    if (!isNew && id) {
+      loadTask(parseInt(id));
+    }
+  }, [isNew, id]);
+
+  const loadTask = async (taskId: number) => {
+    try {
+      const task = await labService.getTaskById(taskId);
+      if (task) {
+        setNumber(task.number.toString());
+        setDescription(task.description);
+      }
+    } catch (error) {
+      console.error('Failed to load task:', error);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      if (isNew && labId) {
+        await labService.createTask(labId, {
+          number: parseInt(number),
+          description,
+        });
+      } else if (id) {
+        await labService.updateTask(parseInt(id), {
+          number: parseInt(number),
+          description,
+        });
+      }
+      navigate(-1);
+    } catch (error) {
+      console.error('Failed to save task:', error);
+    }
+  };
 
   const handleFileChange = (file: File | null) => {
     setSelectedFile(file);
   };
 
   return (
-    <Box p={3} maxWidth={800} mx="auto">
+    <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}
@@ -31,23 +72,22 @@ const AdminTaskEditPage: React.FC = () => {
         <Typography variant="h4" gutterBottom>
           {isNew ? 'Создание задания' : `Редактирование задания №${id}`}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-          {isNew ? `Добавление задания в лабораторную работу №${labId}` : 'Измените данные задания ниже.'}
-        </Typography>
-
-        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        
+        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
           <TextField
             label="Номер задания"
             type="number"
-            defaultValue={1}
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
             fullWidth
           />
           <TextField
             label="Описание задания"
             multiline
             rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             fullWidth
-            placeholder="Опишите требования к заданию..."
           />
           
           <Box>
@@ -60,25 +100,16 @@ const AdminTaskEditPage: React.FC = () => {
             />
           </Box>
 
-          <Box mt={2} display="flex" gap={2}>
-            <Button variant="contained" color="primary" size="large">
+          <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+            <Button variant="contained" color="primary" size="large" onClick={handleSave}>
               Сохранить задание
             </Button>
-            <Button variant="outlined" onClick={() => navigate(-1)} size="large" sx={{ backgroundColor: 'transparent' }}>
+            <Button variant="outlined" onClick={() => navigate(-1)} size="large">
               Отмена
             </Button>
           </Box>
         </Box>
       </Paper>
-
-      <Box mt={4}>
-        <Typography variant="h6" color="warning.main">
-          Примечание: Это страница-заглушка.
-        </Typography>
-        <Typography variant="body2">
-          В реальной версии здесь будет происходить загрузка файла на сервер и валидация данных.
-        </Typography>
-      </Box>
     </Box>
   );
 };

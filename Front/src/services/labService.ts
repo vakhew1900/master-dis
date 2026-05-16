@@ -71,5 +71,18 @@ export const labService = {
   async createTask(labId: number, task: Task): Promise<Task> {
     console.log('Mock create task for lab:', labId, task);
     return Promise.resolve({ ...task, id: Date.now() });
+  },
+
+  async getTaskById(taskId: number): Promise<Task | undefined> {
+    for (const lab of MOCK_LABS) {
+      const task = lab.tasks?.find(t => t.id === taskId);
+      if (task) return Promise.resolve(task);
+    }
+    return undefined;
+  },
+
+  async updateTask(taskId: number, task: Task): Promise<Task> {
+    console.log('Mock update task:', taskId, task);
+    return Promise.resolve(task);
   }
 };

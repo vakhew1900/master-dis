@@ -3,7 +3,6 @@ export const SEVERITY = {
   MODIFIED: 'MODIFIED',
   EXTRA: 'EXTRA',
   MOVABLE: 'MOVABLE',
-  // UI-specific variations
   MOVABLE_STUDENT: 'MOVABLE_STUDENT',
   MOVABLE_REFERENCE: 'MOVABLE_REFERENCE',
 } as const;
@@ -25,13 +24,19 @@ export const ROUTES = {
     LABS: {
       ROOT: 'labs',
       NEW: 'new',
-      DETAIL: (id: string | number) => `${id}`,
+      DETAIL: (id: string | number) => `labs/${id}`,
     },
     TASKS: {
       NEW: 'tasks/new',
       EDIT: (id: string | number) => `tasks/${id}/edit`,
-    }
+    },
+    SUBMISSION: (id: string | number) => `student/submission/${id}`
   }
+} as const;
+
+export const REPORT_TYPES = {
+  TWO_GRAPH: 'TWO_GRAPH',
+  MERGED_GRAPH: 'MERGED_GRAPH',
 } as const;
 
 export const SEVERITY_COLORS = {

@@ -14,6 +14,7 @@ import LabCreatePage from './pages/admin/lab/LabCreatePage';
 import AdminLabDetailPage from './pages/admin/lab/LabDetailPage';
 import AdminTaskEditPage from './pages/admin/lab/TaskEditPage';
 import StudentsPage from './pages/admin/StudentsPage';
+import SubmissionDetailPage from './pages/admin/SubmissionDetailPage';
 
 function App() {
   return (
@@ -74,6 +75,11 @@ function App() {
               <Route path="students" element={
                 <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
                   <StudentsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="student/submission/:submissionId" element={
+                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
+                  <SubmissionDetailPage />
                 </ProtectedRoute>
               } />
             </Route>

@@ -88,11 +88,13 @@ const AdminLabsPage: React.FC = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Лабораторные работы
         </Typography>
+import { ROUTES } from '../../../api/models/constants';
+// ...
         <Button
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
-          onClick={() => console.log('Создать работу')}
+          onClick={() => navigate(ROUTES.ADMIN_LAB_NEW)}
         >
           Создать работу
         </Button>

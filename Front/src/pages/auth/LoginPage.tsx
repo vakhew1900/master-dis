@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
 import { useNotification } from '../../context/NotificationContext';
 import { InputField } from '../../components/common/InputField';
+import { ROUTES } from '../../api/models/constants';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -13,7 +14,11 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || (username === 'admin' ? '/admin' : '/student');
+
+
+// ...
+
+  const from = location.state?.from?.pathname || (username === 'admin' ? ROUTES.ADMIN : '/student');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

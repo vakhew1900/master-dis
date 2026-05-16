@@ -11,8 +11,10 @@ import ComparisonResultPage from './pages/ComparisonResultPage';
 import { ProtectedRoute } from './components/routing/ProtectedRoute';
 import { USER_ROLES } from './api/models/constants';
 import AdminLabsPage from './pages/admin/lab/LabsPage';
+import LabCreatePage from './pages/admin/lab/LabCreatePage';
 import AdminLabDetailPage from './pages/admin/lab/LabDetailPage';
 import AdminTaskEditPage from './pages/admin/lab/TaskEditPage';
+import { ROUTES } from './api/models/constants';
 
 function App() {
   return (
@@ -49,10 +51,18 @@ function App() {
               } 
             />
             <Route 
-              path="admin/labs" 
+              path={ROUTES.ADMIN_LABS.substring(7)} 
               element={
                 <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
                   <AdminLabsPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path={ROUTES.ADMIN_LAB_NEW.substring(7)} 
+              element={
+                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
+                  <LabCreatePage />
                 </ProtectedRoute>
               } 
             />
@@ -65,7 +75,7 @@ function App() {
               } 
             />
             <Route 
-              path="admin/tasks/new" 
+              path={ROUTES.ADMIN_TASK_NEW.substring(7)} 
               element={
                 <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
                   <AdminTaskEditPage />

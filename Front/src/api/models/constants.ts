@@ -15,6 +15,19 @@ export const USER_ROLES = {
 
 export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
 
+export const ROUTES = {
+  HOME: '/',
+  LOGIN: '/login',
+  COMPARISON: '/comparison',
+  COMPARISON_RESULT: '/comparison-result',
+  ADMIN: '/admin',
+  ADMIN_LABS: '/admin/labs',
+  ADMIN_LAB_NEW: '/admin/labs/new',
+  ADMIN_LAB_DETAIL: (id: string | number) => `/admin/labs/${id}`,
+  ADMIN_TASK_NEW: '/admin/tasks/new',
+  ADMIN_TASK_EDIT: (id: string | number) => `/admin/tasks/${id}/edit`,
+} as const;
+
 export const SEVERITY_COLORS = {
   [SEVERITY.IDENTICAL]: { bg: '#365939', border: '#496c4b' },
   [SEVERITY.MODIFIED]: { bg: '#5e5339', border: '#80714a' },

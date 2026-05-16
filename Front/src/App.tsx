@@ -9,6 +9,9 @@ import LoginPage from './pages/auth/LoginPage';
 import ComparisonPage from './pages/ComparisonPage';
 import ComparisonResultPage from './pages/ComparisonResultPage';
 import { ProtectedRoute } from './components/routing/ProtectedRoute';
+import AdminLabsPage from './pages/admin/AdminLabsPage';
+import AdminLabDetailPage from './pages/admin/AdminLabDetailPage';
+import AdminTaskEditPage from './pages/admin/AdminTaskEditPage';
 
 function App() {
   return (
@@ -34,7 +37,48 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            {/* ... */}
+            
+            {/* Admin Routes */}
+            <Route 
+              path="admin" 
+              element={
+                <ProtectedRoute role="ADMIN">
+                  <AdminPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="admin/labs" 
+              element={
+                <ProtectedRoute role="ADMIN">
+                  <AdminLabsPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="admin/labs/:id" 
+              element={
+                <ProtectedRoute role="ADMIN">
+                  <AdminLabDetailPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="admin/tasks/new" 
+              element={
+                <ProtectedRoute role="ADMIN">
+                  <AdminTaskEditPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="admin/tasks/:id/edit" 
+              element={
+                <ProtectedRoute role="ADMIN">
+                  <AdminTaskEditPage />
+                </ProtectedRoute>
+              } 
+            />
           </Route>
         </Routes>
       </Router>

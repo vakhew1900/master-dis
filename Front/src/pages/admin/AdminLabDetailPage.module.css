@@ -1,0 +1,33 @@
+.container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.backButton {
+  margin-bottom: 16px !important;
+}
+
+.section {
+  margin-top: 40px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.taskItem {
+  margin-bottom: 12px;
+}
+
+.description {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

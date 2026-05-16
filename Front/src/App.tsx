@@ -15,6 +15,8 @@ import AdminLabDetailPage from './pages/admin/lab/LabDetailPage';
 import AdminTaskEditPage from './pages/admin/lab/TaskEditPage';
 import StudentsPage from './pages/admin/StudentsPage';
 import SubmissionDetailPage from './pages/admin/SubmissionDetailPage';
+import StudentLabsPage from './pages/student/StudentLabsPage';
+import StudentSubmissionPage from './pages/student/StudentSubmissionPage';
 
 function App() {
   return (
@@ -80,6 +82,19 @@ function App() {
               <Route path="student/submission/:submissionId" element={
                 <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
                   <SubmissionDetailPage />
+                </ProtectedRoute>
+              } />
+            </Route>
+
+            <Route path="student">
+              <Route index element={
+                <ProtectedRoute roles={[USER_ROLES.STUDENT]}>
+                  <StudentLabsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="submission/:labId" element={
+                <ProtectedRoute roles={[USER_ROLES.STUDENT]}>
+                  <StudentSubmissionPage />
                 </ProtectedRoute>
               } />
             </Route>

@@ -123,5 +123,21 @@ export const labService = {
         compareResult: mockData.compare_result
       };
     }
+  },
+
+  async checkSolution(labId: number, params: { reportType: string }): Promise<any> {
+    return this.checkSubmission(labId, params);
+  },
+
+  async getStudentLabs(): Promise<components["schemas"]["LaboratoryWorkDto"][]> {
+    return Promise.resolve([
+      { id: 1, number: 1, topic: "Git Basics", maxGrade: 5, tasks: [{ id: 1, number: 1, description: "Init repo", status: "COMPLETED", grade: 5 }] },
+      { id: 2, number: 2, topic: "Branching", maxGrade: 5, tasks: [{ id: 2, number: 1, description: "Merge branch", status: "PENDING", grade: 4 }] }
+    ]);
+  },
+
+  async uploadSolution(labId: number, file: File): Promise<any> {
+    console.log(`Mock upload for lab ${labId}: ${file.name}`);
+    return Promise.resolve();
   }
 };

@@ -14,6 +14,7 @@ public class Constants {
         public static final String ADMIN_SUBMISSIONS = ADMIN + "/submissions";
 
         public static final String STUDENT = API_PREFIX + "/student";
+        public static final String STUDENT_LABS = STUDENT + "/labs";
         public static final String STUDENT_TASKS = STUDENT + "/tasks";
         public static final String STUDENT_UPLOAD = "/{id}/upload";
         public static final String STUDENT_CHECK = "/{id}/check";

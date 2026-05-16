@@ -1,40 +1,39 @@
-package org.master.diploma.backend.controller;
+package org.master.diploma.backend.controller.student;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.master.diploma.backend.config.Constants;
-import org.master.diploma.backend.entity.*;
-import org.master.diploma.backend.repository.*;
-import org.master.diploma.backend.service.*;
+import org.master.diploma.backend.entity.StudentSubmission;
+import org.master.diploma.backend.entity.Task;
+import org.master.diploma.backend.entity.User;
+import org.master.diploma.backend.repository.StudentSubmissionRepository;
+import org.master.diploma.backend.repository.TaskRepository;
+import org.master.diploma.backend.repository.UserRepository;
+import org.master.diploma.backend.service.ComparisonService;
+import org.master.diploma.backend.service.FileService;
 import org.master.diploma.backend.support.FileHelper;
 import org.master.diploma.git.graph.dto.GitComparisonResultDto;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping(Constants.Routes.STUDENT)
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Student Operations", description = "Endpoints for students to view tasks and submit work")
-public class StudentController {
+@Tag(name = "Student Submission Operations", description = "Endpoints for students to submit and check work")
+public class StudentSubmissionController {
     private final TaskRepository taskRepository;
     private final StudentSubmissionRepository submissionRepository;
     private final UserRepository userRepository;
     private final FileService fileService;
     private final ComparisonService comparisonService;
-
-    @GetMapping(Constants.Routes.STUDENT_TASKS)
-    @Operation(summary = "Get all available tasks")
-    public List<Task> getTasks() {
-        return taskRepository.findAll();
-    }
 
     @PostMapping(Constants.Routes.STUDENT_UPLOAD)
     @Operation(summary = "Upload task solution (ZIP)")
@@ -49,7 +48,7 @@ public class StudentController {
                         .task(task)
                         .build());
 
-        if (submission.getStudentRepoPath() != null) {
+        if (submission.getStudentRepoPath() != null && !submission.getStudentRepoPath().equals("NOT_SUBMITTED")) {
             fileService.deleteByFullRepoPath(submission.getStudentRepoPath());
         }
 

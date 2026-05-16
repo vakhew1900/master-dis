@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../api/models/constants';
 import {
   Typography,
   Button,
@@ -88,8 +89,6 @@ const AdminLabsPage: React.FC = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Лабораторные работы
         </Typography>
-import { ROUTES } from '../../../api/models/constants';
-// ...
         <Button
           variant="contained"
           color="primary"

@@ -20,12 +20,18 @@ export const ROUTES = {
   LOGIN: '/login',
   COMPARISON: '/comparison',
   COMPARISON_RESULT: '/comparison-result',
-  ADMIN: '/admin',
-  ADMIN_LABS: '/admin/labs',
-  ADMIN_LAB_NEW: '/admin/labs/new',
-  ADMIN_LAB_DETAIL: (id: string | number) => `/admin/labs/${id}`,
-  ADMIN_TASK_NEW: '/admin/tasks/new',
-  ADMIN_TASK_EDIT: (id: string | number) => `/admin/tasks/${id}/edit`,
+  ADMIN: {
+    ROOT: 'admin',
+    LABS: {
+      ROOT: 'labs',
+      NEW: 'labs/new',
+      DETAIL: (id: string | number) => `labs/${id}`,
+    },
+    TASKS: {
+      NEW: 'tasks/new',
+      EDIT: (id: string | number) => `tasks/${id}/edit`,
+    }
+  }
 } as const;
 
 export const SEVERITY_COLORS = {

@@ -1,4 +1,4 @@
-package org.master.diploma.backend.controller;
+package org.master.diploma.backend.controller.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

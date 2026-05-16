@@ -18,9 +18,9 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
-import { labService } from '../../services/labService';
-import type { LaboratoryWork } from '../../services/labService';
-import styles from './AdminLabsPage.module.css';
+import { labService } from '../../../services/labService';
+import type { LaboratoryWork } from '../../../services/labService';
+import styles from './LabsPage.module.css';
 
 const AdminLabsPage: React.FC = () => {
   const [labs, setLabs] = useState<LaboratoryWork[]>([]);

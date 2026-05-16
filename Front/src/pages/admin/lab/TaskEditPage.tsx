@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Typography, Button, Box, Paper, TextField } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { FileField } from '../../components/common/FileField';
+import { FileField } from '../../../components/common/FileField';
 
 const AdminTaskEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

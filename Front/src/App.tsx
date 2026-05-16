@@ -10,9 +10,9 @@ import ComparisonPage from './pages/ComparisonPage';
 import ComparisonResultPage from './pages/ComparisonResultPage';
 import { ProtectedRoute } from './components/routing/ProtectedRoute';
 import { USER_ROLES } from './api/models/constants';
-import AdminLabsPage from './pages/admin/AdminLabsPage';
-import AdminLabDetailPage from './pages/admin/AdminLabDetailPage';
-import AdminTaskEditPage from './pages/admin/AdminTaskEditPage';
+import AdminLabsPage from './pages/admin/lab/LabsPage';
+import AdminLabDetailPage from './pages/admin/lab/LabDetailPage';
+import AdminTaskEditPage from './pages/admin/lab/TaskEditPage';
 
 function App() {
   return (

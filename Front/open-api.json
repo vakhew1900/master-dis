@@ -549,7 +549,7 @@
         "tags": [
           "Admin Student Management"
         ],
-        "summary": "Get all students",
+        "summary": "Get all students with their submissions",
         "operationId": "getAllStudents",
         "responses": {
           "200": {
@@ -559,7 +559,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/User"
+                    "$ref": "#/components/schemas/UserDto"
                   }
                 }
               }
@@ -949,6 +949,10 @@
           "description": {
             "type": "string"
           },
+          "maxGrade": {
+            "type": "number",
+            "format": "double"
+          },
           "tasks": {
             "type": "array",
             "items": {
@@ -1199,6 +1203,37 @@
           }
         ]
       },
+      "SubmissionDto": {
+        "type": "object",
+        "properties": {
+          "labId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "labNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "taskId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "taskName": {
+            "type": "string"
+          },
+          "submissionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "grade": {
+            "type": "number",
+            "format": "double"
+          },
+          "exists": {
+            "type": "boolean"
+          }
+        }
+      },
       "UserDto": {
         "type": "object",
         "properties": {
@@ -1223,6 +1258,12 @@
           },
           "password": {
             "type": "string"
+          },
+          "submissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubmissionDto"
+            }
           }
         }
       },
@@ -1242,6 +1283,10 @@
           },
           "description": {
             "type": "string"
+          },
+          "maxGrade": {
+            "type": "number",
+            "format": "double"
           },
           "tasks": {
             "type": "array",

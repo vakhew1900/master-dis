@@ -135,7 +135,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all students */
+        /** Get all students with their submissions */
         get: operations["getAllStudents"];
         put?: never;
         /** Create a new student */
@@ -328,6 +328,8 @@ export interface components {
             number?: number;
             topic?: string;
             description?: string;
+            /** Format: double */
+            maxGrade?: number;
             tasks?: components["schemas"]["Task"][];
         };
         Task: {
@@ -419,6 +421,20 @@ export interface components {
              */
             type: "TwoGraphComparisonResultDto";
         };
+        SubmissionDto: {
+            /** Format: int64 */
+            labId?: number;
+            /** Format: int32 */
+            labNumber?: number;
+            /** Format: int64 */
+            taskId?: number;
+            taskName?: string;
+            /** Format: int64 */
+            submissionId?: number;
+            /** Format: double */
+            grade?: number;
+            exists?: boolean;
+        };
         UserDto: {
             /** Format: int64 */
             id?: number;
@@ -428,6 +444,7 @@ export interface components {
             lastName?: string;
             middleName?: string;
             password?: string;
+            submissions?: components["schemas"]["SubmissionDto"][];
         };
         LaboratoryWorkDto: {
             /** Format: int64 */
@@ -436,6 +453,8 @@ export interface components {
             number?: number;
             topic?: string;
             description?: string;
+            /** Format: double */
+            maxGrade?: number;
             tasks?: components["schemas"]["TaskDto"][];
         };
         TaskDto: {
@@ -774,7 +793,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["User"][];
+                    "*/*": components["schemas"]["UserDto"][];
                 };
             };
         };

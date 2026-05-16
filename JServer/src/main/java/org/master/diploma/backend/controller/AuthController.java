@@ -17,17 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @RestController
 @RequestMapping(Constants.Routes.AUTH)
 @RequiredArgsConstructor
-@Tag(name = "Authentication", description = "Endpoints for user registration and login")
+@Tag(name = "Authentication", description = "Endpoints for user login and information")
 public class AuthController {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    @PostMapping(Constants.Routes.AUTH_REGISTER)
-    @Operation(summary = "Register a new user")
-    public User register(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
 
     @PostMapping("/login")
     @Operation(summary = "Login user (Basic Auth verification)")
@@ -49,6 +41,9 @@ public class AuthController {
                         .id(user.getId())
                         .username(user.getUsername())
                         .role(user.getRole().name())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .middleName(user.getMiddleName())
                         .build()))
                 .orElse(ResponseEntity.status(401).build());
     }

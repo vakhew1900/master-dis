@@ -15,6 +15,10 @@ public class UserDto {
         public static final String ID = "id";
         public static final String USERNAME = "username";
         public static final String ROLE = "role";
+        public static final String FIRST_NAME = "firstName";
+        public static final String LAST_NAME = "lastName";
+        public static final String MIDDLE_NAME = "middleName";
+        public static final String PASSWORD = "password";
     }
 
     @SerializedName(FIELDS.ID)
@@ -25,4 +29,16 @@ public class UserDto {
 
     @SerializedName(FIELDS.ROLE)
     private String role;
+
+    @SerializedName(FIELDS.FIRST_NAME)
+    private String firstName;
+
+    @SerializedName(FIELDS.LAST_NAME)
+    private String lastName;
+
+    @SerializedName(FIELDS.MIDDLE_NAME)
+    private String middleName;
+
+    @SerializedName(FIELDS.PASSWORD)
+    private String password;
 }

@@ -18,6 +18,9 @@ public class User {
         public static final String USERNAME = "username";
         public static final String PASSWORD = "password";
         public static final String ROLE = "role";
+        public static final String FIRST_NAME = "first_name";
+        public static final String LAST_NAME = "last_name";
+        public static final String MIDDLE_NAME = "middle_name";
     }
 
     @Id
@@ -30,6 +33,15 @@ public class User {
 
     @Column(name = COLUMN_NAMES.PASSWORD, nullable = false)
     private String password;
+
+    @Column(name = COLUMN_NAMES.FIRST_NAME)
+    private String firstName;
+
+    @Column(name = COLUMN_NAMES.LAST_NAME)
+    private String lastName;
+
+    @Column(name = COLUMN_NAMES.MIDDLE_NAME)
+    private String middleName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = COLUMN_NAMES.ROLE, nullable = false)

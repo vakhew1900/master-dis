@@ -24,11 +24,33 @@ public class AdminStudentController {
     private final StudentSubmissionRepository submissionRepository;
     private final TaskRepository taskRepository;
     private final org.master.diploma.backend.service.FileService fileService;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @GetMapping
     @Operation(summary = "Get all students")
     public List<User> getAllStudents() {
         return userRepository.findByRole(User.Role.STUDENT);
+    }
+
+    @PostMapping
+    @Operation(summary = "Create a new student")
+    public ResponseEntity<User> createStudent(@RequestBody org.master.diploma.backend.dto.UserDto userDto) {
+        User student = User.builder()
+                .username(userDto.getUsername())
+                .password(passwordEncoder.encode(userDto.getPassword()))
+                .firstName(userDto.getFirstName())
+                .lastName(userDto.getLastName())
+                .middleName(userDto.getMiddleName())
+                .role(User.Role.STUDENT)
+                .build();
+        return ResponseEntity.ok(userRepository.save(student));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a user")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{studentId}/submissions")

@@ -24,12 +24,13 @@ public class AdminStudentController {
     private final StudentSubmissionRepository submissionRepository;
     private final TaskRepository taskRepository;
     private final org.master.diploma.backend.service.FileService fileService;
+    private final org.master.diploma.backend.service.UserService userService;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @GetMapping
-    @Operation(summary = "Get all students")
-    public List<User> getAllStudents() {
-        return userRepository.findByRole(User.Role.STUDENT);
+    @Operation(summary = "Get all students with their submissions")
+    public List<org.master.diploma.backend.dto.UserDto> getAllStudents() {
+        return userService.getAllStudentsWithSubmissions();
     }
 
     @PostMapping
@@ -103,6 +104,12 @@ public class AdminStudentController {
             @RequestParam(required = false) String feedback) {
         
         StudentSubmission submission = submissionRepository.findById(submissionId).orElseThrow();
+        
+        Double maxGrade = submission.getTask().getLab().getMaxGrade();
+        if (grade > maxGrade) {
+            throw new IllegalArgumentException("Grade cannot exceed max grade: " + maxGrade);
+        }
+
         submission.setGrade(grade);
         submission.setFeedback(feedback);
         return ResponseEntity.ok(submissionRepository.save(submission));

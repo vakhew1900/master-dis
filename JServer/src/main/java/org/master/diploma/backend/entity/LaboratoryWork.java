@@ -18,6 +18,7 @@ public class LaboratoryWork {
         public static final String NUMBER = "number";
         public static final String TOPIC = "topic";
         public static final String DESCRIPTION = "description";
+        public static final String MAX_GRADE = "max_grade";
     }
 
     @Id
@@ -33,6 +34,9 @@ public class LaboratoryWork {
 
     @Column(name = COLUMN_NAMES.DESCRIPTION, columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = COLUMN_NAMES.MAX_GRADE, nullable = false)
+    private Double maxGrade;
 
     @OneToMany(mappedBy = "lab", cascade = CascadeType.ALL)
     private List<Task> tasks;

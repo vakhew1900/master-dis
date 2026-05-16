@@ -51,6 +51,7 @@ public class LaboratoryWorkService {
                     .number(lab.getNumber())
                     .topic(lab.getTopic())
                     .description(lab.getDescription())
+                    .maxGrade(lab.getMaxGrade())
                     .tasks(taskDtos)
                     .build();
         }).collect(Collectors.toList());

@@ -15,5 +15,6 @@ public class LaboratoryWorkDto {
     private Integer number;
     private String topic;
     private String description;
+    private Double maxGrade;
     private List<TaskDto> tasks;
 }

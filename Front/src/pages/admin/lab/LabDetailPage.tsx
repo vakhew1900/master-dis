@@ -13,6 +13,11 @@ import {
   ListItemIcon,
   TextField,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  MenuItem
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -20,6 +25,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { labService } from '../../../services/labService';
 import type { LaboratoryWork } from '../../../services/labService';
 import styles from './LabDetailPage.module.css';
@@ -30,11 +36,16 @@ const AdminLabDetailPage: React.FC = () => {
   const [editLab, setEditLab] = useState<LaboratoryWork | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [openAssign, setOpenAssign] = useState(false);
+  const [students, setStudents] = useState<any[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState('');
+  const [selectedTask, setSelectedTask] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
       loadLab(parseInt(id));
+      loadStudents();
     }
   }, [id]);
 
@@ -55,6 +66,11 @@ const AdminLabDetailPage: React.FC = () => {
     }
   };
 
+  const loadStudents = async () => {
+    const data = await labService.getAllStudents();
+    setStudents(data);
+  };
+
   const handleSave = async () => {
     if (editLab && id) {
       try {
@@ -71,6 +87,13 @@ const AdminLabDetailPage: React.FC = () => {
   const cancelEdit = () => {
     setEditLab(lab);
     setIsEditing(false);
+  };
+
+  const handleAssign = async () => {
+    if (selectedTask && selectedStudent) {
+      await labService.assignTask(parseInt(selectedTask), parseInt(selectedStudent));
+      setOpenAssign(false);
+    }
   };
 
   if (loading) {
@@ -123,7 +146,10 @@ const AdminLabDetailPage: React.FC = () => {
               <Typography variant="h4" gutterBottom>
                 Лаб. работа №{lab.number}: {lab.topic}
               </Typography>
-              <Button startIcon={<EditIcon />} onClick={() => setIsEditing(true)}>Редактировать</Button>
+              <Stack direction="row" spacing={1}>
+                <Button startIcon={<PersonAddIcon />} onClick={() => setOpenAssign(true)}>Назначить</Button>
+                <Button startIcon={<EditIcon />} onClick={() => setIsEditing(true)}>Редактировать</Button>
+              </Stack>
             </Box>
             <Typography variant="body1" className={styles.description}>
               {lab.description}
@@ -131,6 +157,38 @@ const AdminLabDetailPage: React.FC = () => {
           </Box>
         )}
       </Paper>
+
+      <Dialog open={openAssign} onClose={() => setOpenAssign(false)}>
+        <DialogTitle>Назначить задание студенту</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+          <TextField
+            select
+            fullWidth
+            label="Задание"
+            value={selectedTask}
+            onChange={(e) => setSelectedTask(e.target.value)}
+          >
+            {lab.tasks?.map((t) => (
+              <MenuItem key={t.id} value={t.id}>Задание {t.number}</MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            select
+            fullWidth
+            label="Студент"
+            value={selectedStudent}
+            onChange={(e) => setSelectedStudent(e.target.value)}
+          >
+            {students.map((s) => (
+              <MenuItem key={s.id} value={s.id}>{s.fullName}</MenuItem>
+            ))}
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAssign(false)}>Отмена</Button>
+          <Button onClick={handleAssign} variant="contained">Назначить</Button>
+        </DialogActions>
+      </Dialog>
 
       <div className={styles.section}>
         <div className={styles.sectionHeader}>

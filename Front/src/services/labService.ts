@@ -84,5 +84,45 @@ export const labService = {
   async updateTask(taskId: number, task: Task): Promise<Task> {
     console.log('Mock update task:', taskId, task);
     return Promise.resolve(task);
+  },
+
+  async getAllStudents(): Promise<components["schemas"]["UserDto"][]> {
+    return Promise.resolve([
+      { 
+        id: 1, 
+        username: 'student1', 
+        firstName: 'Иван',
+        lastName: 'Иванов',
+        middleName: 'Иванович',
+        role: 'STUDENT',
+        submissions: [
+          { labNumber: 1, grade: 5, submissionId: 101, exists: true  },
+          { labNumber: 2, grade: 4, submissionId: 102, exists : true }
+        ]
+      },
+      { 
+        id: 2, 
+        username: 'student2', 
+        firstName: 'Петр',
+        lastName: 'Петров',
+        middleName: 'Петрович',
+        role: 'STUDENT',
+        submissions: [
+          { labNumber: 4, grade: 3, submissionId: 201, exists: true }
+        ]
+      }
+    ]);
+  },
+
+  async assignTask(taskId: number, studentId: number): Promise<void> {
+    console.log(`Mock assign task ${taskId} to student ${studentId}`);
+    return Promise.resolve();
+  },
+
+  async getStudentSubmissions(studentId: number): Promise<any[]> {
+    return Promise.resolve([
+      { labNumber: 1, grade: 5 },
+      { labNumber: 2, grade: 4 }
+    ]);
   }
 };

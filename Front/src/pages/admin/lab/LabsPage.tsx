@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../../api/models/constants';
 import {
   Typography,
   Button,
@@ -30,10 +29,6 @@ const AdminLabsPage: React.FC = () => {
   const [selectedLabId, setSelectedLabId] = useState<number | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadLabs();
-  }, []);
-
   const loadLabs = async () => {
     setLoading(true);
     try {
@@ -45,6 +40,10 @@ const AdminLabsPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadLabs();
+  }, []);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, id: number) => {
     event.stopPropagation();
@@ -58,15 +57,20 @@ const AdminLabsPage: React.FC = () => {
   };
 
   const handleEdit = () => {
-    console.log('Edit lab:', selectedLabId);
+    if (selectedLabId) {
+      navigate(`/admin/labs/${selectedLabId}`);
+    }
     handleMenuClose();
-    // In a real app, this would open a modal or navigate to an edit page
   };
 
   const handleDelete = async () => {
     if (selectedLabId) {
-      await labService.deleteLab(selectedLabId);
-      loadLabs();
+      try {
+        await labService.deleteLab(selectedLabId);
+        setLabs(labs.filter(lab => lab.id !== selectedLabId));
+      } catch (error) {
+        console.error('Failed to delete lab:', error);
+      }
     }
     handleMenuClose();
   };
@@ -77,7 +81,7 @@ const AdminLabsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
         <CircularProgress />
       </Box>
     );
@@ -89,11 +93,12 @@ const AdminLabsPage: React.FC = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Лабораторные работы
         </Typography>
+
         <Button
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
-          onClick={() => navigate(ROUTES.ADMIN_LAB_NEW)}
+          onClick={() => navigate('/admin/labs/new')}
         >
           Создать работу
         </Button>

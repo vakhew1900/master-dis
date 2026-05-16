@@ -8,7 +8,7 @@ import LoginPage from './pages/auth/LoginPage';
 import ComparisonPage from './pages/ComparisonPage';
 import ComparisonResultPage from './pages/ComparisonResultPage';
 import { ProtectedRoute } from './components/routing/ProtectedRoute';
-import { USER_ROLES, ROUTES } from './api/models/constants';
+import { USER_ROLES } from './api/models/constants';
 import AdminLabsPage from './pages/admin/lab/LabsPage';
 import LabCreatePage from './pages/admin/lab/LabCreatePage';
 import AdminLabDetailPage from './pages/admin/lab/LabDetailPage';
@@ -19,11 +19,11 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          <Route path={ROUTES.HOME} element={<MainLayout />}>
+          <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
-            <Route path={ROUTES.LOGIN.substring(1)} element={<LoginPage />} />
+            <Route path="login" element={<LoginPage />} />
             <Route 
-              path={ROUTES.COMPARISON.substring(1)} 
+              path="comparison" 
               element={
                 <ProtectedRoute roles={[USER_ROLES.STUDENT, USER_ROLES.ADMIN]}>
                   <ComparisonPage />
@@ -31,7 +31,7 @@ function App() {
               } 
             />
             <Route 
-              path={ROUTES.COMPARISON_RESULT.substring(1)} 
+              path="comparison-result" 
               element={
                 <ProtectedRoute roles={[USER_ROLES.STUDENT, USER_ROLES.ADMIN]}>
                   <ComparisonResultPage />
@@ -39,38 +39,36 @@ function App() {
               } 
             />
             
-            <Route path={ROUTES.ADMIN.ROOT}>
-              <Route index element={
-                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
-                  <AdminPage />
-                </ProtectedRoute>
-              } />
-              <Route path={ROUTES.ADMIN.LABS.ROOT} element={
-                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
-                  <AdminLabsPage />
-                </ProtectedRoute>
-              } />
-              <Route path={ROUTES.ADMIN.LABS.NEW} element={
-                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
-                  <LabCreatePage />
-                </ProtectedRoute>
-              } />
-              <Route path={ROUTES.ADMIN.LABS.DETAIL(':id')} element={
-                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
-                  <AdminLabDetailPage />
-                </ProtectedRoute>
-              } />
-              <Route path={ROUTES.ADMIN.TASKS.NEW} element={
-                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
-                  <AdminTaskEditPage />
-                </ProtectedRoute>
-              } />
-              <Route path={ROUTES.ADMIN.TASKS.EDIT(':id')} element={
-                <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
-                  <AdminTaskEditPage />
-                </ProtectedRoute>
-              } />
-            </Route>
+            <Route path="admin" element={
+              <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
+                <AdminPage />
+              </ProtectedRoute>
+            } />
+            <Route path="admin/labs" element={
+              <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
+                <AdminLabsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="admin/labs/new" element={
+              <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
+                <LabCreatePage />
+              </ProtectedRoute>
+            } />
+            <Route path="admin/labs/:id" element={
+              <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
+                <AdminLabDetailPage />
+              </ProtectedRoute>
+            } />
+            <Route path="admin/tasks/new" element={
+              <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
+                <AdminTaskEditPage />
+              </ProtectedRoute>
+            } />
+            <Route path="admin/tasks/:id/edit" element={
+              <ProtectedRoute roles={[USER_ROLES.ADMIN]}>
+                <AdminTaskEditPage />
+              </ProtectedRoute>
+            } />
           </Route>
         </Routes>
       </Router>

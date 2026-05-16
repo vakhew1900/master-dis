@@ -19,17 +19,20 @@ const LoginPage: React.FC = () => {
 
 // ...
 
-  const from = location.state?.from?.pathname || (username === 'admin' ? ROUTES.ADMIN : '/student');
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const data = await authService.login({ username, password });
 
-      localStorage.setItem('token', data.token);
+      // token might not exist if it's basic auth in the service, check the service
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      
       login(username, data.role);
 
-      navigate(from, { replace: true });
+      const targetPath = location.state?.from?.pathname || (data.role === 'ADMIN' ? '/admin' : '/student');
+      navigate(targetPath, { replace: true });
     } catch (error) {
       addError('Ошибка входа: неверные данные');
     }

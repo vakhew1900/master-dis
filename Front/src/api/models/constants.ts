@@ -24,8 +24,8 @@ export const ROUTES = {
     ROOT: 'admin',
     LABS: {
       ROOT: 'labs',
-      NEW: 'labs/new',
-      DETAIL: (id: string | number) => `labs/${id}`,
+      NEW: 'new',
+      DETAIL: (id: string | number) => `${id}`,
     },
     TASKS: {
       NEW: 'tasks/new',

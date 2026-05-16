@@ -24,6 +24,7 @@ public class AdminStudentController {
     private final StudentSubmissionRepository submissionRepository;
     private final TaskRepository taskRepository;
     private final org.master.diploma.backend.service.FileService fileService;
+    private final org.master.diploma.backend.service.ComparisonService comparisonService;
     private final org.master.diploma.backend.service.UserService userService;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
@@ -31,6 +32,24 @@ public class AdminStudentController {
     @Operation(summary = "Get all students with their submissions")
     public List<org.master.diploma.backend.dto.UserDto> getAllStudents() {
         return userService.getAllStudentsWithSubmissions();
+    }
+
+    @PostMapping("/submissions/{submissionId}/check")
+    @Operation(summary = "Check submission solution (Admin)")
+    public ResponseEntity<org.master.diploma.git.graph.dto.GitComparisonResultDto> checkSubmission(
+            @PathVariable Long submissionId,
+            @RequestParam(defaultValue = "MERGED_GRAPH") org.master.diploma.backend.service.ComparisonService.ReportType reportType,
+            @RequestParam(defaultValue = "BRANCH") org.master.diploma.backend.service.ComparisonService.ComparisonMethod method) throws java.io.IOException {
+        
+        StudentSubmission submission = submissionRepository.findById(submissionId).orElseThrow();
+        
+        org.master.diploma.git.graph.dto.GitComparisonResultDto result = comparisonService.compareRepositories(
+                submission.getTask().getReferenceRepoPath(), 
+                submission.getStudentRepoPath(),
+                reportType,
+                method
+        );
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping

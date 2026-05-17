@@ -452,7 +452,7 @@ export interface components {
             grade?: number;
             exists?: boolean;
         };
-        UserDto: {
+        UserResponseDto: {
             /** Format: int64 */
             id?: number;
             username?: string;
@@ -460,8 +460,14 @@ export interface components {
             firstName?: string;
             lastName?: string;
             middleName?: string;
-            password?: string;
             submissions?: components["schemas"]["SubmissionDto"][];
+        };
+        UserCreateDto: {
+            username?: string;
+            password?: string;
+            firstName?: string;
+            lastName?: string;
+            middleName?: string;
         };
         LaboratoryWorkDto: {
             /** Format: int64 */
@@ -739,7 +745,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["UserDto"];
+                    "*/*": components["schemas"]["UserResponseDto"];
                 };
             };
         };
@@ -810,7 +816,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["UserDto"][];
+                    "*/*": components["schemas"]["UserResponseDto"][];
                 };
             };
         };
@@ -824,7 +830,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserDto"];
+                "application/json": components["schemas"]["UserCreateDto"];
             };
         };
         responses: {
@@ -834,7 +840,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["User"];
+                    "*/*": components["schemas"]["UserResponseDto"];
                 };
             };
         };
@@ -991,7 +997,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["UserDto"];
+                    "*/*": components["schemas"]["UserResponseDto"];
                 };
             };
         };

@@ -17,7 +17,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { labService } from '../../services/labService';
 import { REPORT_TYPES } from '../../api/models/constants';
-import type { components } from '../../api/models/schema';
+import type { components } from 'та../../api/models/schema';
 
 type SubmissionDto = components["schemas"]["StudentSubmission"];
 

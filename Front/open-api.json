@@ -450,7 +450,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDto"
+                  "$ref": "#/components/schemas/UserResponseDto"
                 }
               }
             }
@@ -559,7 +559,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserDto"
+                    "$ref": "#/components/schemas/UserResponseDto"
                   }
                 }
               }
@@ -577,7 +577,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserDto"
+                "$ref": "#/components/schemas/UserCreateDto"
               }
             }
           },
@@ -589,7 +589,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/UserResponseDto"
                 }
               }
             }
@@ -837,7 +837,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDto"
+                  "$ref": "#/components/schemas/UserResponseDto"
                 }
               }
             }
@@ -1294,7 +1294,7 @@
           }
         }
       },
-      "UserDto": {
+      "UserResponseDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -1316,14 +1316,31 @@
           "middleName": {
             "type": "string"
           },
-          "password": {
-            "type": "string"
-          },
           "submissions": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SubmissionDto"
             }
+          }
+        }
+      },
+      "UserCreateDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
           }
         }
       },

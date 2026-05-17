@@ -10,20 +10,28 @@ import {
   TableRow,
   Paper,
   Box,
-  CircularProgress
+  CircularProgress,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { labService } from '../../services/labService';
 import type { components } from '../../api/models/schema';
 import SubmissionCell from '../../components/common/SubmissionCell';
+import { ActionsMenu } from '../../components/common/ActionsMenu';
 
-type UserDto = components["schemas"]["UserDto"];
-type LaboratoryWork = components["schemas"]["LaboratoryWork"];
-type SubmissionDto = components["schemas"]["SubmissionDto"];
+type UserResponseDto = components["schemas"]["UserResponseDto"];
+type UserCreateDto = components["schemas"]["UserCreateDto"];
 
 const StudentsPage: React.FC = () => {
-  const [students, setStudents] = useState<UserDto[]>([]);
-  const [allLabs, setAllLabs] = useState<LaboratoryWork[]>([]);
+  const [students, setStudents] = useState<UserResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [newStudent, setNewStudent] = useState<UserCreateDto>({ username: '', firstName: '', lastName: '', password: '' });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,63 +41,88 @@ const StudentsPage: React.FC = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [studentsList, labsList] = await Promise.all([
-        labService.getAllStudents(),
-        labService.getAllLabs()
-      ]);
-      setStudents(studentsList);
-      setAllLabs(labsList);
+      const data = await labService.getAllStudents();
+      setStudents(data);
     } catch (error) {
-      console.error('Failed to load students/labs:', error);
+      console.error('Failed to load students:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCreateStudent = async () => {
+    try {
+      await labService.createStudent(newStudent);
+      setOpenCreate(false);
+      setNewStudent({ username: '', firstName: '', lastName: '', password: '' });
+      loadData();
+    } catch (error) {
+      console.error('Failed to create student:', error);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm('Удалить студента?')) {
+      await labService.deleteStudent(id);
+      setStudents(students.filter(s => s.id !== id));
+    }
+  };
+
   if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <Box sx={{ display: 'flex', justifyContent: 'center', p: 5 }}><CircularProgress /></Box>;
   }
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>Список студентов</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Typography variant="h4">Список студентов</Typography>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpenCreate(true)}>
+          Добавить студента
+        </Button>
+      </Box>
+
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 800 }}>
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell>Логин</TableCell>
               <TableCell>ФИО</TableCell>
-              {allLabs.map(lab => (
-                <TableCell key={lab.id} align="center">ЛР {lab.number}</TableCell>
-              ))}
+              <TableCell>Работы</TableCell>
+              <TableCell align="right">Действия</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {students.map((student) => {
-              const submissions = (student.submissions as SubmissionDto[]) || [];
-              
-              return (
-                <TableRow key={student.id}>
-                  <TableCell>{student.username}</TableCell>
-                  <TableCell>{`${student.lastName || ''} ${student.firstName || ''} ${student.middleName || ''}`.trim()}</TableCell>
-                  {allLabs.map(lab => {
-                    const submission = submissions.find((sub) => sub.labNumber === lab.number);
-                    return (
-                      <TableCell key={lab.id} align="center">
-                        <SubmissionCell labNumber={lab.number!} submission={submission} />
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
+            {students.map((student) => (
+              <TableRow key={student.id}>
+                <TableCell>{student.username}</TableCell>
+                <TableCell>{`${student.lastName || ''} ${student.firstName || ''}`.trim()}</TableCell>
+                <TableCell>
+                  {(student.submissions || []).map((sub: any, index: number) => (
+                    <SubmissionCell key={index} labNumber={sub.labNumber} submission={sub} />
+                  ))}
+                </TableCell>
+                <TableCell align="right">
+                  <ActionsMenu onDelete={() => handleDelete(student.id!)} />
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Добавить студента</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+          <TextField label="Логин" fullWidth onChange={(e) => setNewStudent({...newStudent, username: e.target.value})} />
+          <TextField label="Фамилия" fullWidth onChange={(e) => setNewStudent({...newStudent, lastName: e.target.value})} />
+          <TextField label="Имя" fullWidth onChange={(e) => setNewStudent({...newStudent, firstName: e.target.value})} />
+          <TextField label="Пароль" type="password" fullWidth onChange={(e) => setNewStudent({...newStudent, password: e.target.value})} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCreate(false)}>Отмена</Button>
+          <Button variant="contained" onClick={handleCreateStudent}>Добавить</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

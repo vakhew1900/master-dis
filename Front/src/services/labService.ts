@@ -56,7 +56,7 @@ export const labService = {
     return Promise.resolve(task);
   },
 
-  async getAllStudents(): Promise<components["schemas"]["UserDto"][]> {
+  async getAllStudents(): Promise<components["schemas"]["UserResponseDto"][]> {
     return Promise.resolve([
       { 
         id: 1, 
@@ -79,6 +79,16 @@ export const labService = {
         ]
       }
     ]);
+  },
+
+  async createStudent(student: components["schemas"]["UserCreateDto"]): Promise<components["schemas"]["UserResponseDto"]> {
+    console.log('Mock create student:', student);
+    return Promise.resolve({ id: Date.now(), username: student.username, firstName: student.firstName, lastName: student.lastName });
+  },
+
+  async deleteStudent(id: number): Promise<void> {
+    console.log('Mock delete student:', id);
+    return Promise.resolve();
   },
 
   async assignTask(taskId: number, studentId: number): Promise<void> {

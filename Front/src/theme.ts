@@ -4,86 +4,47 @@ const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#2f81f7', // GitHub Blue for focus/links
-    },
-    secondary: {
-      main: '#f78166', // GitHub Orange
+      main: '#4b6eaf', // --nav-active
     },
     background: {
-      default: '#0d1117', // Deep dark
-      paper: '#161b22',   // Card background
+      default: '#1e1e1e', // --bg-color
+      paper: '#2b2b2b',   // --panel-bg
     },
     text: {
-      primary: '#e6edf3',
-      secondary: '#848d97',
+      primary: '#a9b7c6', // --text-main
     },
-    divider: '#30363d',
-  },
-  typography: {
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-    ].join(','),
-    button: {
-      textTransform: 'none',
-      fontWeight: 500,
-    },
-  },
-  shape: {
-    borderRadius: 6,
   },
   components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          border: '1px solid #30363d',
-          backgroundColor: '#21262d',
-          color: '#e6edf3',
-          '&:hover': {
-            backgroundColor: '#30363d',
-            borderColor: '#8b949e',
-          },
-        },
-        containedPrimary: {
-          backgroundColor: '#238636', // GitHub Green for primary actions
-          borderColor: 'rgba(240, 246, 252, 0.1)',
-          '&:hover': {
-            backgroundColor: '#2ea043',
-          },
-        },
-        outlinedPrimary: {
-          color: '#58a6ff',
-          borderColor: '#30363d',
-          '&:hover': {
-            backgroundColor: '#30363d',
-            borderColor: '#8b949e',
-          },
-        },
-      },
-    },
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundImage: 'none',
-          backgroundColor: '#161b22',
-          border: '1px solid #30363d',
-          boxShadow: 'none',
+          backgroundColor: '#2b2b2b', // --panel-bg
+        },
+      },
+    },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#323232', // --card-bg
         },
       },
     },
     MuiTableCell: {
       styleOverrides: {
-        root: {
-          borderBottom: '1px solid #30363d',
-        },
         head: {
+          color: '#ffffff', // --text-header
           fontWeight: 600,
-          color: '#848d97',
+        },
+        root: {
+          color: '#a9b7c6', // --text-main
+          borderBottom: '1px solid #3f3f3f', // --border-color
+        }
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
         },
       },
     },

@@ -26,7 +26,7 @@ export const Breadcrumbs: React.FC = () => {
   }
 
   return (
-    <Box sx={{ mb: 2, mt: 1 }}>
+    <Box sx={{ mb: 2, mt: -1}}>
       <MUIBreadcrumbs 
         separator={<NavigateNextIcon fontSize="small" />} 
         aria-label="breadcrumb"

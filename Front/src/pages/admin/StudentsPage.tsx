@@ -23,6 +23,7 @@ import { labService } from '../../services/labService';
 import type { components } from '../../api/models/schema';
 import SubmissionCell from '../../components/common/SubmissionCell';
 import { ActionsMenu } from '../../components/common/ActionsMenu';
+import { useNotification } from '../../components/common/NotificationManager';
 
 type UserResponseDto = components["schemas"]["UserResponseDto"];
 type UserCreateDto = components["schemas"]["UserCreateDto"];
@@ -31,7 +32,9 @@ const StudentsPage: React.FC = () => {
   const [students, setStudents] = useState<UserResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [openCreate, setOpenCreate] = useState(false);
+  const [openDelete, setOpenDelete] = useState<number | null>(null);
   const [newStudent, setNewStudent] = useState<UserCreateDto>({ username: '', firstName: '', lastName: '', password: '' });
+  const { showNotification, NotificationComponent } = useNotification();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,15 +59,22 @@ const StudentsPage: React.FC = () => {
       setOpenCreate(false);
       setNewStudent({ username: '', firstName: '', lastName: '', password: '' });
       loadData();
+      showNotification('Студент успешно создан', 'success');
     } catch (error) {
-      console.error('Failed to create student:', error);
+      showNotification('Ошибка создания студента', 'error');
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (confirm('Удалить студента?')) {
-      await labService.deleteStudent(id);
-      setStudents(students.filter(s => s.id !== id));
+  const handleDelete = async () => {
+    if (openDelete) {
+      try {
+        await labService.deleteStudent(openDelete);
+        setStudents(students.filter(s => s.id !== openDelete));
+        showNotification('Студент успешно удален', 'success');
+      } catch (error) {
+        showNotification('Ошибка при удалении', 'error');
+      }
+      setOpenDelete(null);
     }
   };
 
@@ -74,6 +84,7 @@ const StudentsPage: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      {NotificationComponent}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h4">Список студентов</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpenCreate(true)}>
@@ -102,13 +113,22 @@ const StudentsPage: React.FC = () => {
                   ))}
                 </TableCell>
                 <TableCell align="right">
-                  <ActionsMenu onDelete={() => handleDelete(student.id!)} />
+                  <ActionsMenu onDelete={() => setOpenDelete(student.id!)} />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog open={!!openDelete} onClose={() => setOpenDelete(null)}>
+        <DialogTitle>Подтверждение</DialogTitle>
+        <DialogContent>Вы уверены, что хотите удалить этого студента?</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDelete(null)}>Отмена</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">Удалить</Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth maxWidth="sm">
         <DialogTitle>Добавить студента</DialogTitle>

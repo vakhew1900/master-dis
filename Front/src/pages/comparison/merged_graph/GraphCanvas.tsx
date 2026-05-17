@@ -34,6 +34,8 @@ const getCustomRenderer = (severity: string) => {
         ctx.strokeStyle = borderColor;
         ctx.lineWidth = borderWidth;
         ctx.stroke();
+        
+        // Add cross for extra nodes
         if (severity === SEVERITY.EXTRA) {
           ctx.beginPath();
           const crossSize = size * 0.7;
@@ -75,7 +77,7 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
           color: { background: color.bg, border: color.border, highlight: { background: color.border, border: '#ffffff' } },
           font: { color: '#a9b7c6', size: 12 },
           shape: 'custom',
-          ctxRenderer: getCustomRenderer(node.severity || ''),
+          ctxRenderer: getCustomRenderer(severityKey),
           size: 18
         };
       })
@@ -119,10 +121,11 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
             const positions = networkRef.current.getPositions([activeMovablePair.from, activeMovablePair.to]);
             const pos1 = positions[activeMovablePair.from];
             const pos2 = positions[activeMovablePair.to];
+            console.log("Positions for edges:", { pos1, pos2, pair: activeMovablePair });
             if (pos1 && pos2) {
-                ctx.strokeStyle = 'rgba(75, 110, 175, 0.7)';
-                ctx.lineWidth = 1.5;
-                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = '#4b6eaf';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 4]);
                 ctx.beginPath();
                 ctx.moveTo(pos1.x, pos1.y);
                 ctx.lineTo(pos2.x, pos2.y);
@@ -154,18 +157,15 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
       network.destroy();
       networkRef.current = null;
     };
-  }, [data]);
+  }, [data, activeMovablePair]);
 
   useEffect(() => {
     if (networkRef.current) {
       if (selectedNodeId) networkRef.current.selectNodes([selectedNodeId]);
       else networkRef.current.unselectAll();
+      networkRef.current.redraw();
     }
-  }, [selectedNodeId]);
-
-  useEffect(() => {
-    if (networkRef.current) networkRef.current.redraw();
-  }, [activeMovablePair]);
+  }, [selectedNodeId, activeMovablePair]);
 
   return (
     <div className={styles.wrapper}>

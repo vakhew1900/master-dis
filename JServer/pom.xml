@@ -69,11 +69,15 @@
             <artifactId>minio</artifactId>
             <version>8.5.14</version>
         </dependency>
-
         <dependency>
             <groupId>org.aeonbits.owner</groupId>
             <artifactId>owner</artifactId>
             <version>1.0.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.27.1</version>
         </dependency>
         <dependency>
             <groupId>com.openai</groupId>

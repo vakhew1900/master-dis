@@ -1,58 +1,40 @@
 package org.master.diploma.backend.service;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.springframework.stereotype.Service;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.zip.*;
 
 @Service
 public class ZipProcessingService {
     public static final long MAX_ZIP_SIZE = 10 * 1024 * 1024; // 10 MB
     public static final long MAX_UNZIPPED_SIZE = 100 * 1024 * 1024; // 100 MB
-    public static final double MAX_COMPRESSION_RATIO = 100.0; // Protection against zip bombs
 
     public Path unzip(InputStream zipInputStream, Path targetDir) throws IOException {
-        long totalSize = 0;
-        try (ZipInputStream zis = new ZipInputStream(zipInputStream)) {
-            ZipEntry entry = zis.getNextEntry();
-            while (entry != null) {
-                Path newPath = zipSlipProtect(entry, targetDir);
-                if (entry.isDirectory()) {
-                    Files.createDirectories(newPath);
-                } else {
-                    if (newPath.getParent() != null) {
-                        if (Files.notExists(newPath.getParent())) {
-                            Files.createDirectories(newPath.getParent());
-                        }
-                    }
-                    try (OutputStream os = Files.newOutputStream(newPath)) {
-                        byte[] buffer = new byte[8192];
-                        int len;
-                        while ((len = zis.read(buffer)) > 0) {
-                            totalSize += len;
-                            if (totalSize > MAX_UNZIPPED_SIZE) {
-                                throw new IOException("Unzipped size exceeds limit: " + MAX_UNZIPPED_SIZE);
-                            }
-                            os.write(buffer, 0, len);
-                        }
-                    }
+        try (ZipArchiveInputStream zis = new ZipArchiveInputStream(zipInputStream, StandardCharsets.UTF_8.name())) {
+            ZipArchiveEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.isDirectory()) continue;
+
+                // Flatten structure: resolve entry name relative to targetDir
+                Path entryPath = Paths.get(entry.getName());
+                // Remove root folder if present to flatten structure
+                Path relativePath = entryPath.getNameCount() > 1 ? entryPath.subpath(1, entryPath.getNameCount()) : entryPath;
+                Path newPath = targetDir.resolve(relativePath).normalize();
+
+                if (!newPath.startsWith(targetDir)) {
+                    throw new IOException("Zip Slip vulnerability: " + entry.getName());
                 }
-                entry = zis.getNextEntry();
+
+                if (newPath.getParent() != null) {
+                    Files.createDirectories(newPath.getParent());
+                }
+
+                Files.copy(zis, newPath, StandardCopyOption.REPLACE_EXISTING);
             }
-            zis.closeEntry();
         }
         return targetDir;
-    }
-
-    private Path zipSlipProtect(ZipEntry entry, Path targetDir) throws IOException {
-        Path targetDirResolved = targetDir.toAbsolutePath().normalize();
-        Path entryPath = Paths.get(entry.getName());
-        Path resolvedPath = targetDirResolved.resolve(entryPath).normalize();
-
-        if (!resolvedPath.startsWith(targetDirResolved)) {
-            throw new IOException("Entry is outside of the target dir: " + entry.getName());
-        }
-
-        return resolvedPath;
     }
 }

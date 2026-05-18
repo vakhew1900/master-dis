@@ -1,0 +1,35 @@
+.tooltip {
+  position: absolute;
+  background: #2b2b2b;
+  border: 1px solid #444;
+  padding: 12px;
+  borderRadius: 4px;
+  color: #eee;
+  fontSize: 13px;
+  zIndex: 1000;
+  pointerEvents: none;
+  boxShadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  width: 280px;
+}
+
+.hash {
+  font-family: monospace;
+  font-weight: bold;
+  color: #4b6eaf;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.message {
+  font-weight: 600;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 6px;
+  color: #ffffff;
+}
+
+.meta {
+  font-size: 11px;
+  color: #a9b7c6;
+  margin-top: 4px;
+}

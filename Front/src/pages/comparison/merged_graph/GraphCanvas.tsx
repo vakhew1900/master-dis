@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Network, DataSet } from 'vis-network/standalone';
 import type { GitGraphDto, NodeDto } from '../../../api/generated/model';
 import { SEVERITY, SEVERITY_COLORS } from '../../../api/models/constants';
+import { GraphNodeTooltip } from '../../../components/common/GraphNodeTooltip';
 import styles from './GraphCanvas.module.css';
 
 interface GraphCanvasProps {
@@ -32,7 +33,6 @@ const getCustomRenderer = (severity: string) => {
         ctx.lineWidth = borderWidth;
         ctx.stroke();
         
-        // Add cross for extra nodes
         if (severity === SEVERITY.EXTRA) {
           ctx.beginPath();
           const crossSize = size * 0.7;
@@ -57,6 +57,7 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const networkRef = useRef<Network | null>(null);
+  const [tooltip, setTooltip] = useState<{ node: NodeDto; x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (!containerRef.current || !data.nodes) return;
@@ -113,12 +114,22 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
     const network = new Network(containerRef.current, { nodes: visNodes, edges: visEdges }, options);
     networkRef.current = network;
 
+    network.on('hoverNode', (params) => {
+      const node = data.nodes?.find(n => n.id === params.node);
+      if (node) {
+        const pos = network.getPositions([params.node])[params.node];
+        const domPos = network.canvasToDOM(pos);
+        setTooltip({ node, x: domPos.x, y: domPos.y });
+      }
+    });
+
+    network.on('blurNode', () => setTooltip(null));
+
     network.on("afterDrawing", (ctx) => {
         if (activeMovablePair && networkRef.current) {
             const positions = networkRef.current.getPositions([activeMovablePair.from, activeMovablePair.to]);
             const pos1 = positions[activeMovablePair.from];
             const pos2 = positions[activeMovablePair.to];
-            console.log("Positions for edges:", { pos1, pos2, pair: activeMovablePair });
             if (pos1 && pos2) {
                 ctx.strokeStyle = '#4b6eaf';
                 ctx.lineWidth = 2;
@@ -165,9 +176,10 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
   }, [selectedNodeId, activeMovablePair]);
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} style={{ position: 'relative' }}>
       <h3 className={styles.title}>{title}</h3>
       <div ref={containerRef} className={styles.canvas} />
+      {tooltip && <GraphNodeTooltip node={tooltip.node} x={tooltip.x} y={tooltip.y} />}
     </div>
   );
 };

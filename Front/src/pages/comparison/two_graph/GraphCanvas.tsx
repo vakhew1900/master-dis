@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Network, DataSet } from 'vis-network/standalone';
 import type { GitGraphDto, NodeDto } from '../../../api/generated/model';
 import { SEVERITY, SEVERITY_COLORS } from '../../../api/models/constants';
+import { GraphNodeTooltip } from '../../../components/common/GraphNodeTooltip';
 import styles from './GraphCanvas.module.css';
 
 interface GraphCanvasProps {
@@ -11,38 +12,26 @@ interface GraphCanvasProps {
   selectedNodeId: string | null;
 }
 
-/**
- * Custom renderer with volume (shadows) and cross for EXTRA.
- */
 const getCustomRenderer = (severity: string) => {
   return ({ ctx, x, y, style }: any) => {
     const { size = 16, color, borderColor, borderWidth = 2 } = style;
-    
     return {
       drawNode() {
         if (!ctx) return;
-        
         ctx.save();
-        
-        // Volume Effect (Shadow)
         ctx.shadowColor = 'rgba(0,0,0,0.4)';
         ctx.shadowBlur = 6;
         ctx.shadowOffsetX = 2;
         ctx.shadowOffsetY = 2;
-
-        // Base Circle
         ctx.beginPath();
         ctx.arc(x, y, size, 0, 2 * Math.PI, false);
         ctx.fillStyle = color;
         ctx.fill();
-        
-        // Remove shadow for border to keep it sharp
         ctx.shadowColor = 'transparent';
         ctx.strokeStyle = borderColor;
         ctx.lineWidth = borderWidth;
         ctx.stroke();
-
-        // Cross for EXTRA
+        
         if (severity === SEVERITY.EXTRA || severity === 'MISSED') {
           ctx.beginPath();
           const crossSize = size * 0.7;
@@ -55,7 +44,6 @@ const getCustomRenderer = (severity: string) => {
           ctx.lineCap = 'round';
           ctx.stroke();
         }
-
         ctx.restore();
       },
       nodeDimensions: { width: size * 2, height: size * 2 }
@@ -66,6 +54,7 @@ const getCustomRenderer = (severity: string) => {
 export const GraphCanvas: React.FC<GraphCanvasProps> = ({ data, title, onNodeSelect, selectedNodeId }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const networkRef = useRef<Network | null>(null);
+  const [tooltip, setTooltip] = useState<{ node: NodeDto; x: number; y: number } | null>(null);
 
   const graphType = title.toLowerCase().includes('эталон') ? 'reference' : 'student';
 
@@ -78,17 +67,11 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({ data, title, onNodeSel
         if (severityKey === SEVERITY.MOVABLE) {
             severityKey = graphType === 'student' ? SEVERITY.MOVABLE_STUDENT : SEVERITY.MOVABLE_REFERENCE;
         }
-        
         const color = SEVERITY_COLORS[severityKey as keyof typeof SEVERITY_COLORS] || SEVERITY_COLORS.DEFAULT;
-        
         return {
           id: node.id,
           label: node.hash?.substring(0, 7),
-          color: {
-            background: color.bg,
-            border: color.border,
-            highlight: { background: color.border, border: '#ffffff' }
-          },
+          color: { background: color.bg, border: color.border, highlight: { background: color.border, border: '#ffffff' } },
           font: { color: '#a9b7c6', size: 12 },
           shape: 'custom',
           ctxRenderer: getCustomRenderer(node.severity || ''),
@@ -121,7 +104,7 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({ data, title, onNodeSel
         hover: true,
         dragNodes: false,
         multiselect: false,
-        zoomView: false, // Отключаем по умолчанию (будем включать по Ctrl)
+        zoomView: false,
       },
       autoResize: true
     };
@@ -129,11 +112,21 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({ data, title, onNodeSel
     const network = new Network(containerRef.current, { nodes: visNodes, edges: visEdges }, options);
     networkRef.current = network;
 
+    network.on('hoverNode', (params) => {
+      const node = data.nodes?.find(n => n.id === params.node);
+      if (node) {
+        const pos = network.getPositions([params.node])[params.node];
+        const domPos = network.canvasToDOM(pos);
+        setTooltip({ node, x: domPos.x, y: domPos.y });
+      }
+    });
+
+    network.on('blurNode', () => setTooltip(null));
+
     network.on('click', (params) => {
       onNodeSelect(params.nodes.length > 0 ? params.nodes[0] : null);
     });
 
-    // Реализация зума только при зажатом Ctrl
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Control' && networkRef.current) {
             networkRef.current.setOptions({ interaction: { zoomView: true } });
@@ -148,18 +141,14 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({ data, title, onNodeSel
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    const timeoutId = setTimeout(() => {
-        if (networkRef.current) networkRef.current.fit();
-    }, 100);
+    const timeoutId = setTimeout(() => { if (networkRef.current) networkRef.current.fit(); }, 150);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       clearTimeout(timeoutId);
-      if (networkRef.current) {
-          networkRef.current.destroy();
-          networkRef.current = null;
-      }
+      network.destroy();
+      networkRef.current = null;
     };
   }, [data, onNodeSelect, graphType]);
 
@@ -171,9 +160,10 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({ data, title, onNodeSel
   }, [selectedNodeId]);
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} style={{ position: 'relative' }}>
       <h3 className={styles.title}>{title}</h3>
       <div ref={containerRef} className={styles.canvas} style={{ minHeight: '400px' }} />
+      {tooltip && <GraphNodeTooltip node={tooltip.node} x={tooltip.x} y={tooltip.y} />}
     </div>
   );
 };

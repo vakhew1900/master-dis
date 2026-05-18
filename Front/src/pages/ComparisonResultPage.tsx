@@ -4,6 +4,7 @@ import { ComparisonLegend as TwoGraphLegend } from './comparison/two_graph/Compa
 import { GraphCanvas as TwoGraphCanvas } from './comparison/two_graph/GraphCanvas';
 import { CommitDetailsPanel as TwoGraphDetailsPanel } from './comparison/two_graph/CommitDetailsPanel';
 import { MergedComparisonView } from './comparison/merged_graph/MergedComparisonView';
+import type { NodeDto } from '../api/generated/model';
 import styles from './ComparisonResultPage.module.css';
 
 const ComparisonResultPage: React.FC = () => {
@@ -24,17 +25,17 @@ const ComparisonResultPage: React.FC = () => {
 
       const getCounterpartId = (nodeId: string | null) => {
         if (!nodeId) return null;
-        const mapping = compareResult?.matchedHashes1To2 || {};
+        const mapping: Record<string, string> = (compareResult?.matchedHashes1To2 as any) || {};
         if (mapping[nodeId]) return mapping[nodeId];
-        const reverseMatch = Object.keys(mapping).find(key => mapping[key] === nodeId);
+        const reverseMatch = Object.keys(mapping).find((key: string) => mapping[key] === nodeId);
         return reverseMatch || null;
       };
 
       const counterpartId = getCounterpartId(selectedNodeId);
-      const studentNode = firstGraph.nodes?.find(n => n.id === selectedNodeId) 
-                       || firstGraph.nodes?.find(n => n.id === counterpartId) || null;
-      const referenceNode = secondGraph.nodes?.find(n => n.id === selectedNodeId) 
-                         || secondGraph.nodes?.find(n => n.id === counterpartId) || null;
+      const studentNode = firstGraph.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
+                       || firstGraph.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
+      const referenceNode = secondGraph.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
+                         || secondGraph.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
 
       return (
         <div className="container">

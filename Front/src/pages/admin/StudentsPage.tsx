@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Typography,
   Table,
@@ -20,13 +19,10 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { labService } from '../../services/labService';
-import type { components } from '../../api/models/schema';
+import type { UserResponseDto, UserCreateDto } from '../../api/generated/model';
 import SubmissionCell from '../../components/common/SubmissionCell';
 import { ActionsMenu } from '../../components/common/ActionsMenu';
 import { useNotification } from '../../components/common/NotificationManager';
-
-type UserResponseDto = components["schemas"]["UserResponseDto"];
-type UserCreateDto = components["schemas"]["UserCreateDto"];
 
 const StudentsPage: React.FC = () => {
   const [students, setStudents] = useState<UserResponseDto[]>([]);
@@ -35,8 +31,7 @@ const StudentsPage: React.FC = () => {
   const [openDelete, setOpenDelete] = useState<number | null>(null);
   const [newStudent, setNewStudent] = useState<UserCreateDto>({ username: '', firstName: '', lastName: '', password: '' });
   const { showNotification, NotificationComponent } = useNotification();
-  const navigate = useNavigate();
-
+  
   useEffect(() => {
     loadData();
   }, []);

@@ -27,7 +27,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { labService } from '../../../services/labService';
-import type { LaboratoryWork } from '../../../services/labService';
+import type { LaboratoryWork, UserResponseDto } from '../../../api/generated/model';
 import styles from './LabDetailPage.module.css';
 
 const AdminLabDetailPage: React.FC = () => {
@@ -37,7 +37,7 @@ const AdminLabDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [openAssign, setOpenAssign] = useState(false);
-  const [students, setStudents] = useState<any[]>([]);
+  const [students, setStudents] = useState<UserResponseDto[]>([]);
   const [selectedStudent, setSelectedStudent] = useState('');
   const [selectedTask, setSelectedTask] = useState('');
   const navigate = useNavigate();
@@ -180,7 +180,7 @@ const AdminLabDetailPage: React.FC = () => {
             onChange={(e) => setSelectedStudent(e.target.value)}
           >
             {students.map((s) => (
-              <MenuItem key={s.id} value={s.id}>{s.fullName}</MenuItem>
+              <MenuItem key={s.id} value={s.id}>{s.lastName} {s.firstName}</MenuItem>
             ))}
           </TextField>
         </DialogContent>

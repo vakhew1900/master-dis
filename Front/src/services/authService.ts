@@ -1,32 +1,28 @@
-import api from '../api/apiClient';
-import { USER_ROLES, type UserRole } from '../api/models/constants';
+import { getOpenAPIDefinition } from '../api/generated/jserver';
+import type { UserResponseDto, LoginRequestDto } from '../api/generated/model';
 
-interface LoginResponse {
-  username: string;
-  role: UserRole;
-}
+const api = getOpenAPIDefinition();
+
+export type UserResponse = UserResponseDto;
 
 export const authService = {
-  login: async (credentials: { username: string; password: string }): Promise<LoginResponse> => {
-    // Для Basic Auth нам нужно закодировать credentials в base64
+  login: async (credentials: LoginRequestDto): Promise<UserResponse> => {
     const hash = btoa(`${credentials.username}:${credentials.password}`);
-    
-    // В реальном приложении мы бы отправили пробный запрос для проверки:
-    // const response = await api.get('/auth/login', {
-    //   headers: { Authorization: `Basic ${hash}` }
-    // });
-    
-    // Пока эмулируем успех
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const mockRole = credentials.username === 'admin' ? USER_ROLES.ADMIN : USER_ROLES.STUDENT;
-        localStorage.setItem('auth_hash', hash);
-        resolve({
-          username: credentials.username,
-          role: mockRole,
-        });
-      }, 500);
-    });
+
+    try {
+      // Передаем заголовок явно в опциях запроса
+      const response = await api.login(credentials, {
+        headers: { Authorization: `Basic ${hash}` }
+      });
+      localStorage.setItem('auth_hash', hash);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getCurrentUser: async (): Promise<UserResponse> => {
+    return await api.getCurrentUser();
   },
   
   logout: () => {

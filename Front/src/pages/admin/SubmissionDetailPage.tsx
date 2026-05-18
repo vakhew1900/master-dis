@@ -16,15 +16,14 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { labService } from '../../services/labService';
+import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
-import type { components } from 'та../../api/models/schema';
-
-type SubmissionDto = components["schemas"]["StudentSubmission"];
+import type { StudentSubmission } from '../../api/generated/model';
 
 const SubmissionDetailPage: React.FC = () => {
   const { submissionId } = useParams<{ submissionId: string }>();
   const navigate = useNavigate();
-  const [submission, setSubmission] = useState<SubmissionDto | null>(null);
+  const [submission, setSubmission] = useState<StudentSubmission | null>(null);
   const [loading, setLoading] = useState(true);
   const [openGrade, setOpenGrade] = useState(false);
   const [grade, setGrade] = useState('');
@@ -64,7 +63,7 @@ const SubmissionDetailPage: React.FC = () => {
   const handleCheck = async () => {
     if (submissionId) {
       try {
-        const result = await labService.checkSubmission(parseInt(submissionId), { reportType });
+        const result = await graphService.checkSubmission(parseInt(submissionId), { reportType: reportType as any });
         
         if (result.type === 'MergedGraphComparisonResultDto') {
           navigate('/comparison-result', { state: { result, type: 'merged' } });

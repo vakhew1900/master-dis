@@ -442,8 +442,18 @@
         "tags": [
           "Authentication"
         ],
-        "summary": "Login user (Basic Auth verification)",
+        "summary": "Login user (JSON credentials)",
         "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1262,6 +1272,17 @@
             }
           }
         ]
+      },
+      "LoginRequestDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
       },
       "SubmissionDto": {
         "type": "object",

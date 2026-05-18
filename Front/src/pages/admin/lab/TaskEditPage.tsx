@@ -27,8 +27,8 @@ const AdminTaskEditPage: React.FC = () => {
     try {
       const task = await labService.getTaskById(taskId);
       if (task) {
-        setNumber(task.number.toString());
-        setDescription(task.description);
+        setNumber(task.number?.toString() || '');
+        setDescription(task.description || '');
       }
     } catch (error) {
       console.error('Failed to load task:', error);

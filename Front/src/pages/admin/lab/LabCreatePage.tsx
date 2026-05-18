@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Paper, Typography, TextField, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { labService } from '../../../services/labService';
-import { ROUTES } from '../../../api/models/constants';
 
 const LabCreatePage: React.FC = () => {
   const navigate = useNavigate();

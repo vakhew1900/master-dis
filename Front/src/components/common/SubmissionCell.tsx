@@ -1,16 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Typography } from '@mui/material';
-import type { components } from '../../api/models/schema';
-
-type SubmissionDto = components["schemas"]["SubmissionDto"];
+import type { SubmissionDto } from '../../api/generated/model';
 
 interface SubmissionCellProps {
   labNumber: number;
   submission?: SubmissionDto;
 }
 
-const SubmissionCell: React.FC<SubmissionCellProps> = ({ labNumber, submission }) => {
+const SubmissionCell: React.FC<SubmissionCellProps> = ({ submission }) => {
   const navigate = useNavigate();
 
   // Note: 'exists' property in SubmissionDto is boolean (or undefined)

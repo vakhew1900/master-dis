@@ -40,12 +40,12 @@ const AdminPage: React.FC = () => {
       
       <Grid container spacing={3}>
         {sections.map((section) => (
-          <Grid item xs={12} md={4} key={section.title}>
+          <Grid key={section.title} size={{ xs: 12, md: 4 }}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardContent sx={{ flexGrow: 1 }}>
-                <Box display="flex" alignItems="center" mb={2}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   {section.icon}
-                  <Typography variant="h5" component="h2" ml={2}>
+                  <Typography variant="h5" component="h2" sx={{ ml: 2 }}>
                     {section.title}
                   </Typography>
                 </Box>

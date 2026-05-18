@@ -1,38 +1,30 @@
-import client from '../api/apiClient';
+import { getOpenAPIDefinition } from '../api/generated/jserver';
+import type { GitComparisonResultDto } from '../api/generated/model';
+
+const api = getOpenAPIDefinition();
+
+export type GitComparisonResult = GitComparisonResultDto;
 
 export const graphService = {
-  compareGraphs: async (studentFile: File | null, referenceFile: File | null, method: 'TWO_GRAPH' | 'MERGED_GRAPH') => {
-    // В будущем здесь будет реальный вызов:
-    // const { data, error } = await client.POST("/api/comparison/compare-files", { ... });
+  compareFiles: async (
+    reference: File, 
+    student: File, 
+    params: { reportType?: "TWO_GRAPH" | "MERGED_GRAPH"; method?: "BRANCH" | "BRUTE_FORCE" | "DP" | "UNIQUE_LABEL" } = {}
+  ): Promise<GitComparisonResult> => {
+    return await api.compareFiles({ reference, student }, params);
+  },
 
-    // Эмуляция задержки
-    await new Promise(resolve => setTimeout(resolve, 800));
+  checkSolution: async (
+    taskId: number, 
+    params: { reportType?: "TWO_GRAPH" | "MERGED_GRAPH"; method?: "BRANCH" | "BRUTE_FORCE" | "DP" | "UNIQUE_LABEL" } = {}
+  ): Promise<GitComparisonResult> => {
+    return await api.checkSolution(taskId, params);
+  },
 
-    // Подгружаем данные динамически через fetch, чтобы не перегружать Vite
-    const mockPath = method === 'TWO_GRAPH' ? '/mock/two_graph.json' : '/mock/merged_graph.json';
-    const response = await fetch(mockPath);
-    
-    if (!response.ok) {
-        throw new Error(`Failed to load mock data: ${response.statusText}`);
-    }
-
-    const mockData = await response.json();
-
-    if (method === 'TWO_GRAPH') {
-      return {
-        type: 'TwoGraphComparisonResultDto' as const,
-        firstGraph: mockData.first_graph,
-        secondGraph: mockData.second_graph,
-        compareResult: {
-          matchedHashes1To2: mockData.compare_result.matched_hashes_1_to_2
-        }
-      };
-    } else {
-      return {
-        type: 'MergedGraphComparisonResultDto' as const,
-        mergedGraph: mockData.merged_graph,
-        compareResult: mockData.compare_result
-      };
-    }
+  checkSubmission: async (
+    submissionId: number, 
+    params: { reportType?: "TWO_GRAPH" | "MERGED_GRAPH"; method?: "BRANCH" | "BRUTE_FORCE" | "DP" | "UNIQUE_LABEL" } = {}
+  ): Promise<GitComparisonResult> => {
+    return await api.checkSubmission(submissionId, params);
   }
 };

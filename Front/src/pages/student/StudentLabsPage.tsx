@@ -14,9 +14,7 @@ import {
   Button
 } from '@mui/material';
 import { labService } from '../../services/labService';
-import type { components } from '../../api/models/schema';
-
-type LaboratoryWorkDto = components["schemas"]["LaboratoryWorkDto"];
+import type { LaboratoryWorkDto } from '../../api/generated/model';
 
 const StudentLabsPage: React.FC = () => {
   const [labs, setLabs] = useState<LaboratoryWorkDto[]>([]);

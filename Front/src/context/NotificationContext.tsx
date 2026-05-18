@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import { Snackbar, Alert } from '@mui/material';
 
 interface Notification {
   id: number;
@@ -34,17 +35,19 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   return (
     <NotificationContext.Provider value={{ notifications, addError, removeNotification }}>
       {children}
-      <div className="error-container">
-        {notifications.map((n) => (
-          <div 
-            key={n.id} 
-            onClick={() => removeNotification(n.id)}
-            className="error-toast"
-          >
-            Ошибка: {n.message} (нажми, чтобы скрыть)
-          </div>
-        ))}
-      </div>
+      {notifications.map((n) => (
+        <Snackbar
+          key={n.id}
+          open={true}
+          autoHideDuration={6000}
+          onClose={() => removeNotification(n.id)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert onClose={() => removeNotification(n.id)} severity="error" sx={{ width: '100%' }}>
+            {n.message}
+          </Alert>
+        </Snackbar>
+      ))}
     </NotificationContext.Provider>
   );
 };

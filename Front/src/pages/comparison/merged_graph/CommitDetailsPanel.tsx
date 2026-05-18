@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import type { components } from '../../../api/models/schema';
+import type { NodeDto, DiffDto } from '../../../api/generated/model';
 import styles from './CommitDetailsPanel.module.css';
-
-type NodeDto = components["schemas"]["NodeDto"];
-type DiffDto = components["schemas"]["DiffDto"];
 
 interface CommitDetailsPanelProps {
   studentNode: NodeDto | null;

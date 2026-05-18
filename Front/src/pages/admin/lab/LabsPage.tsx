@@ -19,10 +19,10 @@ import {
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 import { labService } from '../../../services/labService';
-import type { LaboratoryWork } from '../../../services/labService';
+import type { LaboratoryWork } from '../../../api/generated/model';
 import styles from './LabsPage.module.css';
 
-const AdminLabsPage: React.FC = () => {
+const LabsPage: React.FC = () => {
   const [labs, setLabs] = useState<LaboratoryWork[]>([]);
   const [loading, setLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -156,4 +156,4 @@ const AdminLabsPage: React.FC = () => {
   );
 };
 
-export default AdminLabsPage;
+export default LabsPage;

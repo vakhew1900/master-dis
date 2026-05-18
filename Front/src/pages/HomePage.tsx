@@ -9,7 +9,7 @@ const HomePage: React.FC = () => {
   const headings = useMemo(() => {
     // Временный ручной парсинг через Regex, чтобы избежать конфликтов с unified в браузере
     const matches = Array.from(content.matchAll(/^## (.*$)/gm));
-    return matches.map((m, index) => ({
+    return matches.map((m) => ({
       text: m[1],
       id: m[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '')
     }));

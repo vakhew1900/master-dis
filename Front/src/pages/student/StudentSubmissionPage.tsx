@@ -12,12 +12,14 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FileField } from '../../components/common/FileField';
 import { labService } from '../../services/labService';
+import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
+import type { LaboratoryWork } from '../../api/generated/model';
 
 const StudentSubmissionPage: React.FC = () => {
   const { labId } = useParams<{ labId: string }>();
   const navigate = useNavigate();
-  const [lab, setLab] = useState<any>(null);
+  const [lab, setLab] = useState<LaboratoryWork | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
 
@@ -46,7 +48,7 @@ const StudentSubmissionPage: React.FC = () => {
   const handleCheck = async () => {
     if (labId) {
       try {
-        const result = await labService.checkSolution(parseInt(labId), { reportType });
+        const result = await graphService.checkSolution(parseInt(labId), { reportType: reportType as any });
         if (result.type === 'MergedGraphComparisonResultDto') {
           navigate('/comparison-result', { state: { result, type: 'merged' } });
         } else if (result.type === 'TwoGraphComparisonResultDto') {

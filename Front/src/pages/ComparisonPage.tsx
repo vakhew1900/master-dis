@@ -37,7 +37,7 @@ const ComparisonPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${commonStyles.detailsPanel} ${styles.container}`}>
       <h1 className={commonStyles.pageTitle}>Сравнение Git-репозиториев</h1>
       
       <div className={styles.comparisonGrid}>

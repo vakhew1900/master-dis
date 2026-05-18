@@ -10,7 +10,7 @@ const Header: React.FC = () => {
   return (
     <header className={styles.mainHeader}>
       <div className={styles.headerContent}>
-        <Link to="/" className={styles.logo}>ОТЧЕТ О СРАВНЕНИИ GIT</Link>
+        <Link to="/" className={styles.logo}>Compare Repository Tutor</Link>
         <nav className={styles.navBar}>
           <NavLink to="/" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`} end>Главная</NavLink>
           

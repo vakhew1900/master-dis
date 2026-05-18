@@ -460,7 +460,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseDto"
+                  "type": "object"
                 }
               }
             }
@@ -1284,6 +1284,26 @@
           }
         }
       },
+      "UserCreateDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          }
+        }
+      },
       "SubmissionDto": {
         "type": "object",
         "properties": {
@@ -1342,26 +1362,6 @@
             "items": {
               "$ref": "#/components/schemas/SubmissionDto"
             }
-          }
-        }
-      },
-      "UserCreateDto": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "middleName": {
-            "type": "string"
           }
         }
       },

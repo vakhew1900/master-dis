@@ -6,9 +6,9 @@ export const axiosInstance = axios.create({
 
 // Добавляем интерцептор для авторизации
 axiosInstance.interceptors.request.use((config) => {
-  const authHash = localStorage.getItem('auth_hash');
-  if (authHash) {
-    config.headers.Authorization = `Basic ${authHash}`;
+  const token = localStorage.getItem('jwt_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });

@@ -7,12 +7,16 @@ import org.master.diploma.backend.config.Constants;
 import org.master.diploma.backend.dto.user.LoginRequestDto;
 import org.master.diploma.backend.dto.user.UserResponseDto;
 import org.master.diploma.backend.repository.UserRepository;
+import org.master.diploma.backend.security.JwtUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping(Constants.Routes.AUTH)
@@ -21,18 +25,27 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
 
     @PostMapping("/login")
     @Operation(summary = "Login user (JSON credentials)")
-    public ResponseEntity<UserResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
                         loginRequest.getPassword()
                 )
         );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return getCurrentUser();
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String jwt = jwtUtils.generateToken(userDetails);
+
+        return userRepository.findByUsername(userDetails.getUsername())
+                .map(user -> ResponseEntity.ok(Map.of(
+                        "token", jwt,
+                        "user", UserResponseDto.from(user)
+                )))
+                .orElse(ResponseEntity.status(401).build());
     }
 
     @GetMapping("/me")

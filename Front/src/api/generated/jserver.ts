@@ -16,6 +16,7 @@ import type {
   GradeSubmissionParams,
   LaboratoryWork,
   LaboratoryWorkDto,
+  Login200,
   LoginRequestDto,
   StudentSubmission,
   Task,
@@ -168,8 +169,8 @@ if(compareFilesBody?.student !== undefined) {
  */
 const login = (
     loginRequestDto: LoginRequestDto,
- options?: SecondParameter<typeof customInstance<UserResponseDto>>,) => {
-      return customInstance<UserResponseDto>(
+ options?: SecondParameter<typeof customInstance<Login200>>,) => {
+      return customInstance<Login200>(
       {url: `/api/auth/login`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: loginRequestDto

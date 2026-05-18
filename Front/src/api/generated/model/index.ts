@@ -28,6 +28,7 @@ export * from './gradeSubmissionParams';
 export * from './laboratoryWork';
 export * from './laboratoryWorkDto';
 export * from './linkDto';
+export * from './login200';
 export * from './loginRequestDto';
 export * from './mergedGraphComparisonResultDto';
 export * from './nodeDto';

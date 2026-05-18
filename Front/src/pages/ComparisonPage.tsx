@@ -23,7 +23,6 @@ const ComparisonPage: React.FC = () => {
     try {
       const result = await graphService.compareFiles(referenceFile, studentFile, { reportType: method });
       
-      // Переход на страницу результата с передачей данных в state
       navigate('/comparison-result', { 
         state: { 
             result, 
@@ -59,33 +58,25 @@ const ComparisonPage: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.options}>
-        <h3>Тип отчета</h3>
-        <div className={styles.methodToggle}>
-          <button 
-            className={method === 'TWO_GRAPH' ? styles.active : ''} 
-            onClick={() => setMethod('TWO_GRAPH')}
-          >
-            Два графа
-          </button>
-          <button 
-            className={method === 'MERGED_GRAPH' ? styles.active : ''} 
-            onClick={() => setMethod('MERGED_GRAPH')}
-          >
-            Объединенный граф
-          </button>
-        </div>
+      <div style={{ marginBottom: '20px' }}>
+        <label className={styles.label}>Метод сравнения</label>
+        <select 
+          value={method} 
+          onChange={(e) => setMethod(e.target.value as 'TWO_GRAPH' | 'MERGED_GRAPH')}
+          className={styles.select}
+        >
+          <option value="TWO_GRAPH">Two Graph Comparison (Side-by-side)</option>
+          <option value="MERGED_GRAPH">Merged Graph Analysis</option>
+        </select>
       </div>
 
-      <div className={styles.actions}>
-        <button 
-          className={commonStyles.primaryButton} 
-          onClick={handleCompare}
-          disabled={loading || !studentFile || !referenceFile}
-        >
-          {loading ? 'Обработка...' : 'Начать сравнение'}
-        </button>
-      </div>
+      <button 
+        onClick={handleCompare} 
+        disabled={loading}
+        className={styles.button}
+      >
+        {loading ? 'Обработка графов...' : 'Запустить сравнение'}
+      </button>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 package org.master.diploma.git.graph.dto.samples;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,31 +14,24 @@ import java.util.List;
 /**
  * Data Transfer Object for a single node (commit) in the Git graph.
  * Contains details about the commit and its comparison severity.
- * <p>
- * Объект передачи данных для одного узла (коммита) в графе Git.
- * Содержит подробную информацию о коммите и его статусе сравнения.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "DTO for a single node (commit) in the Git graph")
 public class NodeDto {
-    /** Severity status indicating the node is matched but moved. <p> Статус серьезности, указывающий, что узел сопоставлен, но перемещен. */
+    /** Severity status indicating the node is matched but moved. */
     public static final String SEVERITY_MOVABLE = "MOVABLE";
-    /** Severity status indicating the node is missed in the student's work. <p> Статус серьезности, указывающий, что узел отсутствует в работе студента. */
+    /** Severity status indicating the node is missed in the student's work. */
     public static final String SEVERITY_MISSED = "MISSED";
-    /** Severity status indicating the node is extra/unmatched in one of the graphs. <p> Статус серьезности, указывающий, что узел является лишним/несопоставленным в одном из графов. */
+    /** Severity status indicating the node is extra/unmatched in one of the graphs. */
     public static final String SEVERITY_EXTRA = "EXTRA";
-    /** Severity status indicating the node is matched but has differences in labels. <p> Статус серьезности, указывающий, что узел сопоставлен, но имеет различия в метках. */
+    /** Severity status indicating the node is matched but has differences in labels. */
     public static final String SEVERITY_MODIFIED = "MODIFIED";
-    /** Severity status indicating the node is matched and identical. <p> Статус серьезности, указывающий, что узел сопоставлен и идентичен. */
+    /** Severity status indicating the node is matched and identical. */
     public static final String SEVERITY_IDENTICAL = "IDENTICAL";
 
-    /**
-     * Defines constants for the field names used in JSON serialization.
-     * <p>
-     * Определяет константы для имен полей, используемых при JSON-сериализации.
-     */
     public static class FIELDS {
         public static final String ID = "id";
         public static final String NUMBER = "number";
@@ -50,76 +44,40 @@ public class NodeDto {
         public static final String SEVERITY = "severity";
     }
 
-    /**
-     * Unique identifier for the node (typically commit hash) for visualization.
-     * <p>
-     * Уникальный идентификатор узла (обычно хеш коммита) для визуализации.
-     */
     @SerializedName(FIELDS.ID)
+    @Schema(name = FIELDS.ID, description = "Unique identifier (commit hash)")
     private String id;
 
-    /**
-     * Ordinal number of the commit in the graph.
-     * <p>
-     * Порядковый номер коммита в графе.
-     */
     @SerializedName(FIELDS.NUMBER)
+    @Schema(name = FIELDS.NUMBER, description = "Ordinal number of the commit")
     private int number;
 
-    /**
-     * Full SHA hash of the commit.
-     * <p>
-     * Полный SHA-хеш коммита.
-     */
     @SerializedName(FIELDS.HASH)
+    @Schema(name = FIELDS.HASH, description = "Full SHA hash of the commit")
     private String hash;
 
-    /**
-     * Commit message.
-     * <p>
-     * Сообщение коммита.
-     */
     @SerializedName(FIELDS.MESSAGE)
+    @Schema(name = FIELDS.MESSAGE, description = "Commit message")
     private String message;
 
-    /**
-     * Commit creation date in ISO 8601 format.
-     * <p>
-     * Дата создания коммита в формате ISO 8601.
-     */
     @SerializedName(FIELDS.COMMIT_DATE)
+    @Schema(name = FIELDS.COMMIT_DATE, description = "Commit creation date (ISO 8601)")
     private String commitDate;
 
-    /**
-     * Authoring date of the code in ISO 8601 format.
-     * <p>
-     * Дата написания кода автором в формате ISO 8601.
-     */
     @SerializedName(FIELDS.AUTHOR_DATE)
+    @Schema(name = FIELDS.AUTHOR_DATE, description = "Authoring date (ISO 8601)")
     private String authorDate;
 
-    /**
-     * Author information.
-     * <p>
-     * Информация об авторе.
-     */
     @SerializedName(FIELDS.AUTHOR)
+    @Schema(name = FIELDS.AUTHOR, description = "Author information")
     private AuthorDto author;
 
-    /**
-     * List of changed files or diff statistics.
-     * <p>
-     * Список измененных файлов или статистика diff.
-     */
     @SerializedName(FIELDS.DIFFS)
+    @Schema(name = FIELDS.DIFFS, description = "List of changed files or diff stats")
     private List<DiffDto> diffs;
 
-    /**
-     * Comparison severity status of the node (EXTRA, MODIFIED, IDENTICAL).
-     * <p>
-     * Статус серьезности сравнения узла (EXTRA, MODIFIED, IDENTICAL).
-     */
     @SerializedName(FIELDS.SEVERITY)
+    @Schema(name = FIELDS.SEVERITY, description = "Comparison severity status (EXTRA, MODIFIED, IDENTICAL)")
     private String severity;
 
     /**

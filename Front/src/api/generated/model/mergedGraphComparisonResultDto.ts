@@ -8,7 +8,10 @@ import type { CompareResultDto } from './compareResultDto';
 import type { GitComparisonResultDto } from './gitComparisonResultDto';
 import type { GitGraphDto } from './gitGraphDto';
 
+/**
+ * DTO for the merged view of two Git graphs.
+ */
 export type MergedGraphComparisonResultDto = GitComparisonResultDto & {
-  mergedGraph?: GitGraphDto;
-  compareResult?: CompareResultDto;
+  merged_graph?: GitGraphDto;
+  compare_result?: CompareResultDto;
 };

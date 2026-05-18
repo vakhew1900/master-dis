@@ -5,4 +5,7 @@
  * OpenAPI spec version: v0
  */
 
+/**
+ * Map of commit hashes from graph 1 to graph 2
+ */
 export type CompareResultDtoMatchedHashes1To2 = {[key: string]: string};

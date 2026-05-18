@@ -7,7 +7,12 @@
 import type { LinkDto } from './linkDto';
 import type { NodeDto } from './nodeDto';
 
+/**
+ * DTO representing a Git commit graph
+ */
 export interface GitGraphDto {
+  /** List of nodes (commits) in the graph */
   nodes?: NodeDto[];
+  /** List of links between commits in the graph */
   links?: LinkDto[];
 }

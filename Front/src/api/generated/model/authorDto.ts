@@ -5,6 +5,9 @@
  * OpenAPI spec version: v0
  */
 
+/**
+ * Author information
+ */
 export interface AuthorDto {
   name?: string;
   email?: string;

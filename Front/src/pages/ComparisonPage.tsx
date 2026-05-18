@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { graphService } from '../services/graphService';
 import { FileField } from '../components/common/FileField';
 import { REPORT_TYPES } from '../api/models/constants';
+import { isMergedResult } from '../api/utils';
 import commonStyles from '../styles/common.module.css';
 import styles from './ComparisonPage.module.css';
 
@@ -26,7 +27,7 @@ const ComparisonPage: React.FC = () => {
       navigate('/comparison-result', { 
         state: { 
             result, 
-            type: result.type === 'TwoGraphComparisonResultDto' ? 'two' : 'merged' 
+            type: isMergedResult(result) ? 'merged' : 'two' 
         } 
       });
     } catch (error) {

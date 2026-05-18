@@ -406,8 +406,8 @@ export interface components {
             target?: string;
         };
         MergedGraphComparisonResultDto: Omit<components["schemas"]["GitComparisonResultDto"], "type"> & {
-            mergedGraph?: components["schemas"]["GitGraphDto"];
-            compareResult?: components["schemas"]["CompareResultDto"];
+            merged_graph?: components["schemas"]["GitGraphDto"];
+            compare_result?: components["schemas"]["CompareResultDto"];
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript

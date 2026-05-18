@@ -6,6 +6,10 @@
  */
 import type { CompareResultDtoMatchedHashes1To2 } from './compareResultDtoMatchedHashes1To2';
 
+/**
+ * DTO representing the mapping between matched vertices in two graphs.
+ */
 export interface CompareResultDto {
-  matchedHashes1To2?: CompareResultDtoMatchedHashes1To2;
+  /** Map of commit hashes from graph 1 to graph 2 */
+  matched_hashes_1_to_2?: CompareResultDtoMatchedHashes1To2;
 }

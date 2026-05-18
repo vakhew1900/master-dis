@@ -5,7 +5,12 @@
  * OpenAPI spec version: v0
  */
 
+/**
+ * DTO for a link (edge) between two commits
+ */
 export interface LinkDto {
+  /** Hash of the source (parent) commit */
   source?: string;
+  /** Hash of the target (child) commit */
   target?: string;
 }

@@ -5,6 +5,9 @@
  * OpenAPI spec version: v0
  */
 
+/**
+ * List of changed files or diff stats
+ */
 export interface DiffDto {
   value?: string;
   state?: string;

@@ -1122,18 +1122,22 @@
           "email": {
             "type": "string"
           }
-        }
+        },
+        "description": "Author information"
       },
       "CompareResultDto": {
         "type": "object",
         "properties": {
-          "matchedHashes1To2": {
+          "matched_hashes_1_to_2": {
             "type": "object",
             "additionalProperties": {
-              "type": "string"
-            }
+              "type": "string",
+              "description": "Map of commit hashes from graph 1 to graph 2"
+            },
+            "description": "Map of commit hashes from graph 1 to graph 2"
           }
-        }
+        },
+        "description": "DTO representing the mapping between matched vertices in two graphs."
       },
       "DiffDto": {
         "type": "object",
@@ -1144,7 +1148,8 @@
           "state": {
             "type": "string"
           }
-        }
+        },
+        "description": "List of changed files or diff stats"
       },
       "GitComparisonResultDto": {
         "required": [
@@ -1173,31 +1178,38 @@
         "properties": {
           "nodes": {
             "type": "array",
+            "description": "List of nodes (commits) in the graph",
             "items": {
               "$ref": "#/components/schemas/NodeDto"
             }
           },
           "links": {
             "type": "array",
+            "description": "List of links between commits in the graph",
             "items": {
               "$ref": "#/components/schemas/LinkDto"
             }
           }
-        }
+        },
+        "description": "DTO representing a Git commit graph"
       },
       "LinkDto": {
         "type": "object",
         "properties": {
           "source": {
-            "type": "string"
+            "type": "string",
+            "description": "Hash of the source (parent) commit"
           },
           "target": {
-            "type": "string"
+            "type": "string",
+            "description": "Hash of the target (child) commit"
           }
-        }
+        },
+        "description": "DTO for a link (edge) between two commits"
       },
       "MergedGraphComparisonResultDto": {
         "type": "object",
+        "description": "DTO for the merged view of two Git graphs.",
         "allOf": [
           {
             "$ref": "#/components/schemas/GitComparisonResultDto"
@@ -1205,10 +1217,10 @@
           {
             "type": "object",
             "properties": {
-              "mergedGraph": {
+              "merged_graph": {
                 "$ref": "#/components/schemas/GitGraphDto"
               },
-              "compareResult": {
+              "compare_result": {
                 "$ref": "#/components/schemas/CompareResultDto"
               }
             }
@@ -1219,40 +1231,50 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique identifier (commit hash)"
           },
           "number": {
             "type": "integer",
+            "description": "Ordinal number of the commit",
             "format": "int32"
           },
           "hash": {
-            "type": "string"
+            "type": "string",
+            "description": "Full SHA hash of the commit"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Commit message"
           },
           "commitDate": {
-            "type": "string"
+            "type": "string",
+            "description": "Commit creation date (ISO 8601)"
           },
           "authorDate": {
-            "type": "string"
+            "type": "string",
+            "description": "Authoring date (ISO 8601)"
           },
           "author": {
             "$ref": "#/components/schemas/AuthorDto"
           },
           "diffs": {
             "type": "array",
+            "description": "List of changed files or diff stats",
             "items": {
               "$ref": "#/components/schemas/DiffDto"
             }
           },
           "severity": {
-            "type": "string"
+            "type": "string",
+            "description": "Comparison severity status (EXTRA, MODIFIED, IDENTICAL)"
           }
-        }
+        },
+        "description": "DTO for a single node (commit) in the Git graph"
       },
       "TwoGraphComparisonResultDto": {
         "type": "object",
+        "description": "DTO for the traditional side-by-side comparison of two Git graphs.",
         "allOf": [
           {
             "$ref": "#/components/schemas/GitComparisonResultDto"
@@ -1260,13 +1282,13 @@
           {
             "type": "object",
             "properties": {
-              "firstGraph": {
+              "first_graph": {
                 "$ref": "#/components/schemas/GitGraphDto"
               },
-              "secondGraph": {
+              "second_graph": {
                 "$ref": "#/components/schemas/GitGraphDto"
               },
-              "compareResult": {
+              "compare_result": {
                 "$ref": "#/components/schemas/CompareResultDto"
               }
             }

@@ -6,18 +6,20 @@ import { CommitDetailsPanel as TwoGraphDetailsPanel } from './comparison/two_gra
 import { MergedComparisonView } from './comparison/merged_graph/MergedComparisonView';
 import type { NodeDto } from '../api/generated/model';
 import styles from './ComparisonResultPage.module.css';
+import { isMergedResult, isTwoGraphResult } from '../api/utils';
 
 const ComparisonResultPage: React.FC = () => {
   const location = useLocation();
   const result = location.state?.result;
 
+  console.log(location)
   if (!result) {
     return <div className="container">Нет данных для отображения.</div>;
   }
 
   // Two Graph mode
-  if (result.type === 'TwoGraphComparisonResultDto') {
-      const { firstGraph, secondGraph, compareResult } = result;
+  if (isTwoGraphResult(result)) {
+      const { first_graph, second_graph, compare_result } = result;
       
       // Логика синхронизации для двух графов (дублируем из старой версии для стабильности)
       const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
@@ -25,30 +27,30 @@ const ComparisonResultPage: React.FC = () => {
 
       const getCounterpartId = (nodeId: string | null) => {
         if (!nodeId) return null;
-        const mapping: Record<string, string> = (compareResult?.matchedHashes1To2 as any) || {};
+        const mapping: Record<string, string> = (compare_result?.matchedHashes1To2 as any) || {};
         if (mapping[nodeId]) return mapping[nodeId];
         const reverseMatch = Object.keys(mapping).find((key: string) => mapping[key] === nodeId);
         return reverseMatch || null;
       };
 
       const counterpartId = getCounterpartId(selectedNodeId);
-      const studentNode = firstGraph.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
-                       || firstGraph.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
-      const referenceNode = secondGraph.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
-                         || secondGraph.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
+      const studentNode = first_graph.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
+                       || first_graph.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
+      const referenceNode = second_graph.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
+                         || second_graph.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
 
       return (
         <div className="container">
           <TwoGraphLegend />
           <div className={styles.graphsWrapper}>
             <TwoGraphCanvas 
-              data={firstGraph} 
+              data={first_graph} 
               title="Репозиторий студента" 
               onNodeSelect={handleNodeSelect}
               selectedNodeId={selectedNodeId === studentNode?.id ? selectedNodeId : counterpartId}
             />
             <TwoGraphCanvas 
-              data={secondGraph} 
+              data={second_graph} 
               title="Эталонный репозиторий" 
               onNodeSelect={handleNodeSelect}
               selectedNodeId={selectedNodeId === referenceNode?.id ? selectedNodeId : counterpartId}
@@ -60,7 +62,7 @@ const ComparisonResultPage: React.FC = () => {
   }
 
   // Merged Graph mode
-  if (result.type === 'MergedGraphComparisonResultDto') {
+  if (isMergedResult(result)) {
       return (
         <div className="container">
           <MergedComparisonView result={result} />

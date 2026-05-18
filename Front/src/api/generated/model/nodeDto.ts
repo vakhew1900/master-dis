@@ -7,14 +7,25 @@
 import type { AuthorDto } from './authorDto';
 import type { DiffDto } from './diffDto';
 
+/**
+ * DTO for a single node (commit) in the Git graph
+ */
 export interface NodeDto {
+  /** Unique identifier (commit hash) */
   id?: string;
+  /** Ordinal number of the commit */
   number?: number;
+  /** Full SHA hash of the commit */
   hash?: string;
+  /** Commit message */
   message?: string;
+  /** Commit creation date (ISO 8601) */
   commitDate?: string;
+  /** Authoring date (ISO 8601) */
   authorDate?: string;
   author?: AuthorDto;
+  /** List of changed files or diff stats */
   diffs?: DiffDto[];
+  /** Comparison severity status (EXTRA, MODIFIED, IDENTICAL) */
   severity?: string;
 }

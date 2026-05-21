@@ -9,13 +9,15 @@ const LabCreatePage: React.FC = () => {
   const [topic, setTopic] = useState('');
   const [number, setNumber] = useState('');
   const [description, setDescription] = useState('');
+  const [maxGrade, setMaxGrade] = useState('');
 
   const handleSave = async () => {
     try {
       await labService.createLab({
         topic,
         number: parseInt(number),
-        description
+        description,
+        maxGrade: parseInt(maxGrade)
       });
       navigate('/admin/labs');
     } catch (error) {
@@ -46,6 +48,13 @@ const LabCreatePage: React.FC = () => {
             label="Тема" 
             value={topic} 
             onChange={(e) => setTopic(e.target.value)} 
+            fullWidth 
+          />
+          <TextField 
+            label="Максимальная оценка" 
+            type="number" 
+            value={maxGrade} 
+            onChange={(e) => setMaxGrade(e.target.value)} 
             fullWidth 
           />
           <TextField 

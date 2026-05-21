@@ -15,6 +15,7 @@ export const authService = {
       const token = (response as any).token; 
       if (token) {
         localStorage.setItem('jwt_token', token);
+        localStorage.setItem('login_time', Date.now().toString());
       }
       
       return await api.getCurrentUser();
@@ -29,5 +30,6 @@ export const authService = {
   
   logout: () => {
     localStorage.removeItem('jwt_token');
+    localStorage.removeItem('login_time');
   }
 };

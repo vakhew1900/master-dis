@@ -18,8 +18,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     const checkAuth = async () => {
-      const hash = localStorage.getItem('auth_hash');
-      if (hash) {
+      const token = localStorage.getItem('jwt_token');
+      if (token) {
         try {
           const userData = await authService.getCurrentUser();
           setUser(userData);

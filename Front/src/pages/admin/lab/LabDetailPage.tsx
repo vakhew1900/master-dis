@@ -30,6 +30,8 @@ import { labService } from '../../../services/labService';
 import type { LaboratoryWork, UserResponseDto } from '../../../api/generated/model';
 import styles from './LabDetailPage.module.css';
 
+import AdminTaskItem from '../../../components/lab/AdminTaskItem';
+
 const AdminLabDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [lab, setLab] = useState<LaboratoryWork | null>(null);
@@ -96,6 +98,10 @@ const AdminLabDetailPage: React.FC = () => {
     }
   };
 
+  const handleEditTask = (taskId: number) => {
+    navigate(`/admin/tasks/${taskId}/edit`);
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
@@ -131,6 +137,11 @@ const AdminLabDetailPage: React.FC = () => {
               onChange={(e) => setEditLab({...editLab, topic: e.target.value})}
             />
             <TextField 
+              label="Максимальная оценка" type="number" fullWidth 
+              value={editLab.maxGrade} 
+              onChange={(e) => setEditLab({...editLab, maxGrade: parseInt(e.target.value)})}
+            />
+            <TextField 
               label="Описание" multiline rows={4} fullWidth 
               value={editLab.description} 
               onChange={(e) => setEditLab({...editLab, description: e.target.value})}
@@ -143,9 +154,14 @@ const AdminLabDetailPage: React.FC = () => {
         ) : (
           <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h4" gutterBottom>
-                Лаб. работа №{lab.number}: {lab.topic}
-              </Typography>
+              <Box>
+                <Typography variant="h4" gutterBottom>
+                  Лаб. работа №{lab.number}: {lab.topic}
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                  Максимальная оценка: {lab.maxGrade || 0}
+                </Typography>
+              </Box>
               <Stack direction="row" spacing={1}>
                 <Button startIcon={<PersonAddIcon />} onClick={() => setOpenAssign(true)}>Назначить</Button>
                 <Button startIcon={<EditIcon />} onClick={() => setIsEditing(true)}>Редактировать</Button>
@@ -209,23 +225,13 @@ const AdminLabDetailPage: React.FC = () => {
         <List>
           {lab.tasks && lab.tasks.length > 0 ? (
             lab.tasks.map((task) => (
-              <ListItem key={task.id} className={styles.taskItem} component={Paper} sx={{ mb: 1 }}>
-                <ListItemIcon>
-                  <AssignmentIcon color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={`Задание ${task.number}`}
-                  secondary={task.description}
-                />
-                {isEditing && (
-                  <Button 
-                    size="small" 
-                    onClick={() => navigate(`/admin/tasks/${task.id}/edit`)}
-                  >
-                    Изменить
-                  </Button>
-                )}
-              </ListItem>
+              <AdminTaskItem
+                key={task.id}
+                task={task}
+                isEditing={isEditing}
+                onEdit={handleEditTask}
+                className={styles.taskItem}
+              />
             ))
           ) : (
             <Typography color="text.secondary">В этой лабораторной работе пока нет заданий.</Typography>

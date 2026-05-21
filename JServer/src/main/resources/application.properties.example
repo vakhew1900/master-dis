@@ -21,3 +21,7 @@ minio.secret-key=minioadmin
 
 # Auth
 admin.initial-password=admin
+
+# Error Handling
+server.error.include-message=always
+server.error.include-binding-errors=always

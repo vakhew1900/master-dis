@@ -7,7 +7,9 @@ import {
   Paper,
   Stack,
   TextField,
-  MenuItem
+  MenuItem,
+  Divider,
+  CircularProgress
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FileField } from '../../components/common/FileField';
@@ -20,6 +22,7 @@ const StudentSubmissionPage: React.FC = () => {
   const { labId } = useParams<{ labId: string }>();
   const navigate = useNavigate();
   const [lab, setLab] = useState<LaboratoryWork | null>(null);
+  const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
 
@@ -30,15 +33,25 @@ const StudentSubmissionPage: React.FC = () => {
   }, [labId]);
 
   const loadLabData = async (id: number) => {
-    const data = await labService.getLabById(id);
-    setLab(data);
+    setLoading(true);
+    try {
+      const data = await labService.getLabById(id);
+      setLab(data);
+    } catch (error) {
+      console.error('Failed to load lab:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const currentGrade = (lab?.tasks || []).reduce((sum, t: any) => sum + (t.grade || 0), 0);
 
   const handleUpload = async () => {
     if (selectedFile && labId) {
       try {
         await labService.uploadSolution(parseInt(labId), selectedFile);
         alert('Решение загружено');
+        loadLabData(parseInt(labId)); // Refresh data
       } catch (error) {
         console.error('Upload failed:', error);
       }
@@ -60,7 +73,8 @@ const StudentSubmissionPage: React.FC = () => {
     }
   };
 
-  if (!lab) return <Typography>Загрузка...</Typography>;
+  if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}><CircularProgress /></Box>;
+  if (!lab) return <Typography>Лабораторная работа не найдена</Typography>;
 
   return (
     <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
@@ -69,8 +83,18 @@ const StudentSubmissionPage: React.FC = () => {
       </Button>
 
       <Paper sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom>Лабораторная работа №{lab.number}: {lab.topic}</Typography>
-        <Typography variant="body1" sx={{ mb: 3 }}>{lab.description}</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Box>
+            <Typography variant="h4" gutterBottom>Лабораторная работа №{lab.number}: {lab.topic}</Typography>
+            <Typography variant="body1" sx={{ mb: 3 }}>{lab.description}</Typography>
+          </Box>
+          <Box sx={{ textAlign: 'right' }}>
+            <Typography variant="h5" color="primary">
+              {currentGrade} / {lab.maxGrade || 0}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">Баллы</Typography>
+          </Box>
+        </Box>
         
         <Stack spacing={3} sx={{ mt: 3 }}>
           <Box>
@@ -79,7 +103,9 @@ const StudentSubmissionPage: React.FC = () => {
               label={selectedFile ? selectedFile.name : "Выберите ZIP-архив"} 
               onChange={(f) => setSelectedFile(f)} 
             />
-            <Button variant="contained" onClick={handleUpload} sx={{ mt: 1 }}>Загрузить</Button>
+            <Button variant="contained" onClick={handleUpload} sx={{ mt: 1 }} disabled={!selectedFile}>
+              Загрузить
+            </Button>
           </Box>
 
           <Divider />
@@ -108,8 +134,5 @@ const StudentSubmissionPage: React.FC = () => {
     </Box>
   );
 };
-
-// Simple Divider since I didn't import it in this file
-const Divider = () => <Box sx={{ my: 2, borderBottom: '1px solid #ddd' }} />;
 
 export default StudentSubmissionPage;

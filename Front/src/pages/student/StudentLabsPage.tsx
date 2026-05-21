@@ -16,6 +16,8 @@ import {
 import { labService } from '../../services/labService';
 import type { LaboratoryWorkDto } from '../../api/generated/model';
 
+import StudentLabRow from '../../components/lab/StudentLabRow';
+
 const StudentLabsPage: React.FC = () => {
   const [labs, setLabs] = useState<LaboratoryWorkDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,10 @@ const StudentLabsPage: React.FC = () => {
     }
   };
 
+  const handleOpenLab = (id: number) => {
+    navigate(`/student/submission/${id}`);
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
@@ -52,30 +58,20 @@ const StudentLabsPage: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Номер</TableCell>
+              <TableCell width={80}>Номер</TableCell>
               <TableCell>Тема</TableCell>
-              <TableCell>Макс. оценка</TableCell>
-              <TableCell>Статус</TableCell>
-              <TableCell>Действие</TableCell>
+              <TableCell width={150}>Оценка (тек./макс.)</TableCell>
+              <TableCell>Статус заданий</TableCell>
+              <TableCell width={120}>Действие</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {labs.map((lab) => (
-              <TableRow key={lab.id}>
-                <TableCell>{lab.number}</TableCell>
-                <TableCell>{lab.topic}</TableCell>
-                <TableCell>{lab.maxGrade}</TableCell>
-                <TableCell>
-                  {lab.tasks?.map(task => (
-                    <Typography key={task.id} variant="body2">{task.status}</Typography>
-                  ))}
-                </TableCell>
-                <TableCell>
-                  <Button variant="contained" onClick={() => navigate(`/student/submission/${lab.id}`)}>
-                    Открыть
-                  </Button>
-                </TableCell>
-              </TableRow>
+              <StudentLabRow 
+                key={lab.id} 
+                lab={lab} 
+                onOpen={handleOpenLab} 
+              />
             ))}
           </TableBody>
         </Table>

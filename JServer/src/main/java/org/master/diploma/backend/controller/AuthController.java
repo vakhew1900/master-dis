@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -30,24 +31,27 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Login user (JSON credentials)")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String jwt = jwtUtils.generateToken(userDetails);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwt = jwtUtils.generateToken(userDetails);
 
-        return userRepository.findByUsername(userDetails.getUsername())
-                .map(user -> ResponseEntity.ok(Map.of(
-                        "token", jwt,
-                        "user", UserResponseDto.from(user)
-                )))
-                .orElse(ResponseEntity.status(401).build());
+            return userRepository.findByUsername(userDetails.getUsername())
+                    .map(user -> ResponseEntity.ok(Map.of(
+                            "token", jwt,
+                            "user", UserResponseDto.from(user)
+                    )))
+                    .orElse(ResponseEntity.status(401).build());
+        } catch (AuthenticationException e) {
+            throw e; // Rethrow to let GlobalExceptionHandler handle it with 401
+        }
     }
-
     @GetMapping("/me")
     @Operation(summary = "Get current authenticated user info")
     public ResponseEntity<UserResponseDto> getCurrentUser() {

@@ -22,6 +22,8 @@ import { labService } from '../../../services/labService';
 import type { LaboratoryWork } from '../../../api/generated/model';
 import styles from './LabsPage.module.css';
 
+import AdminLabRow from '../../../components/lab/AdminLabRow';
+
 const LabsPage: React.FC = () => {
   const [labs, setLabs] = useState<LaboratoryWork[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +48,6 @@ const LabsPage: React.FC = () => {
   }, []);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, id: number) => {
-    event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setSelectedLabId(id);
   };
@@ -111,34 +112,22 @@ const LabsPage: React.FC = () => {
               <TableCell width={80}>№</TableCell>
               <TableCell>Тема</TableCell>
               <TableCell>Описание</TableCell>
+              <TableCell align="right" width={100}>Макс. балл</TableCell>
               <TableCell align="right" width={120}>Задания</TableCell>
               <TableCell align="right" width={80}>Действия</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {labs.map((lab) => (
-              <TableRow
+              <AdminLabRow
                 key={lab.id}
+                lab={lab}
+                onClick={handleRowClick}
+                onMenuOpen={handleMenuOpen}
                 className={styles.tableRow}
-                onClick={() => handleRowClick(lab.id!)}
-              >
-                <TableCell component="th" scope="row">
-                  {lab.number}
-                </TableCell>
-                <TableCell>{lab.topic}</TableCell>
-                <TableCell className={styles.descriptionCell}>
-                  {lab.description}
-                </TableCell>
-                <TableCell align="right">{lab.tasks?.length || 0}</TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    className={styles.actionButton}
-                    onClick={(e) => handleMenuOpen(e, lab.id!)}
-                  >
-                    <MoreVertIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
+                actionButtonClassName={styles.actionButton}
+                descriptionCellClassName={styles.descriptionCell}
+              />
             ))}
           </TableBody>
         </Table>

@@ -15,6 +15,7 @@ import org.master.diploma.backend.service.ComparisonService;
 import org.master.diploma.backend.service.FileService;
 import org.master.diploma.backend.support.FileHelper;
 import org.master.diploma.git.graph.dto.GitComparisonResultDto;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class StudentSubmissionController {
     private final FileService fileService;
     private final ComparisonService comparisonService;
 
-    @PostMapping(Constants.Routes.STUDENT_UPLOAD)
+    @PostMapping(value = Constants.Routes.STUDENT_UPLOAD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload task solution (ZIP)")
     public ResponseEntity<StudentSubmission> uploadSolution(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

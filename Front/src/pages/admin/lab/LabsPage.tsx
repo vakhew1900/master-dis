@@ -35,9 +35,10 @@ const LabsPage: React.FC = () => {
     setLoading(true);
     try {
       const data = await labService.getAllLabs();
-      setLabs(data);
+      setLabs(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to load labs:', error);
+      setLabs([]);
     } finally {
       setLoading(false);
     }
@@ -68,7 +69,7 @@ const LabsPage: React.FC = () => {
     if (selectedLabId) {
       try {
         await labService.deleteLab(selectedLabId);
-        setLabs(labs.filter(lab => lab.id !== selectedLabId));
+        setLabs(prevLabs => prevLabs.filter(lab => lab.id !== selectedLabId));
       } catch (error) {
         console.error('Failed to delete lab:', error);
       }
@@ -118,7 +119,7 @@ const LabsPage: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {labs.map((lab) => (
+            {Array.isArray(labs) && labs.map((lab) => (
               <AdminLabRow
                 key={lab.id}
                 lab={lab}

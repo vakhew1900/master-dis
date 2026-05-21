@@ -9,6 +9,7 @@ import org.master.diploma.backend.repository.LaboratoryWorkRepository;
 import org.master.diploma.backend.repository.TaskRepository;
 import org.master.diploma.backend.service.FileService;
 import org.master.diploma.backend.support.FileHelper;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +24,7 @@ public class AdminTaskController {
     private final LaboratoryWorkRepository labRepository;
     private final FileService fileService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Create a new task with reference repository")
     public ResponseEntity<Task> createTask(
             @RequestParam Integer number,
@@ -46,7 +47,7 @@ public class AdminTaskController {
         return ResponseEntity.ok(taskRepository.save(task));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Update a task and optionally its reference repository")
     public ResponseEntity<Task> updateTask(
             @PathVariable Long id,

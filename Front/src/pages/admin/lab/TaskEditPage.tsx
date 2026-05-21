@@ -41,12 +41,12 @@ const AdminTaskEditPage: React.FC = () => {
         await labService.createTask(labId, {
           number: parseInt(number),
           description,
-        });
+        }, selectedFile || undefined);
       } else if (id) {
         await labService.updateTask(parseInt(id), {
           number: parseInt(number),
           description,
-        });
+        }, selectedFile || undefined);
       }
       navigate(-1);
     } catch (error) {

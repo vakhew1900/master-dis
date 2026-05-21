@@ -31,9 +31,10 @@ const StudentLabsPage: React.FC = () => {
     setLoading(true);
     try {
       const data = await labService.getStudentLabs();
-      setLabs(data);
+      setLabs(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to load student labs:', error);
+      setLabs([]);
     } finally {
       setLoading(false);
     }
@@ -66,7 +67,7 @@ const StudentLabsPage: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {labs.map((lab) => (
+            {Array.isArray(labs) && labs.map((lab) => (
               <StudentLabRow 
                 key={lab.id} 
                 lab={lab} 

@@ -14,7 +14,9 @@ export type { LaboratoryWork, Task, UserResponseDto, StudentSubmission };
 
 export const labService = {
   async getAllLabs(): Promise<LaboratoryWork[]> {
-    return await api.getAllLabs();
+    const data = await api.getAllLabs();
+    console.log('labService.getAllLabs data:', data);
+    return data;
   },
 
   async getLabById(id: number): Promise<LaboratoryWork> {

@@ -51,11 +51,15 @@ const updateTask = (
     id: number,
     updateTaskBody?: UpdateTaskBody,
     params?: UpdateTaskParams,
- options?: SecondParameter<typeof customInstance<Task>>,) => {
+ options?: SecondParameter<typeof customInstance<Task>>,) => {const formData = new FormData();
+if(updateTaskBody?.file !== undefined) {
+ formData.append(`file`, updateTaskBody.file);
+ }
+
       return customInstance<Task>(
       {url: `/api/admin/tasks/${id}`, method: 'PUT',
-      headers: {'Content-Type': 'application/json', },
-      data: updateTaskBody,
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData,
         params
     },
       options);
@@ -196,11 +200,15 @@ const getAllTasks = (
 const createTask = (
     params: CreateTaskParams,
     createTaskBody?: CreateTaskBody,
- options?: SecondParameter<typeof customInstance<Task>>,) => {
+ options?: SecondParameter<typeof customInstance<Task>>,) => {const formData = new FormData();
+if(createTaskBody?.file !== undefined) {
+ formData.append(`file`, createTaskBody.file);
+ }
+
       return customInstance<Task>(
       {url: `/api/admin/tasks`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: createTaskBody,
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData,
         params
     },
       options);

@@ -27,7 +27,7 @@ const ComparisonResultPage: React.FC = () => {
 
       const getCounterpartId = (nodeId: string | null) => {
         if (!nodeId) return null;
-        const mapping: Record<string, string> = (compare_result?.matchedHashes1To2 as any) || {};
+        const mapping: Record<string, string> = (compare_result?.matched_hashes_1_to_2 as CompareResultDtoMatchedHashes1To2) || {};
         if (mapping[nodeId]) return mapping[nodeId];
         const reverseMatch = Object.keys(mapping).find((key: string) => mapping[key] === nodeId);
         return reverseMatch || null;

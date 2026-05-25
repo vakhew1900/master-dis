@@ -10,8 +10,7 @@ interface SubmissionCellProps {
 
 const SubmissionCell: React.FC<SubmissionCellProps> = ({ submission }) => {
   const navigate = useNavigate();
-  console.log(submission)
-  console.log(submission.exists)
+
 
   // Note: 'exists' property in SubmissionDto is boolean (or undefined)
   if (submission && submission.exists) {

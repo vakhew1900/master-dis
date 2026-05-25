@@ -20,6 +20,7 @@ import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
 import { getComparisonResultState } from '../../api/utils';
 import type { AdminSubmissionDto } from '../../api/generated/model';
+import { GradeSubmissionDialog } from '../../components/admin/GradeSubmissionDialog';
 
 const SubmissionDetailPage: React.FC = () => {
   const { submissionId } = useParams<{ submissionId: string }>();
@@ -27,8 +28,6 @@ const SubmissionDetailPage: React.FC = () => {
   const [submission, setSubmission] = useState<AdminSubmissionDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [openGrade, setOpenGrade] = useState(false);
-  const [grade, setGrade] = useState('');
-  const [feedback, setFeedback] = useState('');
   const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
 
   useEffect(() => {
@@ -49,10 +48,10 @@ const SubmissionDetailPage: React.FC = () => {
     }
   };
 
-  const handleGrade = async () => {
+  const handleGrade = async (grade: number, feedback: string) => {
     if (submissionId) {
       try {
-        await labService.gradeSubmission(parseInt(submissionId), parseFloat(grade), feedback);
+        await labService.gradeSubmission(parseInt(submissionId), grade, feedback);
         setOpenGrade(false);
         loadSubmission(parseInt(submissionId));
       } catch (error) {
@@ -119,25 +118,13 @@ const SubmissionDetailPage: React.FC = () => {
       </Paper>
 
 
-      <Dialog open={openGrade} onClose={() => setOpenGrade(false)}>
-        <DialogTitle>Выставить оценку</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-          <TextField 
-            label="Оценка" type="number" fullWidth 
-            value={grade} 
-            onChange={(e) => setGrade(e.target.value)} 
-          />
-          <TextField 
-            label="Отзыв" multiline rows={4} fullWidth 
-            value={feedback} 
-            onChange={(e) => setFeedback(e.target.value)} 
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenGrade(false)}>Отмена</Button>
-          <Button onClick={handleGrade} variant="contained">Сохранить</Button>
-        </DialogActions>
-      </Dialog>
+      <GradeSubmissionDialog 
+        open={openGrade} 
+        onClose={() => setOpenGrade(false)} 
+        onSave={handleGrade}
+        initialGrade={submission.grade ?? 0}
+        initialFeedback={submission.feedback ?? ''}
+      />
     </Box>
   );
 };

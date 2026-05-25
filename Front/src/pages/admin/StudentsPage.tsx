@@ -23,13 +23,13 @@ import type { UserResponseDto, UserCreateDto } from '../../api/generated/model';
 import SubmissionCell from '../../components/common/SubmissionCell';
 import { ActionsMenu } from '../../components/common/ActionsMenu';
 import { useNotification } from '../../components/common/NotificationManager';
+import { CreateStudentDialog } from '../../components/admin/CreateStudentDialog';
 
 const StudentsPage: React.FC = () => {
   const [students, setStudents] = useState<UserResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [openCreate, setOpenCreate] = useState(false);
   const [openDelete, setOpenDelete] = useState<number | null>(null);
-  const [newStudent, setNewStudent] = useState<UserCreateDto>({ username: '', firstName: '', lastName: '', password: '' });
   const { showNotification, NotificationComponent } = useNotification();
   
   useEffect(() => {
@@ -48,11 +48,10 @@ const StudentsPage: React.FC = () => {
     }
   };
 
-  const handleCreateStudent = async () => {
+  const handleCreateStudent = async (student: UserCreateDto) => {
     try {
-      await labService.createStudent(newStudent);
+      await labService.createStudent(student);
       setOpenCreate(false);
-      setNewStudent({ username: '', firstName: '', lastName: '', password: '' });
       loadData();
       showNotification('Студент успешно создан', 'success');
     } catch (error) {
@@ -125,19 +124,11 @@ const StudentsPage: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Добавить студента</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
-          <TextField label="Логин" fullWidth onChange={(e) => setNewStudent({...newStudent, username: e.target.value})} />
-          <TextField label="Фамилия" fullWidth onChange={(e) => setNewStudent({...newStudent, lastName: e.target.value})} />
-          <TextField label="Имя" fullWidth onChange={(e) => setNewStudent({...newStudent, firstName: e.target.value})} />
-          <TextField label="Пароль" type="password" fullWidth onChange={(e) => setNewStudent({...newStudent, password: e.target.value})} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenCreate(false)}>Отмена</Button>
-          <Button variant="contained" onClick={handleCreateStudent}>Добавить</Button>
-        </DialogActions>
-      </Dialog>
+      <CreateStudentDialog 
+        open={openCreate} 
+        onClose={() => setOpenCreate(false)} 
+        onSave={handleCreateStudent}
+      />
     </Box>
   );
 };

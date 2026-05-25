@@ -2,6 +2,7 @@ package org.master.diploma.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.master.diploma.backend.dto.admin.AdminLabDto;
+import org.master.diploma.backend.dto.admin.AdminSubmissionDto;
 import org.master.diploma.backend.dto.admin.AdminTaskDto;
 import org.master.diploma.backend.entity.LaboratoryWork;
 import org.master.diploma.backend.entity.Task;
@@ -60,6 +61,19 @@ public class AdminLabService {
     @Transactional
     public void deleteLab(Long id) {
         laboratoryWorkRepository.deleteById(id);
+    }
+
+    public AdminSubmissionDto convertToSubmissionDto(org.master.diploma.backend.entity.StudentSubmission submission) {
+        return AdminSubmissionDto.builder()
+                .id(submission.getId())
+                .taskId(submission.getTask().getId())
+                .taskDescription(submission.getTask().getDescription())
+                .student(org.master.diploma.backend.dto.user.UserResponseDto.from(submission.getStudent()))
+                .studentRepoPath(submission.getStudentRepoPath())
+                .grade(submission.getGrade())
+                .feedback(submission.getFeedback())
+                .submittedAt(submission.getSubmittedAt())
+                .build();
     }
 
     private AdminLabDto convertToDto(LaboratoryWork lab) {

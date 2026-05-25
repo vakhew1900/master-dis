@@ -640,7 +640,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/StudentSubmission"
+                  "$ref": "#/components/schemas/AdminSubmissionDto"
                 }
               }
             }
@@ -689,7 +689,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/StudentSubmission"
+                  "$ref": "#/components/schemas/AdminSubmissionDto"
                 }
               }
             }
@@ -881,7 +881,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/StudentSubmission"
+                    "$ref": "#/components/schemas/AdminSubmissionDto"
                   }
                 }
               }
@@ -905,7 +905,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/StudentSubmission"
+                    "$ref": "#/components/schemas/AdminSubmissionDto"
                   }
                 }
               }
@@ -1432,6 +1432,39 @@
             "items": {
               "$ref": "#/components/schemas/SubmissionDto"
             }
+          }
+        }
+      },
+      "AdminSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "taskId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "taskDescription": {
+            "type": "string"
+          },
+          "student": {
+            "$ref": "#/components/schemas/UserResponseDto"
+          },
+          "studentRepoPath": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "number",
+            "format": "double"
+          },
+          "feedback": {
+            "type": "string"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },

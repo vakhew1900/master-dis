@@ -19,12 +19,12 @@ import { labService } from '../../services/labService';
 import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
 import { getComparisonResultState } from '../../api/utils';
-import type { StudentSubmission } from '../../api/generated/model';
+import type { AdminSubmissionDto } from '../../api/generated/model';
 
 const SubmissionDetailPage: React.FC = () => {
   const { submissionId } = useParams<{ submissionId: string }>();
   const navigate = useNavigate();
-  const [submission, setSubmission] = useState<StudentSubmission | null>(null);
+  const [submission, setSubmission] = useState<AdminSubmissionDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [openGrade, setOpenGrade] = useState(false);
   const [grade, setGrade] = useState('');
@@ -41,7 +41,7 @@ const SubmissionDetailPage: React.FC = () => {
     setLoading(true);
     try {
       const data = await labService.getSubmissionById(id);
-      setSubmission(data);
+      setSubmission(data as any);
     } catch (error) {
       console.error('Failed to load submission:', error);
     } finally {
@@ -92,11 +92,7 @@ const SubmissionDetailPage: React.FC = () => {
       </Button>
 
       <Paper sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom>Решение: {submission.task?.description}</Typography>
-        <Typography variant="h6" color="text.secondary" gutterBottom>
-          Лабораторная работа №{submission.task?.lab?.number}: {submission.task?.lab?.topic}
-        </Typography>
-        <Divider sx={{ my: 2 }} />
+        <Typography variant="h4" gutterBottom>Решение: {submission.taskDescription}</Typography>
         <Typography variant="subtitle1" sx={{ mt: 2 }}>Студент: {submission.student?.lastName} {submission.student?.firstName}</Typography>
         <Typography variant="body1" sx={{ mt: 2 }}>Оценка: {submission.grade ?? 'Не оценено'}</Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>Отзыв: {submission.feedback || 'Нет отзыва'}</Typography>
@@ -116,11 +112,12 @@ const SubmissionDetailPage: React.FC = () => {
               <MenuItem key={key} value={value}>{key}</MenuItem>
             ))}
           </TextField>
-          <Button variant="outlined" color="secondary" onClick={handleCheck}>
+          <Button variant="contained" onClick={handleCheck}>
             Проверить (через {reportType})
           </Button>
         </Stack>
       </Paper>
+
 
       <Dialog open={openGrade} onClose={() => setOpenGrade(false)}>
         <DialogTitle>Выставить оценку</DialogTitle>

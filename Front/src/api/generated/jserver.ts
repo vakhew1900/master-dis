@@ -6,6 +6,7 @@
  */
 import type {
   AdminLabDto,
+  AdminSubmissionDto,
   AdminTaskDto,
   CheckSolutionParams,
   CheckSubmissionParams,
@@ -252,8 +253,8 @@ const createStudent = (
 const assignTask = (
     studentId: number,
     taskId: number,
- options?: SecondParameter<typeof customInstance<StudentSubmission>>,) => {
-      return customInstance<StudentSubmission>(
+ options?: SecondParameter<typeof customInstance<AdminSubmissionDto>>,) => {
+      return customInstance<AdminSubmissionDto>(
       {url: `/api/admin/students/${studentId}/assign/${taskId}`, method: 'POST'
     },
       options);
@@ -265,8 +266,8 @@ const assignTask = (
 const gradeSubmission = (
     submissionId: number,
     params: GradeSubmissionParams,
- options?: SecondParameter<typeof customInstance<StudentSubmission>>,) => {
-      return customInstance<StudentSubmission>(
+ options?: SecondParameter<typeof customInstance<AdminSubmissionDto>>,) => {
+      return customInstance<AdminSubmissionDto>(
       {url: `/api/admin/students/submissions/${submissionId}/grade`, method: 'POST',
         params
     },
@@ -342,8 +343,8 @@ const getCurrentUser = (
  */
 const getStudentSubmissions = (
     studentId: number,
- options?: SecondParameter<typeof customInstance<StudentSubmission[]>>,) => {
-      return customInstance<StudentSubmission[]>(
+ options?: SecondParameter<typeof customInstance<AdminSubmissionDto[]>>,) => {
+      return customInstance<AdminSubmissionDto[]>(
       {url: `/api/admin/students/${studentId}/submissions`, method: 'GET'
     },
       options);
@@ -354,8 +355,8 @@ const getStudentSubmissions = (
  */
 const getAllSubmissions = (
 
- options?: SecondParameter<typeof customInstance<StudentSubmission[]>>,) => {
-      return customInstance<StudentSubmission[]>(
+ options?: SecondParameter<typeof customInstance<AdminSubmissionDto[]>>,) => {
+      return customInstance<AdminSubmissionDto[]>(
       {url: `/api/admin/students/submissions`, method: 'GET'
     },
       options);

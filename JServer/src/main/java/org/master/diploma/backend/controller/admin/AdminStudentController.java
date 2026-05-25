@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.master.diploma.backend.config.Constants;
+import org.master.diploma.backend.dto.admin.AdminSubmissionDto;
 import org.master.diploma.backend.dto.user.UserCreateDto;
 import org.master.diploma.backend.dto.user.UserResponseDto;
 import org.master.diploma.backend.entity.StudentSubmission;
@@ -14,8 +15,10 @@ import org.master.diploma.backend.repository.TaskRepository;
 import org.master.diploma.backend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(Constants.Routes.ADMIN + "/students")
@@ -28,6 +31,7 @@ public class AdminStudentController {
     private final org.master.diploma.backend.service.FileService fileService;
     private final org.master.diploma.backend.service.ComparisonService comparisonService;
     private final org.master.diploma.backend.service.UserService userService;
+    private final org.master.diploma.backend.service.AdminLabService adminLabService;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @GetMapping
@@ -77,21 +81,27 @@ public class AdminStudentController {
 
     @GetMapping("/{studentId}/submissions")
     @Operation(summary = "Get all submissions for a specific student")
-    public ResponseEntity<List<StudentSubmission>> getStudentSubmissions(@PathVariable Long studentId) {
+    public ResponseEntity<List<AdminSubmissionDto>> getStudentSubmissions(@PathVariable Long studentId) {
         return userRepository.findById(studentId)
-                .map(student -> ResponseEntity.ok(submissionRepository.findByStudent(student)))
+                .map(student -> ResponseEntity.ok(
+                        submissionRepository.findByStudent(student).stream()
+                                .map(adminLabService::convertToSubmissionDto)
+                                .collect(Collectors.toList())
+                ))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/submissions")
     @Operation(summary = "Get all student submissions")
-    public List<StudentSubmission> getAllSubmissions() {
-        return submissionRepository.findAll();
+    public List<AdminSubmissionDto> getAllSubmissions() {
+        return submissionRepository.findAll().stream()
+                .map(adminLabService::convertToSubmissionDto)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/{studentId}/assign/{taskId}")
     @Operation(summary = "Assign task to student")
-    public ResponseEntity<StudentSubmission> assignTask(@PathVariable Long studentId, @PathVariable Long taskId) {
+    public ResponseEntity<AdminSubmissionDto> assignTask(@PathVariable Long studentId, @PathVariable Long taskId) {
         User student = userRepository.findById(studentId).orElseThrow();
         Task task = taskRepository.findById(taskId).orElseThrow();
 
@@ -103,7 +113,7 @@ public class AdminStudentController {
                         .studentRepoPath("NOT_SUBMITTED")
                         .build());
         
-        return ResponseEntity.ok(submissionRepository.save(submission));
+        return ResponseEntity.ok(adminLabService.convertToSubmissionDto(submissionRepository.save(submission)));
     }
 
     @DeleteMapping("/submissions/{submissionId}")
@@ -119,7 +129,7 @@ public class AdminStudentController {
 
     @PostMapping("/submissions/{submissionId}/grade")
     @Operation(summary = "Grade student submission")
-    public ResponseEntity<StudentSubmission> gradeSubmission(
+    public ResponseEntity<AdminSubmissionDto> gradeSubmission(
             @PathVariable Long submissionId, 
             @RequestParam Double grade,
             @RequestParam(required = false) String feedback) {
@@ -133,6 +143,6 @@ public class AdminStudentController {
 
         submission.setGrade(grade);
         submission.setFeedback(feedback);
-        return ResponseEntity.ok(submissionRepository.save(submission));
+        return ResponseEntity.ok(adminLabService.convertToSubmissionDto(submissionRepository.save(submission)));
     }
 }

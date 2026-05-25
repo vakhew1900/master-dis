@@ -6,6 +6,7 @@
  */
 
 export * from './adminLabDto';
+export * from './adminSubmissionDto';
 export * from './adminTaskDto';
 export * from './authorDto';
 export * from './checkSolutionMethod';

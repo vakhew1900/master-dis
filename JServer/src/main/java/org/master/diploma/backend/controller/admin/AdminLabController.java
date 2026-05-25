@@ -4,71 +4,59 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.master.diploma.backend.config.Constants;
+import org.master.diploma.backend.dto.admin.AdminLabDto;
+import org.master.diploma.backend.dto.admin.AdminTaskDto;
 import org.master.diploma.backend.entity.LaboratoryWork;
-import org.master.diploma.backend.repository.LaboratoryWorkRepository;
+import org.master.diploma.backend.service.AdminLabService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
-import org.master.diploma.backend.entity.Task;
-import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping(Constants.Routes.ADMIN_LABS)
 @RequiredArgsConstructor
 @Tag(name = "Admin Lab Management", description = "Endpoints for teachers to manage laboratory works")
 public class AdminLabController {
-    private final LaboratoryWorkRepository laboratoryWorkRepository;
+    private final AdminLabService adminLabService;
 
     @GetMapping
     @Operation(summary = "Get all laboratory works")
-    public List<LaboratoryWork> getAllLabs() {
-        return laboratoryWorkRepository.findAll();
+    public List<AdminLabDto> getAllLabs() {
+        return adminLabService.getAllLabs();
     }
 
     @PostMapping
     @Operation(summary = "Create a new laboratory work")
-    public LaboratoryWork createLab(@RequestBody LaboratoryWork lab) {
-        return laboratoryWorkRepository.save(lab);
+    public AdminLabDto createLab(@RequestBody LaboratoryWork lab) {
+        return adminLabService.createLab(lab);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a laboratory work")
-    public ResponseEntity<LaboratoryWork> updateLab(@PathVariable Long id, @RequestBody LaboratoryWork labDetails) {
-        return laboratoryWorkRepository.findById(id)
-                .map(lab -> {
-                    lab.setNumber(labDetails.getNumber());
-                    lab.setTopic(labDetails.getTopic());
-                    lab.setDescription(labDetails.getDescription());
-                    return ResponseEntity.ok(laboratoryWorkRepository.save(lab));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<AdminLabDto> updateLab(@PathVariable Long id, @RequestBody LaboratoryWork labDetails) {
+        AdminLabDto updated = adminLabService.updateLab(id, labDetails);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get laboratory work by ID")
-    public ResponseEntity<LaboratoryWork> getLabById(@PathVariable Long id) {
-        return laboratoryWorkRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<AdminLabDto> getLabById(@PathVariable Long id) {
+        AdminLabDto lab = adminLabService.getLabById(id);
+        return lab != null ? ResponseEntity.ok(lab) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}/tasks")
     @Operation(summary = "Get all tasks for a specific laboratory work")
-    public ResponseEntity<List<Task>> getTasksByLabId(@PathVariable Long id) {
-        return laboratoryWorkRepository.findById(id)
-                .map(lab -> ResponseEntity.ok(lab.getTasks()))
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<List<AdminTaskDto>> getTasksByLabId(@PathVariable Long id) {
+        List<AdminTaskDto> tasks = adminLabService.getTasksByLabId(id);
+        return !tasks.isEmpty() ? ResponseEntity.ok(tasks) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a laboratory work")
     public ResponseEntity<Void> deleteLab(@PathVariable Long id) {
-        return laboratoryWorkRepository.findById(id)
-                .map(lab -> {
-                    laboratoryWorkRepository.delete(lab);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        adminLabService.deleteLab(id);
+        return ResponseEntity.ok().build();
     }
 }

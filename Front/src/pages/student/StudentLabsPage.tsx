@@ -14,12 +14,12 @@ import {
   Button
 } from '@mui/material';
 import { labService } from '../../services/labService';
-import type { LaboratoryWorkDto } from '../../api/generated/model';
+import type { StudentLabDto } from '../../api/generated/model';
 
 import StudentLabRow from '../../components/lab/StudentLabRow';
 
 const StudentLabsPage: React.FC = () => {
-  const [labs, setLabs] = useState<LaboratoryWorkDto[]>([]);
+  const [labs, setLabs] = useState<StudentLabDto[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 

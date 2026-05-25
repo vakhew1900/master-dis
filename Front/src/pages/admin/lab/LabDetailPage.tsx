@@ -27,15 +27,15 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { labService } from '../../../services/labService';
-import type { LaboratoryWork, UserResponseDto } from '../../../api/generated/model';
+import type { AdminLabDto, UserResponseDto } from '../../../api/generated/model';
 import styles from './LabDetailPage.module.css';
 
 import AdminTaskItem from '../../../components/lab/AdminTaskItem';
 
 const AdminLabDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [lab, setLab] = useState<LaboratoryWork | null>(null);
-  const [editLab, setEditLab] = useState<LaboratoryWork | null>(null);
+  const [lab, setLab] = useState<AdminLabDto | null>(null);
+  const [editLab, setEditLab] = useState<AdminLabDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [openAssign, setOpenAssign] = useState(false);

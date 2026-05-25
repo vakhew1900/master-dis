@@ -1,10 +1,10 @@
 import React from 'react';
 import { ListItem, ListItemIcon, ListItemText, Paper, Button } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import type { Task } from '../../api/generated/model';
+import type { AdminTaskDto } from '../../api/generated/model';
 
 interface AdminTaskItemProps {
-  task: Task;
+  task: AdminTaskDto;
   isEditing: boolean;
   onEdit: (id: number) => void;
   className?: string;

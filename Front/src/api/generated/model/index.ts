@@ -5,6 +5,8 @@
  * OpenAPI spec version: v0
  */
 
+export * from './adminLabDto';
+export * from './adminTaskDto';
 export * from './authorDto';
 export * from './checkSolutionMethod';
 export * from './checkSolutionParams';
@@ -26,16 +28,16 @@ export * from './gitComparisonResultDto';
 export * from './gitGraphDto';
 export * from './gradeSubmissionParams';
 export * from './laboratoryWork';
-export * from './laboratoryWorkDto';
 export * from './linkDto';
 export * from './login200';
 export * from './loginRequestDto';
 export * from './mergedGraphComparisonResultDto';
 export * from './nodeDto';
+export * from './studentLabDto';
 export * from './studentSubmission';
+export * from './studentTaskDto';
 export * from './submissionDto';
 export * from './task';
-export * from './taskDto';
 export * from './twoGraphComparisonResultDto';
 export * from './updateTaskBody';
 export * from './updateTaskParams';

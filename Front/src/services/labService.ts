@@ -1,57 +1,57 @@
 import { getOpenAPIDefinition } from '../api/generated/jserver';
 import type { 
-  LaboratoryWork, 
-  Task, 
+  AdminLabDto, 
+  AdminTaskDto, 
   UserResponseDto, 
   UserCreateDto, 
-  LaboratoryWorkDto,
+  StudentLabDto,
   StudentSubmission
 } from '../api/generated/model';
 
 const api = getOpenAPIDefinition();
 
-export type { LaboratoryWork, Task, UserResponseDto, StudentSubmission };
+export type { AdminLabDto, AdminTaskDto, UserResponseDto, StudentSubmission };
 
 export const labService = {
-  async getAllLabs(): Promise<LaboratoryWork[]> {
+  async getAllLabs(): Promise<AdminLabDto[]> {
     const data = await api.getAllLabs();
     console.log('labService.getAllLabs data:', data);
     return data;
   },
 
-  async getLabById(id: number): Promise<LaboratoryWork> {
+  async getLabById(id: number): Promise<AdminLabDto> {
     return await api.getLabById(id);
   },
 
-  async createLab(lab: LaboratoryWork): Promise<LaboratoryWork> {
-    return await api.createLab(lab);
+  async createLab(lab: AdminLabDto): Promise<AdminLabDto> {
+    return await api.createLab(lab as any);
   },
 
-  async updateLab(id: number, lab: LaboratoryWork): Promise<LaboratoryWork> {
-    return await api.updateLab(id, lab);
+  async updateLab(id: number, lab: AdminLabDto): Promise<AdminLabDto> {
+    return await api.updateLab(id, lab as any);
   },
 
   async deleteLab(id: number): Promise<void> {
     return await api.deleteLab(id);
   },
 
-  async createTask(labId: number, task: { number: number, description: string }, file?: File): Promise<Task> {
+  async createTask(labId: number, task: { number: number, description: string }, file?: File): Promise<AdminTaskDto> {
     return await api.createTask(
       { labId: labId, number: task.number, description: task.description },
       file ? { file: file as any } : undefined
     );
   },
 
-  async getTaskById(taskId: number): Promise<Task> {
-    return await api.getTaskById(taskId);
+  async getTaskById(taskId: number): Promise<AdminTaskDto> {
+    return await api.getTaskById(taskId) as AdminTaskDto;
   },
 
-  async updateTask(taskId: number, task: { number?: number, description?: string }, file?: File): Promise<Task> {
+  async updateTask(taskId: number, task: { number?: number, description?: string }, file?: File): Promise<AdminTaskDto> {
     return await api.updateTask(
       taskId,
       file ? { file: file as any } : undefined,
       { number: task.number, description: task.description }
-    );
+    ) as AdminTaskDto;
   },
 
   async getAllStudents(): Promise<UserResponseDto[]> {
@@ -83,8 +83,13 @@ export const labService = {
     return await api.gradeSubmission(submissionId, { grade, feedback });
   },
 
-  async getStudentLabs(): Promise<LaboratoryWorkDto[]> {
+  async getStudentLabs(): Promise<StudentLabDto[]> {
     return await api.getLabs();
+  },
+
+  async getStudentLabById(id: number): Promise<StudentLabDto | undefined> {
+    const labs = await api.getLabs();
+    return labs.find(l => l.id === id);
   },
 
   async uploadSolution(taskId: number, file: File): Promise<StudentSubmission> {

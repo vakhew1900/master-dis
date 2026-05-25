@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { graphService } from '../services/graphService';
 import { FileField } from '../components/common/FileField';
 import { REPORT_TYPES } from '../api/models/constants';
-import { isMergedResult } from '../api/utils';
+import { getComparisonResultState } from '../api/utils';
 import commonStyles from '../styles/common.module.css';
 import styles from './ComparisonPage.module.css';
 
@@ -25,10 +25,7 @@ const ComparisonPage: React.FC = () => {
       const result = await graphService.compareFiles(referenceFile, studentFile, { reportType: method });
       
       navigate('/comparison-result', { 
-        state: { 
-            result, 
-            type: isMergedResult(result) ? 'merged' : 'two' 
-        } 
+        state: getComparisonResultState(result)
       });
     } catch (error) {
         console.error('Comparison failed:', error);

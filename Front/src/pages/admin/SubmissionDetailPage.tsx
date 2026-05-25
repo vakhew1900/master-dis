@@ -18,6 +18,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { labService } from '../../services/labService';
 import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
+import { getComparisonResultState } from '../../api/utils';
 import type { StudentSubmission } from '../../api/generated/model';
 
 const SubmissionDetailPage: React.FC = () => {
@@ -65,11 +66,9 @@ const SubmissionDetailPage: React.FC = () => {
       try {
         const result = await graphService.checkSubmission(parseInt(submissionId), { reportType: reportType as any });
         
-        if (result.type === 'MergedGraphComparisonResultDto') {
-          navigate('/comparison-result', { state: { result, type: 'merged' } });
-        } else if (result.type === 'TwoGraphComparisonResultDto') {
-          navigate('/comparison-result', { state: { result, type: 'two' } });
-        }
+        navigate('/comparison-result', { 
+          state: getComparisonResultState(result)
+        });
       } catch (error) {
         console.error('Failed to check submission:', error);
       }
@@ -93,7 +92,11 @@ const SubmissionDetailPage: React.FC = () => {
       </Button>
 
       <Paper sx={{ p: 4 }}>
-        <Typography variant="h4">Решение: {submission.task?.description}</Typography>
+        <Typography variant="h4" gutterBottom>Решение: {submission.task?.description}</Typography>
+        <Typography variant="h6" color="text.secondary" gutterBottom>
+          Лабораторная работа №{submission.task?.lab?.number}: {submission.task?.lab?.topic}
+        </Typography>
+        <Divider sx={{ my: 2 }} />
         <Typography variant="subtitle1" sx={{ mt: 2 }}>Студент: {submission.student?.lastName} {submission.student?.firstName}</Typography>
         <Typography variant="body1" sx={{ mt: 2 }}>Оценка: {submission.grade ?? 'Не оценено'}</Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>Отзыв: {submission.feedback || 'Нет отзыва'}</Typography>

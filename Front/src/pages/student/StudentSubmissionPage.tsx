@@ -16,12 +16,13 @@ import { FileField } from '../../components/common/FileField';
 import { labService } from '../../services/labService';
 import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
-import type { LaboratoryWork } from '../../api/generated/model';
+import { getComparisonResultState } from '../../api/utils';
+import type { StudentLabDto } from '../../api/generated/model';
 
 const StudentSubmissionPage: React.FC = () => {
   const { labId } = useParams<{ labId: string }>();
   const navigate = useNavigate();
-  const [lab, setLab] = useState<LaboratoryWork | null>(null);
+  const [lab, setLab] = useState<StudentLabDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
@@ -35,8 +36,10 @@ const StudentSubmissionPage: React.FC = () => {
   const loadLabData = async (id: number) => {
     setLoading(true);
     try {
-      const data = await labService.getLabById(id);
-      setLab(data);
+      const data = await labService.getStudentLabById(id);
+      if (data) {
+        setLab(data);
+      }
     } catch (error) {
       console.error('Failed to load lab:', error);
     } finally {
@@ -44,29 +47,35 @@ const StudentSubmissionPage: React.FC = () => {
     }
   };
 
-  const currentGrade = (lab?.tasks || []).reduce((sum, t: any) => sum + (t.grade || 0), 0);
+  const currentGrade = (lab?.tasks || []).reduce((sum, t) => sum + (t.grade || 0), 0);
 
   const handleUpload = async () => {
-    if (selectedFile && labId) {
+    // If there are multiple tasks, we might need a selector. 
+    // For now, assume uploading to the first task if not specified.
+    const taskId = lab?.tasks?.[0]?.id;
+    
+    if (selectedFile && taskId) {
       try {
-        await labService.uploadSolution(parseInt(labId), selectedFile);
+        await labService.uploadSolution(taskId, selectedFile);
         alert('Решение загружено');
-        loadLabData(parseInt(labId)); // Refresh data
+        if (labId) loadLabData(parseInt(labId)); // Refresh data
       } catch (error) {
         console.error('Upload failed:', error);
       }
+    } else {
+      alert('Не выбрано задание или файл');
     }
   };
 
   const handleCheck = async () => {
-    if (labId) {
+    const taskId = lab?.tasks?.[0]?.id;
+    if (taskId) {
       try {
-        const result = await graphService.checkSolution(parseInt(labId), { reportType: reportType as any });
-        if (result.type === 'MergedGraphComparisonResultDto') {
-          navigate('/comparison-result', { state: { result, type: 'merged' } });
-        } else if (result.type === 'TwoGraphComparisonResultDto') {
-          navigate('/comparison-result', { state: { result, type: 'two' } });
-        }
+        const result = await graphService.checkSolution(taskId, { reportType: reportType as any });
+        
+        navigate('/comparison-result', { 
+          state: getComparisonResultState(result)
+        });
       } catch (error) {
         console.error('Check failed:', error);
       }
@@ -124,7 +133,7 @@ const StudentSubmissionPage: React.FC = () => {
                   <MenuItem key={key} value={value}>{key}</MenuItem>
                 ))}
               </TextField>
-              <Button variant="outlined" color="secondary" onClick={handleCheck}>
+              <Button variant="contained" onClick={handleCheck}>
                 Проверить
               </Button>
             </Stack>

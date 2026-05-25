@@ -182,7 +182,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/LaboratoryWork"
+                  "$ref": "#/components/schemas/AdminLabDto"
                 }
               }
             }
@@ -222,7 +222,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/LaboratoryWork"
+                  "$ref": "#/components/schemas/AdminLabDto"
                 }
               }
             }
@@ -273,7 +273,7 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "required": [
                   "file"
@@ -772,7 +772,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/LaboratoryWork"
+                    "$ref": "#/components/schemas/AdminLabDto"
                   }
                 }
               }
@@ -802,7 +802,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/LaboratoryWork"
+                  "$ref": "#/components/schemas/AdminLabDto"
                 }
               }
             }
@@ -825,7 +825,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/LaboratoryWorkDto"
+                    "$ref": "#/components/schemas/StudentLabDto"
                   }
                 }
               }
@@ -940,7 +940,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Task"
+                    "$ref": "#/components/schemas/AdminTaskDto"
                   }
                 }
               }
@@ -1050,6 +1050,54 @@
           },
           "lab": {
             "$ref": "#/components/schemas/LaboratoryWork"
+          }
+        }
+      },
+      "AdminLabDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "maxGrade": {
+            "type": "number",
+            "format": "double"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminTaskDto"
+            }
+          }
+        }
+      },
+      "AdminTaskDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string"
+          },
+          "referenceRepoPath": {
+            "type": "string"
           }
         }
       },
@@ -1387,7 +1435,7 @@
           }
         }
       },
-      "LaboratoryWorkDto": {
+      "StudentLabDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -1411,12 +1459,12 @@
           "tasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/TaskDto"
+              "$ref": "#/components/schemas/StudentTaskDto"
             }
           }
         }
       },
-      "TaskDto": {
+      "StudentTaskDto": {
         "type": "object",
         "properties": {
           "id": {

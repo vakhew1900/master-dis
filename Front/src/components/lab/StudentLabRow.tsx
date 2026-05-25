@@ -1,9 +1,9 @@
 import React from 'react';
 import { TableRow, TableCell, Typography, Button } from '@mui/material';
-import type { LaboratoryWorkDto } from '../../api/generated/model';
+import type { StudentLabDto } from '../../api/generated/model';
 
 interface StudentLabRowProps {
-  lab: LaboratoryWorkDto;
+  lab: StudentLabDto;
   onOpen: (id: number) => void;
 }
 

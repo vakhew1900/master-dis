@@ -1,10 +1,10 @@
 import React from 'react';
 import { TableRow, TableCell, IconButton } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import type { LaboratoryWork } from '../../api/generated/model';
+import type { AdminLabDto } from '../../api/generated/model';
 
 interface AdminLabRowProps {
-  lab: LaboratoryWork;
+  lab: AdminLabDto;
   onClick: (id: number) => void;
   onMenuOpen: (event: React.MouseEvent<HTMLButtonElement>, id: number) => void;
   className?: string;

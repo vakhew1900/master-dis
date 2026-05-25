@@ -7,7 +7,7 @@ import org.master.diploma.backend.config.Constants;
 import org.master.diploma.backend.entity.User;
 import org.master.diploma.backend.repository.UserRepository;
 import org.master.diploma.backend.service.LaboratoryWorkService;
-import org.master.diploma.backend.dto.LaboratoryWorkDto;
+import org.master.diploma.backend.dto.student_info.StudentLabDto;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +25,7 @@ public class StudentLabController {
 
     @GetMapping(Constants.Routes.STUDENT_LABS)
     @Operation(summary = "Get all laboratory works with assigned tasks for current student")
-    public List<LaboratoryWorkDto> getLabs() {
+    public List<StudentLabDto> getLabs() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User student = userRepository.findByUsername(username).orElseThrow();
         return laboratoryWorkService.getLabsForStudent(student);

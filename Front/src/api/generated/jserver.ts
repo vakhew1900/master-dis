@@ -5,6 +5,8 @@
  * OpenAPI spec version: v0
  */
 import type {
+  AdminLabDto,
+  AdminTaskDto,
   CheckSolutionParams,
   CheckSubmissionParams,
   CompareFilesBody,
@@ -15,9 +17,9 @@ import type {
   GitComparisonResultDto,
   GradeSubmissionParams,
   LaboratoryWork,
-  LaboratoryWorkDto,
   Login200,
   LoginRequestDto,
+  StudentLabDto,
   StudentSubmission,
   Task,
   UpdateTaskBody,
@@ -82,8 +84,8 @@ const deleteTask = (
  */
 const getLabById = (
     id: number,
- options?: SecondParameter<typeof customInstance<LaboratoryWork>>,) => {
-      return customInstance<LaboratoryWork>(
+ options?: SecondParameter<typeof customInstance<AdminLabDto>>,) => {
+      return customInstance<AdminLabDto>(
       {url: `/api/admin/labs/${id}`, method: 'GET'
     },
       options);
@@ -95,8 +97,8 @@ const getLabById = (
 const updateLab = (
     id: number,
     laboratoryWork: LaboratoryWork,
- options?: SecondParameter<typeof customInstance<LaboratoryWork>>,) => {
-      return customInstance<LaboratoryWork>(
+ options?: SecondParameter<typeof customInstance<AdminLabDto>>,) => {
+      return customInstance<AdminLabDto>(
       {url: `/api/admin/labs/${id}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
       data: laboratoryWork
@@ -122,11 +124,15 @@ const deleteLab = (
 const uploadSolution = (
     id: number,
     uploadSolutionBody?: UploadSolutionBody,
- options?: SecondParameter<typeof customInstance<StudentSubmission>>,) => {
+ options?: SecondParameter<typeof customInstance<StudentSubmission>>,) => {const formData = new FormData();
+if(uploadSolutionBody?.file !== undefined) {
+ formData.append(`file`, uploadSolutionBody.file);
+ }
+
       return customInstance<StudentSubmission>(
       {url: `/api/student/${id}/upload`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: uploadSolutionBody
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData
     },
       options);
     }
@@ -286,8 +292,8 @@ const checkSubmission = (
  */
 const getAllLabs = (
 
- options?: SecondParameter<typeof customInstance<LaboratoryWork[]>>,) => {
-      return customInstance<LaboratoryWork[]>(
+ options?: SecondParameter<typeof customInstance<AdminLabDto[]>>,) => {
+      return customInstance<AdminLabDto[]>(
       {url: `/api/admin/labs`, method: 'GET'
     },
       options);
@@ -298,8 +304,8 @@ const getAllLabs = (
  */
 const createLab = (
     laboratoryWork: LaboratoryWork,
- options?: SecondParameter<typeof customInstance<LaboratoryWork>>,) => {
-      return customInstance<LaboratoryWork>(
+ options?: SecondParameter<typeof customInstance<AdminLabDto>>,) => {
+      return customInstance<AdminLabDto>(
       {url: `/api/admin/labs`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: laboratoryWork
@@ -312,8 +318,8 @@ const createLab = (
  */
 const getLabs = (
 
- options?: SecondParameter<typeof customInstance<LaboratoryWorkDto[]>>,) => {
-      return customInstance<LaboratoryWorkDto[]>(
+ options?: SecondParameter<typeof customInstance<StudentLabDto[]>>,) => {
+      return customInstance<StudentLabDto[]>(
       {url: `/api/student/api/student/labs`, method: 'GET'
     },
       options);
@@ -360,8 +366,8 @@ const getAllSubmissions = (
  */
 const getTasksByLabId = (
     id: number,
- options?: SecondParameter<typeof customInstance<Task[]>>,) => {
-      return customInstance<Task[]>(
+ options?: SecondParameter<typeof customInstance<AdminTaskDto[]>>,) => {
+      return customInstance<AdminTaskDto[]>(
       {url: `/api/admin/labs/${id}/tasks`, method: 'GET'
     },
       options);

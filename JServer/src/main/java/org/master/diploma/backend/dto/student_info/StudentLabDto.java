@@ -1,4 +1,4 @@
-package org.master.diploma.backend.dto;
+package org.master.diploma.backend.dto.student_info;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,11 +10,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LaboratoryWorkDto {
+public class StudentLabDto {
     private Long id;
     private Integer number;
     private String topic;
     private String description;
     private Double maxGrade;
-    private List<TaskDto> tasks;
+    private List<StudentTaskDto> tasks;
 }

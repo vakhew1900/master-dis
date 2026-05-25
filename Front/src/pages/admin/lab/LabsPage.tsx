@@ -19,13 +19,13 @@ import {
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 import { labService } from '../../../services/labService';
-import type { LaboratoryWork } from '../../../api/generated/model';
+import type { AdminLabDto } from '../../../api/generated/model';
 import styles from './LabsPage.module.css';
 
 import AdminLabRow from '../../../components/lab/AdminLabRow';
 
 const LabsPage: React.FC = () => {
-  const [labs, setLabs] = useState<LaboratoryWork[]>([]);
+  const [labs, setLabs] = useState<AdminLabDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedLabId, setSelectedLabId] = useState<number | null>(null);

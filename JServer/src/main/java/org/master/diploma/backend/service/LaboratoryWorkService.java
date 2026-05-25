@@ -1,8 +1,8 @@
 package org.master.diploma.backend.service;
 
 import lombok.RequiredArgsConstructor;
-import org.master.diploma.backend.dto.LaboratoryWorkDto;
-import org.master.diploma.backend.dto.TaskDto;
+import org.master.diploma.backend.dto.student_info.StudentLabDto;
+import org.master.diploma.backend.dto.student_info.StudentTaskDto;
 import org.master.diploma.backend.entity.LaboratoryWork;
 import org.master.diploma.backend.entity.StudentSubmission;
 import org.master.diploma.backend.entity.Task;
@@ -21,7 +21,7 @@ public class LaboratoryWorkService {
     private final LaboratoryWorkRepository laboratoryWorkRepository;
     private final StudentSubmissionRepository studentSubmissionRepository;
 
-    public List<LaboratoryWorkDto> getLabsForStudent(User student) {
+    public List<StudentLabDto> getLabsForStudent(User student) {
         List<LaboratoryWork> labs = laboratoryWorkRepository.findAll();
         List<StudentSubmission> submissions = studentSubmissionRepository.findByStudent(student);
 
@@ -30,11 +30,11 @@ public class LaboratoryWorkService {
                 .collect(Collectors.toMap(s -> s.getTask().getId(), s -> s));
 
         return labs.stream().map(lab -> {
-            List<TaskDto> taskDtos = lab.getTasks().stream()
+            List<StudentTaskDto> taskDtos = lab.getTasks().stream()
                     .filter(task -> taskSubmissions.containsKey(task.getId()))
                     .map(task -> {
                         StudentSubmission submission = taskSubmissions.get(task.getId());
-                        return TaskDto.builder()
+                        return StudentTaskDto.builder()
                                 .id(task.getId())
                                 .number(task.getNumber())
                                 .description(task.getDescription())
@@ -46,7 +46,7 @@ public class LaboratoryWorkService {
                     })
                     .collect(Collectors.toList());
 
-            return LaboratoryWorkDto.builder()
+            return StudentLabDto.builder()
                     .id(lab.getId())
                     .number(lab.getNumber())
                     .topic(lab.getTopic())

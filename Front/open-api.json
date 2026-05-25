@@ -437,6 +437,84 @@
         }
       }
     },
+    "/api/comparison/admin/task/{taskId}/check": {
+      "post": {
+        "tags": [
+          "Comparison Operations"
+        ],
+        "summary": "Compare an uploaded repository with a reference task repository (Admin)",
+        "operationId": "checkRepositoryByTaskId",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "reportType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "MERGED_GRAPH",
+              "enum": [
+                "TWO_GRAPH",
+                "MERGED_GRAPH"
+              ]
+            }
+          },
+          {
+            "name": "method",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "BRANCH",
+              "enum": [
+                "BRANCH",
+                "BRUTE_FORCE",
+                "DP",
+                "UNIQUE_LABEL"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitComparisonResultDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/login": {
       "post": {
         "tags": [

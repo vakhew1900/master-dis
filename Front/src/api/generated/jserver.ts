@@ -8,6 +8,8 @@ import type {
   AdminLabDto,
   AdminSubmissionDto,
   AdminTaskDto,
+  CheckRepositoryByTaskIdBody,
+  CheckRepositoryByTaskIdParams,
   CheckSolutionParams,
   CheckSubmissionParams,
   CompareFilesBody,
@@ -168,6 +170,27 @@ if(compareFilesBody?.student !== undefined) {
 
       return customInstance<GitComparisonResultDto>(
       {url: `/api/comparison/compare-files`, method: 'POST',
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData,
+        params
+    },
+      options);
+    }
+
+/**
+ * @summary Compare an uploaded repository with a reference task repository (Admin)
+ */
+const checkRepositoryByTaskId = (
+    taskId: number,
+    checkRepositoryByTaskIdBody?: CheckRepositoryByTaskIdBody,
+    params?: CheckRepositoryByTaskIdParams,
+ options?: SecondParameter<typeof customInstance<GitComparisonResultDto>>,) => {const formData = new FormData();
+if(checkRepositoryByTaskIdBody?.file !== undefined) {
+ formData.append(`file`, checkRepositoryByTaskIdBody.file);
+ }
+
+      return customInstance<GitComparisonResultDto>(
+      {url: `/api/comparison/admin/task/${taskId}/check`, method: 'POST',
       headers: {'Content-Type': 'multipart/form-data', },
        data: formData,
         params
@@ -398,7 +421,7 @@ const removeAssignment = (
       options);
     }
 
-return {getTaskById,updateTask,deleteTask,getLabById,updateLab,deleteLab,uploadSolution,checkSolution,compareFiles,login,getAllTasks,createTask,getAllStudents,createStudent,assignTask,gradeSubmission,checkSubmission,getAllLabs,createLab,getLabs,getCurrentUser,getStudentSubmissions,getAllSubmissions,getTasksByLabId,deleteUser,removeAssignment}};
+return {getTaskById,updateTask,deleteTask,getLabById,updateLab,deleteLab,uploadSolution,checkSolution,compareFiles,checkRepositoryByTaskId,login,getAllTasks,createTask,getAllStudents,createStudent,assignTask,gradeSubmission,checkSubmission,getAllLabs,createLab,getLabs,getCurrentUser,getStudentSubmissions,getAllSubmissions,getTasksByLabId,deleteUser,removeAssignment}};
 export type GetTaskByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['getTaskById']>>>
 export type UpdateTaskResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['updateTask']>>>
 export type DeleteTaskResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['deleteTask']>>>
@@ -408,6 +431,7 @@ export type DeleteLabResult = NonNullable<Awaited<ReturnType<ReturnType<typeof g
 export type UploadSolutionResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['uploadSolution']>>>
 export type CheckSolutionResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['checkSolution']>>>
 export type CompareFilesResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['compareFiles']>>>
+export type CheckRepositoryByTaskIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['checkRepositoryByTaskId']>>>
 export type LoginResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['login']>>>
 export type GetAllTasksResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['getAllTasks']>>>
 export type CreateTaskResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['createTask']>>>

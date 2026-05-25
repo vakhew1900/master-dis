@@ -26,5 +26,13 @@ export const graphService = {
     params: { reportType?: "TWO_GRAPH" | "MERGED_GRAPH"; method?: "BRANCH" | "BRUTE_FORCE" | "DP" | "UNIQUE_LABEL" } = {}
   ): Promise<GitComparisonResult> => {
     return await api.checkSubmission(submissionId, params);
+  },
+
+  checkRepositoryByTaskId: async (
+    taskId: number,
+    file: File,
+    params: { reportType?: "TWO_GRAPH" | "MERGED_GRAPH"; method?: "BRANCH" | "BRUTE_FORCE" | "DP" | "UNIQUE_LABEL" } = {}
+  ): Promise<GitComparisonResult> => {
+    return await api.checkRepositoryByTaskId(taskId, { file }, params);
   }
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Network, DataSet } from 'vis-network/standalone';
+import  { Network, DataSet} from 'vis-network/standalone';
 import type { GitGraphDto, NodeDto } from '../../../api/generated/model';
 import { SEVERITY, SEVERITY_COLORS } from '../../../api/models/constants';
 import { GraphNodeTooltip } from '../../../components/common/GraphNodeTooltip';
@@ -12,8 +12,21 @@ interface GraphCanvasProps {
   selectedNodeId: string | null;
 }
 
+interface CustomNodeRendererProps {
+  ctx: CanvasRenderingContext2D;
+  x: number;
+  y: number;
+  style: {
+    size?: number;
+    color: string | CanvasGradient | CanvasPattern;
+    borderColor: string | CanvasGradient | CanvasPattern;
+    borderWidth?: number;
+  };
+}
+
+
 const getCustomRenderer = (severity: string) => {
-  return ({ ctx, x, y, style }: any) => {
+  return ({ ctx, x, y, style }: CustomNodeRendererProps) => {
     const { size = 16, color, borderColor, borderWidth = 2 } = style;
     return {
       drawNode() {

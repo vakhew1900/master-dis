@@ -13,8 +13,20 @@ interface GraphCanvasProps {
   activeMovablePair?: { from: string; to: string } | null;
 }
 
+interface CustomNodeRendererProps {
+  ctx: CanvasRenderingContext2D;
+  x: number;
+  y: number;
+  style: {
+    size?: number;
+    color: string | CanvasGradient | CanvasPattern;
+    borderColor: string | CanvasGradient | CanvasPattern;
+    borderWidth?: number;
+  };
+}
+
 const getCustomRenderer = (severity: string) => {
-  return ({ ctx, x, y, style }: any) => {
+  return ({ ctx, x, y, style }: CustomNodeRendererProps) => {
     const { size = 16, color, borderColor, borderWidth = 2 } = style;
     return {
       drawNode() {

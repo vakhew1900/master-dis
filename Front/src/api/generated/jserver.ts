@@ -17,14 +17,15 @@ import type {
   CreateTaskBody,
   CreateTaskParams,
   GetAllTasks200,
-  GitComparisonResultDto,
   GradeSubmissionParams,
   LaboratoryWork,
   Login200,
   LoginRequestDto,
+  MergedGraphComparisonResultDto,
   StudentLabDto,
   StudentSubmission,
   Task,
+  TwoGraphComparisonResultDto,
   UpdateTaskBody,
   UpdateTaskParams,
   UploadSolutionBody,
@@ -146,8 +147,8 @@ if(uploadSolutionBody?.file !== undefined) {
 const checkSolution = (
     id: number,
     params?: CheckSolutionParams,
- options?: SecondParameter<typeof customInstance<GitComparisonResultDto>>,) => {
-      return customInstance<GitComparisonResultDto>(
+ options?: SecondParameter<typeof customInstance<MergedGraphComparisonResultDto | TwoGraphComparisonResultDto>>,) => {
+      return customInstance<MergedGraphComparisonResultDto | TwoGraphComparisonResultDto>(
       {url: `/api/student/${id}/check`, method: 'POST',
         params
     },
@@ -160,7 +161,7 @@ const checkSolution = (
 const compareFiles = (
     compareFilesBody?: CompareFilesBody,
     params?: CompareFilesParams,
- options?: SecondParameter<typeof customInstance<GitComparisonResultDto>>,) => {const formData = new FormData();
+ options?: SecondParameter<typeof customInstance<MergedGraphComparisonResultDto | TwoGraphComparisonResultDto>>,) => {const formData = new FormData();
 if(compareFilesBody?.reference !== undefined) {
  formData.append(`reference`, compareFilesBody.reference);
  }
@@ -168,7 +169,7 @@ if(compareFilesBody?.student !== undefined) {
  formData.append(`student`, compareFilesBody.student);
  }
 
-      return customInstance<GitComparisonResultDto>(
+      return customInstance<MergedGraphComparisonResultDto | TwoGraphComparisonResultDto>(
       {url: `/api/comparison/compare-files`, method: 'POST',
       headers: {'Content-Type': 'multipart/form-data', },
        data: formData,
@@ -184,12 +185,12 @@ const checkRepositoryByTaskId = (
     taskId: number,
     checkRepositoryByTaskIdBody?: CheckRepositoryByTaskIdBody,
     params?: CheckRepositoryByTaskIdParams,
- options?: SecondParameter<typeof customInstance<GitComparisonResultDto>>,) => {const formData = new FormData();
+ options?: SecondParameter<typeof customInstance<MergedGraphComparisonResultDto | TwoGraphComparisonResultDto>>,) => {const formData = new FormData();
 if(checkRepositoryByTaskIdBody?.file !== undefined) {
  formData.append(`file`, checkRepositoryByTaskIdBody.file);
  }
 
-      return customInstance<GitComparisonResultDto>(
+      return customInstance<MergedGraphComparisonResultDto | TwoGraphComparisonResultDto>(
       {url: `/api/comparison/admin/task/${taskId}/check`, method: 'POST',
       headers: {'Content-Type': 'multipart/form-data', },
        data: formData,
@@ -303,8 +304,8 @@ const gradeSubmission = (
 const checkSubmission = (
     submissionId: number,
     params?: CheckSubmissionParams,
- options?: SecondParameter<typeof customInstance<GitComparisonResultDto>>,) => {
-      return customInstance<GitComparisonResultDto>(
+ options?: SecondParameter<typeof customInstance<MergedGraphComparisonResultDto | TwoGraphComparisonResultDto>>,) => {
+      return customInstance<MergedGraphComparisonResultDto | TwoGraphComparisonResultDto>(
       {url: `/api/admin/students/submissions/${submissionId}/check`, method: 'POST',
         params
     },

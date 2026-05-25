@@ -5,7 +5,8 @@ import type {
   UserResponseDto, 
   UserCreateDto, 
   StudentLabDto,
-  StudentSubmission
+  StudentSubmission,
+  AdminSubmissionDto
 } from '../api/generated/model';
 
 const api = getOpenAPIDefinition();
@@ -38,7 +39,7 @@ export const labService = {
   async createTask(labId: number, task: { number: number, description: string }, file?: File): Promise<AdminTaskDto> {
     return await api.createTask(
       { labId: labId, number: task.number, description: task.description },
-      file ? { file: file as any } : undefined
+      file ? { file: file as File } : undefined
     );
   },
 
@@ -66,11 +67,11 @@ export const labService = {
     return await api.deleteUser(id);
   },
 
-  async assignTask(taskId: number, studentId: number): Promise<StudentSubmission> {
+  async assignTask(taskId: number, studentId: number): Promise<AdminSubmissionDto> {
     return await api.assignTask(studentId, taskId);
   },
 
-  async getSubmissionById(id: number): Promise<StudentSubmission> {
+  async getSubmissionById(id: number): Promise<AdminSubmissionDto> {
     // There is no direct getSubmissionById in the schema, but we have getStudentSubmissions or getAllSubmissions.
     // Based on the pages, we might need to filter.
     const submissions = await api.getAllSubmissions();
@@ -79,7 +80,7 @@ export const labService = {
     return found;
   },
 
-  async gradeSubmission(submissionId: number, grade: number, feedback: string): Promise<StudentSubmission> {
+  async gradeSubmission(submissionId: number, grade: number, feedback: string): Promise<AdminSubmissionDto> {
     return await api.gradeSubmission(submissionId, { grade, feedback });
   },
 

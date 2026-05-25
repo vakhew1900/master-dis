@@ -355,7 +355,14 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/GitComparisonResultDto"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/MergedGraphComparisonResultDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TwoGraphComparisonResultDto"
+                    }
+                  ]
                 }
               }
             }
@@ -429,7 +436,14 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/GitComparisonResultDto"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/MergedGraphComparisonResultDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TwoGraphComparisonResultDto"
+                    }
+                  ]
                 }
               }
             }
@@ -507,7 +521,14 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/GitComparisonResultDto"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/MergedGraphComparisonResultDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TwoGraphComparisonResultDto"
+                    }
+                  ]
                 }
               }
             }
@@ -827,7 +848,14 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/GitComparisonResultDto"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/MergedGraphComparisonResultDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TwoGraphComparisonResultDto"
+                    }
+                  ]
                 }
               }
             }
@@ -1289,15 +1317,7 @@
         },
         "discriminator": {
           "propertyName": "type"
-        },
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/TwoGraphComparisonResultDto"
-          },
-          {
-            "$ref": "#/components/schemas/MergedGraphComparisonResultDto"
-          }
-        ]
+        }
       },
       "GitGraphDto": {
         "type": "object",
@@ -1334,6 +1354,11 @@
         "description": "DTO for a link (edge) between two commits"
       },
       "MergedGraphComparisonResultDto": {
+        "required": [
+          "compare_result",
+          "merged_graph",
+          "type"
+        ],
         "type": "object",
         "description": "DTO for the merged view of two Git graphs.",
         "allOf": [
@@ -1399,6 +1424,12 @@
         "description": "DTO for a single node (commit) in the Git graph"
       },
       "TwoGraphComparisonResultDto": {
+        "required": [
+          "compare_result",
+          "first_graph",
+          "second_graph",
+          "type"
+        ],
         "type": "object",
         "description": "DTO for the traditional side-by-side comparison of two Git graphs.",
         "allOf": [

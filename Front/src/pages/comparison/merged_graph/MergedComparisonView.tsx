@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import type { components } from '../../../api/models/schema';
 import { SEVERITY } from '../../../api/models/constants';
 import { MergedGraphLegend } from './MergedGraphLegend';
 import { GraphCanvas } from './GraphCanvas';
 import { CommitDetailsPanel } from './CommitDetailsPanel';
 import styles from './MergedComparisonView.module.css';
+import type { CompareResultDto, MergedGraphComparisonResultDto, NodeDto } from '../../../api/generated/model';
 
-type MergedGraphResult = components["schemas"]["MergedGraphComparisonResultDto"];
-type NodeDto = components["schemas"]["NodeDto"];
 
 interface MergedComparisonViewProps {
-  result: MergedGraphResult;
+  result: MergedGraphComparisonResultDto;
 }
+
 
 export const MergedComparisonView: React.FC<MergedComparisonViewProps> = ({ result }) => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -28,13 +27,12 @@ export const MergedComparisonView: React.FC<MergedComparisonViewProps> = ({ resu
 
     const node = result.merged_graph?.nodes?.find(n => n.id === nodeId);
     if (node && node.severity === SEVERITY.MOVABLE) {
-        const mapping = (result.compare_result as any)?.matched_hashes_1_to_2 || {};
+        const mapping = (result.compare_result as CompareResultDto)?.matched_hashes_1_to_2 || {};
         const nodeHash = node.hash?.trim();
         const nodeId = node.id;
 
         console.log("Looking for:", { nodeId, nodeHash });
 
-        let counterpart: { id?: string, hash?: string } | undefined;
 
         // Try to find counterpart entry in the mapping
         const counterpartEntry = Object.entries(mapping).find(
@@ -69,10 +67,10 @@ export const MergedComparisonView: React.FC<MergedComparisonViewProps> = ({ resu
   let referenceNode: NodeDto | null = null;
 
   if (activeMovablePair) {
-      studentNode = result.merged_graph.nodes?.find(n => n.id === activeMovablePair.from || n.id === activeMovablePair.to) || null;
-      referenceNode = result.merged_graph.nodes?.find(n => n.id !== studentNode?.id && (n.id === activeMovablePair.from || n.id === activeMovablePair.to)) || null;
+      studentNode = result.merged_graph?.nodes?.find(n => n.id === activeMovablePair.from || n.id === activeMovablePair.to) || null;
+      referenceNode = result.merged_graph?.nodes?.find(n => n.id !== studentNode?.id && (n.id === activeMovablePair.from || n.id === activeMovablePair.to)) || null;
   } else if (selectedNodeId) {
-      studentNode = result.merged_graph.nodes?.find(n => n.id === selectedNodeId) || null;
+      studentNode = result.merged_graph?.nodes?.find(n => n.id === selectedNodeId) || null;
   }
 
   return (
@@ -82,7 +80,7 @@ export const MergedComparisonView: React.FC<MergedComparisonViewProps> = ({ resu
       <div className={styles.mainLayout}>
         <div className={styles.graphColumn}>
           <GraphCanvas 
-            data={result.merged_graph} 
+            data={result.merged_graph!} 
             title="Объединенный граф (Merged Graph)" 
             onNodeSelect={handleNodeSelect}
             selectedNodeId={selectedNodeId}

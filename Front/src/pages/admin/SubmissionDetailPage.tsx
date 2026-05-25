@@ -8,10 +8,6 @@ import {
   Paper,
   TextField,
   Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   MenuItem
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -30,23 +26,26 @@ const SubmissionDetailPage: React.FC = () => {
   const [openGrade, setOpenGrade] = useState(false);
   const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
 
+
+  const loadSubmission = async (id: number) => {
+  setLoading(true);
+  try {
+    const data = await labService.getSubmissionById(id);
+    setSubmission(data);
+  } catch (error) {
+    console.error('Failed to load submission:', error);
+  } finally {
+    setLoading(false);
+  }
+}
+
   useEffect(() => {
     if (submissionId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       loadSubmission(parseInt(submissionId));
     }
   }, [submissionId]);
-
-  const loadSubmission = async (id: number) => {
-    setLoading(true);
-    try {
-      const data = await labService.getSubmissionById(id);
-      setSubmission(data as any);
-    } catch (error) {
-      console.error('Failed to load submission:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+;
 
   const handleGrade = async (grade: number, feedback: string) => {
     if (submissionId) {
@@ -63,7 +62,12 @@ const SubmissionDetailPage: React.FC = () => {
   const handleCheck = async () => {
     if (submissionId) {
       try {
-        const result = await graphService.checkSubmission(parseInt(submissionId), { reportType: reportType as any });
+        const params = { reportType } as { 
+        reportType?: "TWO_GRAPH" | "MERGED_GRAPH";
+        method?: "BRANCH" | "BRUTE_FORCE" | "DP" | "UNIQUE_LABEL";
+      };
+
+        const result = await graphService.checkSubmission(parseInt(submissionId), params);
         
         navigate('/comparison-result', { 
           state: getComparisonResultState(result)

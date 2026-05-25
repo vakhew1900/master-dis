@@ -4,7 +4,7 @@ import { Button, Typography } from '@mui/material';
 import type { SubmissionDto } from '../../api/generated/model';
 
 interface SubmissionCellProps {
-  labNumber: number;
+  labNumber?: number;
   submission?: SubmissionDto;
 }
 

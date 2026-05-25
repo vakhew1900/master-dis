@@ -27,13 +27,8 @@ const StudentSubmissionPage: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
 
-  useEffect(() => {
-    if (labId) {
-      loadLabData(parseInt(labId));
-    }
-  }, [labId]);
 
-  const loadLabData = async (id: number) => {
+    const loadLabData = async (id: number) => {
     setLoading(true);
     try {
       const data = await labService.getStudentLabById(id);
@@ -46,6 +41,14 @@ const StudentSubmissionPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (labId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      loadLabData(parseInt(labId));
+    }
+  }, [labId]);
+
 
   const currentGrade = (lab?.tasks || []).reduce((sum, t) => sum + (t.grade || 0), 0);
 
@@ -71,7 +74,12 @@ const StudentSubmissionPage: React.FC = () => {
     const taskId = lab?.tasks?.[0]?.id;
     if (taskId) {
       try {
-        const result = await graphService.checkSolution(taskId, { reportType: reportType as any });
+        const params = { reportType } as { 
+        reportType?: "TWO_GRAPH" | "MERGED_GRAPH";
+        method?: "BRANCH" | "BRUTE_FORCE" | "DP" | "UNIQUE_LABEL";
+      };
+
+        const result = await graphService.checkSolution(taskId, params);
         
         navigate('/comparison-result', { 
           state: getComparisonResultState(result)

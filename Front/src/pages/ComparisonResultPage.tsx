@@ -5,6 +5,7 @@ import { GraphCanvas as TwoGraphCanvas } from './comparison/two_graph/GraphCanva
 import { CommitDetailsPanel as TwoGraphDetailsPanel } from './comparison/two_graph/CommitDetailsPanel';
 import { MergedComparisonView } from './comparison/merged_graph/MergedComparisonView';
 import type { NodeDto } from '../api/generated/model';
+import type {CompareResultDtoMatchedHashes1To2} from '../api/generated/model';
 import styles from './ComparisonResultPage.module.css';
 import { isMergedResult, isTwoGraphResult } from '../api/utils';
 
@@ -13,6 +14,8 @@ const ComparisonResultPage: React.FC = () => {
   const result = location.state?.result;
 
   console.log(location)
+  const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
+
   if (!result) {
     return <div className="container">Нет данных для отображения.</div>;
   }
@@ -21,8 +24,7 @@ const ComparisonResultPage: React.FC = () => {
   if (isTwoGraphResult(result)) {
       const { first_graph, second_graph, compare_result } = result;
       
-      // Логика синхронизации для двух графов (дублируем из старой версии для стабильности)
-      const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
+      // Логика синхронизации для двух графов (дублируем из старой версии для стабильности
       const handleNodeSelect = (id: string | null) => setSelectedNodeId(id);
 
       const getCounterpartId = (nodeId: string | null) => {
@@ -34,10 +36,10 @@ const ComparisonResultPage: React.FC = () => {
       };
 
       const counterpartId = getCounterpartId(selectedNodeId);
-      const studentNode = first_graph.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
-                       || first_graph.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
-      const referenceNode = second_graph.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
-                         || second_graph.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
+      const studentNode = first_graph?.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
+                       || first_graph?.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
+      const referenceNode = second_graph?.nodes?.find((n: NodeDto) => n.id === selectedNodeId) 
+                         || second_graph?.nodes?.find((n: NodeDto) => n.id === counterpartId) || null;
 
       return (
         <div className="container">

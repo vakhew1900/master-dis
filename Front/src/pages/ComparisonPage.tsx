@@ -24,15 +24,9 @@ const ComparisonPage: React.FC = () => {
   const [taskId, setTaskId] = useState('');
   const [taskFile, setTaskFile] = useState<File | null>(null);
   
-  const [method, setMethod] = useState<"TWO_GRAPH" | "MERGED_GRAPH">(REPORT_TYPES.TWO_GRAPH as any);
+  const [method, setMethod] = useState<"TWO_GRAPH" | "MERGED_GRAPH">(REPORT_TYPES.TWO_GRAPH);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user?.role === USER_ROLES.ADMIN) {
-        loadTasks();
-    }
-  }, [user]);
 
   const loadTasks = async () => {
       // Assuming we need a way to fetch all tasks. 
@@ -43,6 +37,14 @@ const ComparisonPage: React.FC = () => {
       const allTasks = labs.flatMap(l => l.tasks || []);
       setTasks(allTasks);
   };
+
+  useEffect(() => {
+    if (user?.role === USER_ROLES.ADMIN) {
+         // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadTasks();
+    }
+  }, [user]);
+
 
   const handleCompare = async () => {
     setLoading(true);
@@ -95,7 +97,7 @@ const ComparisonPage: React.FC = () => {
 
       <Box sx={{ mt: 3 }}>
         <label>Метод сравнения</label>
-        <select value={method} onChange={(e) => setMethod(e.target.value as any)} className={styles.select}>
+        <select value={method} onChange={(e) => setMethod(e.target.value as "TWO_GRAPH" | "MERGED_GRAPH")} className={styles.select}>
             <option value="TWO_GRAPH">Two Graph (Side-by-side)</option>
             <option value="MERGED_GRAPH">Merged Graph</option>
         </select>

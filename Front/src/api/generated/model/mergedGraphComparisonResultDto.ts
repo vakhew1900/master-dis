@@ -12,6 +12,6 @@ import type { GitGraphDto } from './gitGraphDto';
  * DTO for the merged view of two Git graphs.
  */
 export type MergedGraphComparisonResultDto = GitComparisonResultDto & {
-  merged_graph?: GitGraphDto;
-  compare_result?: CompareResultDto;
+  merged_graph: GitGraphDto;
+  compare_result: CompareResultDto;
 };

@@ -11,7 +11,6 @@ import {
   Paper,
   Box,
   CircularProgress,
-  Button
 } from '@mui/material';
 import { labService } from '../../services/labService';
 import type { StudentLabDto } from '../../api/generated/model';
@@ -22,10 +21,6 @@ const StudentLabsPage: React.FC = () => {
   const [labs, setLabs] = useState<StudentLabDto[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    loadLabs();
-  }, []);
 
   const loadLabs = async () => {
     setLoading(true);
@@ -39,6 +34,12 @@ const StudentLabsPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+     // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadLabs();
+  }, []);
+
 
   const handleOpenLab = (id: number) => {
     navigate(`/student/submission/${id}`);

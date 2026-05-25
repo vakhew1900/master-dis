@@ -14,12 +14,11 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  TextField
+  DialogActions
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { labService } from '../../services/labService';
-import type { UserResponseDto, UserCreateDto } from '../../api/generated/model';
+import type { UserResponseDto, UserCreateDto, SubmissionDto } from '../../api/generated/model';
 import SubmissionCell from '../../components/common/SubmissionCell';
 import { ActionsMenu } from '../../components/common/ActionsMenu';
 import { useNotification } from '../../components/common/NotificationManager';
@@ -32,11 +31,7 @@ const StudentsPage: React.FC = () => {
   const [openDelete, setOpenDelete] = useState<number | null>(null);
   const { showNotification, NotificationComponent } = useNotification();
   
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+    const loadData = async () => {
     setLoading(true);
     try {
       const data = await labService.getAllStudents();
@@ -48,13 +43,20 @@ const StudentsPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadData();
+  }, []);
+
+
+
   const handleCreateStudent = async (student: UserCreateDto) => {
     try {
       await labService.createStudent(student);
       setOpenCreate(false);
       loadData();
       showNotification('Студент успешно создан', 'success');
-    } catch (error) {
+    } catch {
       showNotification('Ошибка создания студента', 'error');
     }
   };
@@ -65,7 +67,7 @@ const StudentsPage: React.FC = () => {
         await labService.deleteStudent(openDelete);
         setStudents(students.filter(s => s.id !== openDelete));
         showNotification('Студент успешно удален', 'success');
-      } catch (error) {
+      } catch {
         showNotification('Ошибка при удалении', 'error');
       }
       setOpenDelete(null);
@@ -102,7 +104,7 @@ const StudentsPage: React.FC = () => {
                 <TableCell>{student.username}</TableCell>
                 <TableCell>{`${student.lastName || ''} ${student.firstName || ''}`.trim()}</TableCell>
                 <TableCell>
-                  {(student.submissions || []).map((sub: any, index: number) => (
+                  {(student.submissions || []).map((sub: SubmissionDto, index: number) => (
                     <SubmissionCell key={index} labNumber={sub.labNumber} submission={sub} />
                   ))}
                 </TableCell>

@@ -10,13 +10,11 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton,
   Menu,
   MenuItem,
   Box,
   CircularProgress
 } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 import { labService } from '../../../services/labService';
 import type { AdminLabDto } from '../../../api/generated/model';

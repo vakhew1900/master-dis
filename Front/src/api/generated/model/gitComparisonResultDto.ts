@@ -4,11 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { MergedGraphComparisonResultDto } from './mergedGraphComparisonResultDto';
-import type { TwoGraphComparisonResultDto } from './twoGraphComparisonResultDto';
 
-export type GitComparisonResultDto = (TwoGraphComparisonResultDto & {
+export interface GitComparisonResultDto {
   type: string;
-}) | (MergedGraphComparisonResultDto & {
-  type: string;
-});
+}

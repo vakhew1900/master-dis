@@ -166,7 +166,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.master.diploma.git.GitGraphComparisonApp</mainClass>
+                            <mainClass>org.master.diploma.backend.JServerBackendApplication</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

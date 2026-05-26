@@ -19,6 +19,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: '#2b2b2b', // --panel-bg
+          backgroundImage: 'none',
         },
       },
     },

@@ -67,7 +67,7 @@ const AdminPage: React.FC = () => {
               </CardContent>
               <CardActions sx={{ p: 2, pt: 0 }}>
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   fullWidth
                   onClick={() => section.path !== "#" && navigate(section.path)}
                 >

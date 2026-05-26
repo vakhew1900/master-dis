@@ -52,7 +52,7 @@ const AdminPage: React.FC = () => {
         {sections.map((section) => (
           <Grid key={section.title} size={{ xs: 12, md: 4 }}>
             <Card
-              sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+              sx={{ height: "100%", display: "flex", flexDirection: "column", borderRadius: "6px"}}
             >
               <CardContent sx={{ flexGrow: 1 }}>
                 <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>

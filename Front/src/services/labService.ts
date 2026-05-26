@@ -6,7 +6,8 @@ import type {
   UserCreateDto, 
   StudentLabDto,
   StudentSubmission,
-  AdminSubmissionDto
+  AdminSubmissionDto,
+  LaboratoryWork
 } from '../api/generated/model';
 
 const api = getOpenAPIDefinition();
@@ -24,12 +25,12 @@ export const labService = {
     return await api.getLabById(id);
   },
 
-  async createLab(lab: AdminLabDto): Promise<AdminLabDto> {
-    return await api.createLab(lab as any);
+  async createLab(lab: LaboratoryWork): Promise<AdminLabDto> {
+    return await api.createLab(lab);
   },
 
-  async updateLab(id: number, lab: AdminLabDto): Promise<AdminLabDto> {
-    return await api.updateLab(id, lab as any);
+  async updateLab(id: number, lab: LaboratoryWork): Promise<AdminLabDto> {
+    return await api.updateLab(id, lab);
   },
 
   async deleteLab(id: number): Promise<void> {

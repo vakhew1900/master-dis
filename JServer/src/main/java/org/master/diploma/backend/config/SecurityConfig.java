@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .requestMatchers(Constants.Routes.AUTH + "/login").permitAll()
                 .requestMatchers(Constants.Routes.AUTH + "/me").authenticated()
                 .requestMatchers(Constants.Routes.COMPARISON + "/**").authenticated()
+                .requestMatchers(Constants.Routes.TASKS + "/**").authenticated()
                 .requestMatchers(Constants.Routes.ADMIN + "/**").hasRole(User.Role.ADMIN.name())
                 .requestMatchers(Constants.Routes.STUDENT + "/**").hasRole(User.Role.STUDENT.name())
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()

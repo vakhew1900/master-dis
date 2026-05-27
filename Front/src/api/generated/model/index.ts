@@ -43,6 +43,7 @@ export * from './studentSubmission';
 export * from './studentTaskDto';
 export * from './submissionDto';
 export * from './task';
+export * from './taskDto';
 export * from './twoGraphComparisonResultDto';
 export * from './updateTaskBody';
 export * from './updateTaskParams';

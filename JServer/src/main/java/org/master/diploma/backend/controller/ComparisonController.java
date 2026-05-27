@@ -38,7 +38,7 @@ public class ComparisonController {
     private final MinioService minioService;
     private final TaskRepository taskRepository;
 
-    @PostMapping(value = "/admin/task/{taskId}/check", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = Constants.Routes.COMPARE_FILES + "/task/{taskId}/check", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Compare an uploaded repository with a reference task repository (Admin)")
     public ResponseEntity<GitComparisonResultDto> checkRepositoryByTaskId(
             @PathVariable Long taskId,

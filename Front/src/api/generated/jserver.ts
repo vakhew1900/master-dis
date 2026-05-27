@@ -25,6 +25,7 @@ import type {
   StudentLabDto,
   StudentSubmission,
   Task,
+  TaskDto,
   TwoGraphComparisonResultDto,
   UpdateTaskBody,
   UpdateTaskParams,
@@ -191,7 +192,7 @@ if(checkRepositoryByTaskIdBody?.file !== undefined) {
  }
 
       return customInstance<MergedGraphComparisonResultDto | TwoGraphComparisonResultDto>(
-      {url: `/api/comparison/admin/task/${taskId}/check`, method: 'POST',
+      {url: `/api/comparison/compare-files/task/${taskId}/check`, method: 'POST',
       headers: {'Content-Type': 'multipart/form-data', },
        data: formData,
         params
@@ -339,6 +340,30 @@ const createLab = (
     }
 
 /**
+ * @summary Get all tasks for authorized users
+ */
+const getAllTasks1 = (
+
+ options?: SecondParameter<typeof customInstance<TaskDto[]>>,) => {
+      return customInstance<TaskDto[]>(
+      {url: `/api/tasks`, method: 'GET'
+    },
+      options);
+    }
+
+/**
+ * @summary Get task by ID for authorized users
+ */
+const getTaskById1 = (
+    id: number,
+ options?: SecondParameter<typeof customInstance<TaskDto>>,) => {
+      return customInstance<TaskDto>(
+      {url: `/api/tasks/${id}`, method: 'GET'
+    },
+      options);
+    }
+
+/**
  * @summary Get all laboratory works with assigned tasks for current student
  */
 const getLabs = (
@@ -422,7 +447,7 @@ const removeAssignment = (
       options);
     }
 
-return {getTaskById,updateTask,deleteTask,getLabById,updateLab,deleteLab,uploadSolution,checkSolution,compareFiles,checkRepositoryByTaskId,login,getAllTasks,createTask,getAllStudents,createStudent,assignTask,gradeSubmission,checkSubmission,getAllLabs,createLab,getLabs,getCurrentUser,getStudentSubmissions,getAllSubmissions,getTasksByLabId,deleteUser,removeAssignment}};
+return {getTaskById,updateTask,deleteTask,getLabById,updateLab,deleteLab,uploadSolution,checkSolution,compareFiles,checkRepositoryByTaskId,login,getAllTasks,createTask,getAllStudents,createStudent,assignTask,gradeSubmission,checkSubmission,getAllLabs,createLab,getAllTasks1,getTaskById1,getLabs,getCurrentUser,getStudentSubmissions,getAllSubmissions,getTasksByLabId,deleteUser,removeAssignment}};
 export type GetTaskByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['getTaskById']>>>
 export type UpdateTaskResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['updateTask']>>>
 export type DeleteTaskResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['deleteTask']>>>
@@ -443,6 +468,8 @@ export type GradeSubmissionResult = NonNullable<Awaited<ReturnType<ReturnType<ty
 export type CheckSubmissionResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['checkSubmission']>>>
 export type GetAllLabsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['getAllLabs']>>>
 export type CreateLabResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['createLab']>>>
+export type GetAllTasks1Result = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['getAllTasks1']>>>
+export type GetTaskById1Result = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['getTaskById1']>>>
 export type GetLabsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['getLabs']>>>
 export type GetCurrentUserResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['getCurrentUser']>>>
 export type GetStudentSubmissionsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getOpenAPIDefinition>['getStudentSubmissions']>>>

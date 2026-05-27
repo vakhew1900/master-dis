@@ -6,15 +6,15 @@ import { FileField } from '../components/common/FileField';
 import { REPORT_TYPES, USER_ROLES } from '../api/models/constants';
 import { getComparisonResultState } from '../api/utils';
 import { useAuth } from '../context/AuthContext';
-import { labService } from '../services/labService';
-import type { AdminTaskDto } from '../api/generated/model';
+import { taskService } from '../services/taskService';
+import type { TaskDto } from '../api/generated/model';
 import commonStyles from '../styles/common.module.css';
 import styles from './ComparisonPage.module.css';
 
 const ComparisonPage: React.FC = () => {
   const { user } = useAuth();
   const [tab, setTab] = useState(0);
-  const [tasks, setTasks] = useState<AdminTaskDto[]>([]);
+  const [tasks, setTasks] = useState<TaskDto[]>([]);
   
   // State for standard comparison
   const [studentFile, setStudentFile] = useState<File | null>(null);
@@ -29,21 +29,16 @@ const ComparisonPage: React.FC = () => {
   const navigate = useNavigate();
 
   const loadTasks = async () => {
-      // Assuming we need a way to fetch all tasks. 
-      // If no direct API, we might need to iterate labs.
-      // For now let's mock or use a known fetch method if exists.
-      // Based on available labService, let's list labs first then tasks.
-      const labs = await labService.getAllLabs();
-      const allTasks = labs.flatMap(l => l.tasks || []);
+      const allTasks = await taskService.getAllTasks();
       setTasks(allTasks);
   };
 
   useEffect(() => {
-    if (user?.role === USER_ROLES.ADMIN) {
-         // eslint-disable-next-line react-hooks/set-state-in-effect
-        loadTasks();
-    }
-  }, [user]);
+    // Both ADMIN and STUDENT should have access to tasks based on API definition
+     // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadTasks();
+  }, []);
+
 
 
   const handleCompare = async () => {
@@ -72,7 +67,7 @@ const ComparisonPage: React.FC = () => {
       
       <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} sx={{ mb: 3 }}>
         <Tab label="Сравнение двух ZIP" />
-        {user?.role === USER_ROLES.ADMIN && <Tab label="Проверка по заданию (Admin)" />}
+        {(user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.STUDENT) && <Tab label="Проверка по заданию (Демо)" />}
       </Tabs>
 
       {tab === 0 ? (

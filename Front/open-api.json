@@ -20,6 +20,10 @@
       "description": "Endpoints for students to view laboratory works and assignments"
     },
     {
+      "name": "Task Management",
+      "description": "Endpoints for all authorized users to view tasks"
+    },
+    {
       "name": "Comparison Operations",
       "description": "Endpoints for direct repository comparison via file uploads"
     },
@@ -451,7 +455,7 @@
         }
       }
     },
-    "/api/comparison/admin/task/{taskId}/check": {
+    "/api/comparison/compare-files/task/{taskId}/check": {
       "post": {
         "tags": [
           "Comparison Operations"
@@ -909,6 +913,62 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/AdminLabDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "get": {
+        "tags": [
+          "Task Management"
+        ],
+        "summary": "Get all tasks for authorized users",
+        "operationId": "getAllTasks_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}": {
+      "get": {
+        "tags": [
+          "Task Management"
+        ],
+        "summary": "Get task by ID for authorized users",
+        "operationId": "getTaskById_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
                 }
               }
             }
@@ -1574,6 +1634,25 @@
           "submittedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "TaskDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string"
+          },
+          "referenceRepoPath": {
+            "type": "string"
           }
         }
       },

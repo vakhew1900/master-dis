@@ -21,6 +21,8 @@ public class Constants {
 
         public static final String COMPARISON = API_PREFIX + "/comparison";
         public static final String COMPARE_FILES = "/compare-files";
+
+        public static final String TASKS = API_PREFIX + "/tasks";
     }
 
     public static class Buckets {

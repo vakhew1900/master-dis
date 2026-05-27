@@ -9,8 +9,5 @@ export interface TaskDto {
   id?: number;
   number?: number;
   description?: string;
-  grade?: number;
-  feedback?: string;
-  submittedAt?: string;
-  status?: string;
+  referenceRepoPath?: string;
 }

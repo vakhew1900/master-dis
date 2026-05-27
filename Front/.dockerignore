@@ -1,0 +1,23 @@
+# Build artifacts
+dist
+node_modules
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+
+# Project-specific
+.gemini
+dist
+node_modules
+*.log

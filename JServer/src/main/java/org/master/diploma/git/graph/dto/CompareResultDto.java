@@ -1,5 +1,6 @@
 package org.master.diploma.git.graph.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,9 +20,15 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "DTO representing the mapping between matched vertices in two graphs.")
 public class CompareResultDto {
 
-    @SerializedName("matched_hashes_1_to_2")
+    public static class FIELDS {
+        public static final String MATCHED_HASHES = "matched_hashes_1_to_2";
+    }
+
+    @SerializedName(FIELDS.MATCHED_HASHES)
+    @Schema(name = FIELDS.MATCHED_HASHES, description = "Map of commit hashes from graph 1 to graph 2")
     private Map<String, String> matchedHashes1To2;
 
     /**

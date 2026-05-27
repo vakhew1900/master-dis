@@ -1,0 +1,27 @@
+spring.application.name=JServer
+spring.datasource.url=jdbc:h2:mem:jserverdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+spring.jpa.hibernate.ddl-auto=update
+
+# OpenAPI
+springdoc.api-docs.path=/v3/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+
+# JSON
+spring.mvc.converters.preferred-json-mapper=gson
+
+# MinIO
+minio.url=http://localhost:9000
+minio.access-key=minioadmin
+minio.secret-key=minioadmin
+
+# Auth
+admin.initial-password=admin
+
+# Error Handling
+server.error.include-message=always
+server.error.include-binding-errors=always

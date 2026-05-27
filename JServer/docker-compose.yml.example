@@ -1,0 +1,36 @@
+services:
+  # MinIO - S3 compatible storage for repository archives
+  minio:
+    image: minio/minio:latest
+    container_name: jserver-minio
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # Web Console
+    environment:
+      CCMINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # PostgreSQL - Uncomment and update application.properties to use persistent DB
+  # db:
+  #   image: postgres:15-alpine
+  #   container_name: jserver-db
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_DB: jserverdb
+  #     POSTGRES_USER: sa
+  #     POSTGRES_PASSWORD: password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  minio_data:
+  # postgres_data:

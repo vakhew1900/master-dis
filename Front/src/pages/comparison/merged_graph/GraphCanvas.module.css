@@ -1,0 +1,24 @@
+.wrapper {
+    flex: 1;
+    background: var(--panel-bg);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    overflow: hidden; /* Prevent graph overflow */
+}
+
+.title {
+    margin: 0;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.canvas {
+    flex: 1;
+    height: 100%;
+    overflow: hidden; /* Ensure canvas stays inside */
+}

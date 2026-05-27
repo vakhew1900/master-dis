@@ -1,5 +1,6 @@
 package org.master.diploma.git.graph.dto.samples;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,36 +8,23 @@ import lombok.NoArgsConstructor;
 
 /**
  * Data Transfer Object for a link (edge) between two commits in the Git graph.
- * <p>
- * Объект передачи данных для связи (ребра) между двумя коммитами в графе Git.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "DTO for a link (edge) between two commits")
 public class LinkDto {
-    /**
-     * Defines constants for the field names used in JSON serialization.
-     * <p>
-     * Определяет константы для имен полей, используемых при JSON-сериализации.
-     */
+
     public static class FIELDS {
         public static final String SOURCE = "source";
         public static final String TARGET = "target";
     }
 
-    /**
-     * Hash of the source (parent) commit.
-     * <p>
-     * Хеш исходного (родительского) коммита.
-     */
     @SerializedName(FIELDS.SOURCE)
+    @Schema(name = FIELDS.SOURCE, description = "Hash of the source (parent) commit")
     private String source;
 
-    /**
-     * Hash of the target (child) commit.
-     * <p>
-     * Хеш целевого (дочернего) коммита.
-     */
     @SerializedName(FIELDS.TARGET)
+    @Schema(name = FIELDS.TARGET, description = "Hash of the target (child) commit")
     private String target;
 }

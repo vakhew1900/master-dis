@@ -1,0 +1,31 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.button {
+    background: var(--nav-active);
+    color: white;
+    cursor: pointer;
+    border: none;
+    padding: 10px 20px;
+    width: 100%;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.select {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-main);
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}

@@ -1,0 +1,33 @@
+package org.master.diploma.backend.controller.student;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.master.diploma.backend.config.Constants;
+import org.master.diploma.backend.entity.User;
+import org.master.diploma.backend.repository.UserRepository;
+import org.master.diploma.backend.service.LaboratoryWorkService;
+import org.master.diploma.backend.dto.student_info.StudentLabDto;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(Constants.Routes.STUDENT)
+@RequiredArgsConstructor
+@Tag(name = "Student Lab Operations", description = "Endpoints for students to view laboratory works and assignments")
+public class StudentLabController {
+    private final LaboratoryWorkService laboratoryWorkService;
+    private final UserRepository userRepository;
+
+    @GetMapping(Constants.Routes.STUDENT_LABS)
+    @Operation(summary = "Get all laboratory works with assigned tasks for current student")
+    public List<StudentLabDto> getLabs() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User student = userRepository.findByUsername(username).orElseThrow();
+        return laboratoryWorkService.getLabsForStudent(student);
+    }
+}

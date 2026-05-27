@@ -4,7 +4,6 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
@@ -27,56 +26,39 @@ import org.master.diploma.git.label.SimpleLabelGenerator;
 
 /**
  * Вспомогательный класс для работы с Git репозиториями через библиотеку JGit.
- * Отвечает за извлечение коммитов, построение графа зависимостей и вычисление diff-ов.
  */
 public final class GitHelper {
 
     private static final Logger logger = LogManager.getLogger(GitHelper.class);
     
-    /** Начальный порядковый номер для индексации коммитов. */
     public static final int START_COMMIT_NUMBER = 0;
-    
-    /** Константа для обозначения некорректного или отсутствующего номера коммита. */
     public static final int INCORRECT_COMMIT_NUMBER = -1;
 
-    /**
-     * Создает структуру графа коммитов (CommitGraph) на основе пути к репозиторию.
-     * 
-     * @param path Путь к локальному Git репозиторию.
-     * @return Объект CommitGraph, содержащий список коммитов и карту смежности.
-     */
     public static CommitGraph createCommitGraph(String path) {
-        // 1. Получаем все "сырые" коммиты из JGit (RevCommit)
+        return createCommitGraph(new File(path));
+    }
 
-
-        List<RevCommit> revCommits = getAllRevCommits(path);
-        
-        // 2. Преобразуем их в наши внутренние объекты Commit (с diff-ами и номерами)
-        List<Commit> commits = getAllCommits(revCommits, path);
-        
-        // 3. Строим матрицу смежности, связывая номера родительских и дочерних коммитов
+    public static CommitGraph createCommitGraph(File repoDir) {
+        List<RevCommit> revCommits = getAllRevCommits(repoDir);
+        List<Commit> commits = getAllCommits(revCommits, repoDir);
         Map<Integer, Set<Integer>> map = createAdjacencyMatrix(createHashToNumberMap(commits), revCommits);
 
         var graph = new CommitGraph(commits, map);
-
         SimpleLabelGenerator.getInstance().makeLabelForGitGraph(graph);
 
         return graph;
     }
 
-    /**
-     * Извлекает все коммиты изо всех веток репозитория.
-     * 
-     * @param path Путь к репозиторию.
-     * @return Список всех найденных RevCommit.
-     */
     public static List<RevCommit> getAllRevCommits(String path) {
+        return getAllRevCommits(new File(path));
+    }
+
+    public static List<RevCommit> getAllRevCommits(File repoDir) {
         List<RevCommit> commits = new ArrayList<>();
-        File repoDir = new File(path);
 
         try {
             if (!repoDir.exists() || !repoDir.isDirectory()) {
-                System.err.println("Указанный путь не является директорией или не существует.");
+                logger.error("Указанный путь не является директорией или не существует: " + repoDir.getAbsolutePath());
                 return commits;
             }
 
@@ -96,7 +78,6 @@ public final class GitHelper {
                         revWalk.markStart(revWalk.parseCommit(headCommitId));
                     }
 
-                    // Собираем все достижимые коммиты
                     for (RevCommit commit : revWalk) {
                         commits.add(commit);
                     }
@@ -110,36 +91,23 @@ public final class GitHelper {
         }
     }
 
-    /**
-     * Преобразует объект RevCommit из JGit в кастомный объект Commit, вычисляя разницу (diff).
-     * 
-     * @param commit Исходный коммит.
-     * @param repositoryPath Путь к репозиторию для выполнения diff.
-     * @param number Порядковый номер, присваиваемый коммиту.
-     * @return Объект Commit с заполненными данными о разнице и хешем.
-     */
-    public static Commit revCommitToCommit(RevCommit commit, String repositoryPath, int number) {
-        try (Git git = Git.open(new File(repositoryPath))) {
+    public static Commit revCommitToCommit(RevCommit commit, File repositoryDir, int number) {
+        try (Git git = Git.open(repositoryDir)) {
             Repository repository = git.getRepository();
 
             var out = new ByteArrayOutputStream();
             try (DiffFormatter diffFormatter = new DiffFormatter(out)) {
-                // Настройки форматирования diff
                 diffFormatter.setRepository(repository);
-//                diffFormatter.setDiffComparator(RawTextComparator.WS_IGNORE_ALL); // Игнорируем пробелы
-                diffFormatter.setDetectRenames(true); // Детектируем переименования
-                diffFormatter.setContext(0); // Минимум контекста вокруг изменений
+                diffFormatter.setDetectRenames(true);
+                diffFormatter.setContext(0);
 
                 List<DiffEntry> diffEntries = new ArrayList<>();
                 
-                // Получаем список изменений (DiffEntry)
                 if (commit.getParentCount() > 0) {
-                    // Если есть родители, сравниваем с ними
                     for (RevCommit parent : commit.getParents()) {
                         diffEntries.addAll(diffFormatter.scan(parent.getTree(), commit.getTree()));
                     }
                 } else {
-                    // Если родителей нет (первый коммит), сравниваем с "пустым" деревом
                     CanonicalTreeParser newTreeParser = new CanonicalTreeParser();
                     try (ObjectReader reader = repository.newObjectReader()) {
                         newTreeParser.reset(reader, commit.getTree().getId());
@@ -148,12 +116,11 @@ public final class GitHelper {
                     diffEntries = diffFormatter.scan(oldTreeParser, newTreeParser);
                 }
 
-                // Преобразуем DiffEntry в текстовое представление (патчи)
                 List<String> diffs = new ArrayList<>();
                 for (DiffEntry diffEntry : diffEntries) {
                     diffFormatter.format(diffEntry);
                     diffs.add(out.toString());
-                    out.reset(); // Очищаем буфер для следующего файла
+                    out.reset();
                 }
 
                 return new Commit(commit, diffEntries, diffs, number);
@@ -163,18 +130,11 @@ public final class GitHelper {
         }
     }
 
-    /**
-     * Преобразует список RevCommit в список Commit, присваивая им порядковые номера.
-     * 
-     * @param revCommits Список "сырых" коммитов.
-     * @param path Путь к репозиторию.
-     * @return Список кастомных объектов Commit.
-     */
-    public static List<Commit> getAllCommits(List<RevCommit> revCommits, String path) {
+    public static List<Commit> getAllCommits(List<RevCommit> revCommits, File repositoryDir) {
         AtomicInteger number = new AtomicInteger(START_COMMIT_NUMBER);
         return revCommits
                 .stream()
-                .map(revCommit -> revCommitToCommit(revCommit, path, number.getAndIncrement()))
+                .map(revCommit -> revCommitToCommit(revCommit, repositoryDir, number.getAndIncrement()))
                 .toList();
     }
 

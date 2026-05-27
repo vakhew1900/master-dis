@@ -1,0 +1,54 @@
+[
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\lab5\\Аврамова\\lab5 с ошибкой",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\lab5\\Аврамова\\lab5 итоговый"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\lab5\\Поливаев\\С ОШИБКОЙ",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\lab5\\Поливаев\\ПРАВИЛЬНЫЙ ВАРИАНТ"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\GitL6_Error_and_Source\\GitL6Error",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\GitL6_Error_and_Source\\GitL6"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Анонимно\\rep-lab6 - с ошибкой",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Анонимно\\rep-lab6 - без ошибки"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Дорохов\\VersionControl_Lab_6 — Ошибка1",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Дорохов\\VersionControl_Lab_6 — Рабочий"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Дорохов\\VersionControl_Lab_6 — Ошибка2",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Дорохов\\VersionControl_Lab_6 — Рабочий"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Кутузов\\dvcs-lab-6 с ошибкой",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Кутузов\\dvcs-lab-6 без ошибки"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Молчанов\\неправильное решение",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Молчанов\\правильное решение"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Панфил\\Неправильная версия",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\lab6\\Панфил\\Исходник"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\зачет\\Абрамова\\с ошибкой\\git 3",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\зачет\\Абрамова\\исходник\\git"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\зачет\\Абрамова\\с ошибкой\\git — копия",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\зачет\\Абрамова\\исхдник\\git"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\зачет\\Буркин\\git — задание 11 с ошибкой",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\зачет\\Буркин\\git - задание 11 исходный реп"
+  },
+  {
+    "student": "E:\\univer\\5_course\\diploma\\real_test\\зачет\\Пятиконов\\git - задание 9 с ошибкой\\git",
+    "reference": "E:\\univer\\5_course\\diploma\\real_test\\зачет\\Пятиконов\\git - задание 9 исходный\\git"
+  }
+]

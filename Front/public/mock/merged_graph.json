@@ -1,0 +1,3258 @@
+
+{
+                
+  "merged_graph": {
+    "nodes": [
+      {
+        "id": "g1_0",
+        "number": 0,
+        "hash": "d3441df7c2d047b9bcab8fdd8725ccd547a8ab47",
+        "message": "commit in master",
+        "commitDate": "2024-04-15T10:40:34Z",
+        "authorDate": "2024-04-15T10:40:34Z",
+        "author": {
+          "name": "Elizaveta Avramova",
+          "email": "137611055+ElizavetaChip@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "-    if play_again \u003d\u003d \u0027да\u0027:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if play_again \u003d\u003d \u0027нет\u0027:",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "MOVABLE"
+      },
+      {
+        "id": "g1_1",
+        "number": 1,
+        "hash": "fd151e4569385774373c1c85fb23135836a6c4a6",
+        "message": "4 commit in f/f",
+        "commitDate": "2024-04-15T10:39:30Z",
+        "authorDate": "2024-04-15T10:39:30Z",
+        "author": {
+          "name": "Elizaveta Avramova",
+          "email": "137611055+ElizavetaChip@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "+play_game()",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "MOVABLE"
+      },
+      {
+        "id": "g1_2",
+        "number": 2,
+        "hash": "3d9c3d2911653d743f8426a428b1fffd13feaa1a",
+        "message": "3 cjmmit in f/f",
+        "commitDate": "2024-04-15T10:38:10Z",
+        "authorDate": "2024-04-15T10:38:10Z",
+        "author": {
+          "name": "Elizaveta Avramova",
+          "email": "137611055+ElizavetaChip@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-# Запускаем игру",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "MOVABLE"
+      },
+      {
+        "id": "g1_3",
+        "number": 3,
+        "hash": "b6bde4a / 1a03a1c",
+        "message": "2 commit in f/f",
+        "commitDate": "2024-04-15T10:37:10Z",
+        "authorDate": "2024-04-15T10:37:10Z",
+        "author": {
+          "name": "Elizaveta Avramova",
+          "email": "137611055+ElizavetaChip@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "-    print(\"Добро пожаловать в игру \u0027Угадай число\u0027!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    print(\"Добро пожаловать в игру \u0027Угадай число\u0027!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_4",
+        "number": 4,
+        "hash": "c343c070171ab9b9dd70a8c0142b8e57d37e8702",
+        "message": "commit in feature/first",
+        "commitDate": "2024-04-15T10:32:22Z",
+        "authorDate": "2024-04-15T10:32:22Z",
+        "author": {
+          "name": "Elizaveta Avramova",
+          "email": "137611055+ElizavetaChip@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "+    while attempts \u003e max_attempts:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    while attempts \u003c max_attempts:",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "MOVABLE"
+      },
+      {
+        "id": "g1_5",
+        "number": 5,
+        "hash": "e4c5cd59f8398b80b339d58cc79a6acf43ef69a9",
+        "message": "master -\u003e change finish print",
+        "commitDate": "2024-04-15T06:43:14Z",
+        "authorDate": "2024-04-15T06:43:14Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-        print(\"Спасибо за игру!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(\"Спасибо за игру! :)\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-        print(\"Спасибо за игру!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(\"Спасибо за игру! :)\")",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_6",
+        "number": 6,
+        "hash": "49e24e5051df6b4c13fc11b87719c01fc28e15fc",
+        "message": "master -\u003e add guess_number line",
+        "commitDate": "2024-04-15T06:42:47Z",
+        "authorDate": "2024-04-15T06:42:47Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "+guess_number()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+guess_number()",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_7",
+        "number": 7,
+        "hash": "11ca4818d8799801f1b89277182f127ffc881cd3",
+        "message": "second -\u003e change max_attempts",
+        "commitDate": "2024-04-15T06:42:07Z",
+        "authorDate": "2024-04-15T06:42:07Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-    max_attempts \u003d 10",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    max_attempts \u003d 15",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    max_attempts \u003d 10",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    max_attempts \u003d 15",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_8",
+        "number": 8,
+        "hash": "5a29822206dad26da046d490ed01d6fe36083f86",
+        "message": "second -\u003e change randit",
+        "commitDate": "2024-04-15T06:41:40Z",
+        "authorDate": "2024-04-15T06:41:40Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-    secret_number \u003d random.randint(1, 100)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    secret_number \u003d random.randint(1, 150)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    secret_number \u003d random.randint(1, 100)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    secret_number \u003d random.randint(1, 150)",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_9",
+        "number": 9,
+        "hash": "ec1e124970aa6152e015abbdae788ece38015238",
+        "message": "second -\u003e add import",
+        "commitDate": "2024-04-15T06:41:20Z",
+        "authorDate": "2024-04-15T06:41:20Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import enum",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    ",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import enum",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    ",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_10",
+        "number": 10,
+        "hash": "01dda97f94be55c1f6c4f6e6d2beb9100a9de6c5",
+        "message": "second -\u003e delete print",
+        "commitDate": "2024-04-15T06:40:59Z",
+        "authorDate": "2024-04-15T06:40:59Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-    print(\"Добро пожаловать в игру \u0027Угадай число\u0027!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    print(\"Добро пожаловать в игру \u0027Угадай число\u0027!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_11",
+        "number": 11,
+        "hash": "3b7ae2a0c8ad348aec2a43e8d59c20ee8b3e84f7",
+        "message": "first -\u003e add choice",
+        "commitDate": "2024-04-15T06:38:54Z",
+        "authorDate": "2024-04-15T06:38:54Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-    ",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    choices \u003d [\u0027k\u0027, \u0027n\u0027, \u0027b\u0027]",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    choices \u003d [\u0027k\u0027, \u0027n\u0027, \u0027b\u0027, \u0027f\u0027]",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    ",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    choices \u003d [\u0027k\u0027, \u0027n\u0027, \u0027b\u0027]",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    choices \u003d [\u0027k\u0027, \u0027n\u0027, \u0027b\u0027, \u0027f\u0027]",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_12",
+        "number": 12,
+        "hash": "85e8cc9f35f37b1c5dd3398e376df46c47543b1f",
+        "message": "first -\u003e delete comment in get_user_choice",
+        "commitDate": "2024-04-15T06:38:18Z",
+        "authorDate": "2024-04-15T06:38:18Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-    \"\"\"Функция для получения выбора пользователя.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    \"\"\"Функция для получения выбора пользователя.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_13",
+        "number": 13,
+        "hash": "98e3985e776b04341b163d34b69d59ceaa150325",
+        "message": "master -\u003e delete to lower",
+        "commitDate": "2024-04-15T06:36:16Z",
+        "authorDate": "2024-04-15T06:36:16Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "-        user_choice \u003d input(\"Выберите камень (k), ножницы (n) или бумагу (b): \").strip().lower()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        user_choice \u003d input(\"Выберите камень (k), ножницы (n) или бумагу (b): \").strip()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-        user_choice \u003d input(\"Выберите камень (k), ножницы (n) или бумагу (b): \").strip().lower()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        user_choice \u003d input(\"Выберите камень (k), ножницы (n) или бумагу (b): \").strip()",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_14",
+        "number": 14,
+        "hash": "d4a554e8df140359b60ec9b3b12d8c2c9d387474",
+        "message": "master -\u003e add import",
+        "commitDate": "2024-04-15T06:35:34Z",
+        "authorDate": "2024-04-15T06:35:34Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "+\u003c?xml version\u003d\"1.0\" encoding\u003d\"UTF-8\"?\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003cproject version\u003d\"4\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"VcsDirectoryMappings\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003cmapping directory\u003d\"$PROJECT_DIR$\" vcs\u003d\"Git\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/project\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import itertools",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c?xml version\u003d\"1.0\" encoding\u003d\"UTF-8\"?\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003cproject version\u003d\"4\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"VcsDirectoryMappings\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003cmapping directory\u003d\"$PROJECT_DIR$\" vcs\u003d\"Git\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/project\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import itertools",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g1_15",
+        "number": 15,
+        "hash": "8bc89d82d8e5849b3c32c2cba7afbd76bffbb69c",
+        "message": "init",
+        "commitDate": "2024-04-15T06:33:38Z",
+        "authorDate": "2024-04-15T06:33:38Z",
+        "author": {
+          "name": "Danila Kuzmin",
+          "email": "denastytiko03@mail.ru"
+        },
+        "diffs": [
+          {
+            "value": "+# Created by .ignore support plugin (hsz.mobi)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+### Python template",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Byte-compiled / optimized / DLL files",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+__pycache__/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.py[cod]",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*$py.class",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# C extensions",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.so",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Distribution / packaging",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.Python",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+env/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+build/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+develop-eggs/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+dist/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+downloads/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+eggs/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.eggs/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+lib/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+lib64/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+parts/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sdist/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+var/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.egg-info/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.installed.cfg",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.egg",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# PyInstaller",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+#  Usually these files are written by a python script from a template",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+#  before PyInstaller builds the exe, so as to inject date/other infos into it.",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.manifest",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.spec",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Installer logs",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+pip-log.txt",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+pip-delete-this-directory.txt",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Unit test / coverage reports",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+htmlcov/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.tox/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.coverage",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.coverage.*",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.cache",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+nosetests.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+coverage.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*,cover",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.hypothesis/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Translations",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.mo",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.pot",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Django stuff:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.log",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+local_settings.py",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Flask stuff:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+instance/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.webassets-cache",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Scrapy stuff:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.scrapy",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Sphinx documentation",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+docs/_build/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# PyBuilder",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+target/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# IPython Notebook",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.ipynb_checkpoints",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# pyenv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.python-version",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# celery beat schedule file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+celerybeat-schedule",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# dotenv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.env",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# virtualenv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+venv/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ENV/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Spyder project settings",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.spyderproject",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Rope project settings",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.ropeproject",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+### VirtualEnv template",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Virtualenv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Bb]in",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ii]nclude",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ll]ib",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ll]ib64",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ll]ocal",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ss]cripts",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+pyvenv.cfg",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.venv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+pip-selfcheck.json",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+### JetBrains template",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# User-specific stuff",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/workspace.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/tasks.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/usage.statistics.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dictionaries",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/shelf",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# AWS User-specific",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/aws.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Generated files",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/contentModel.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Sensitive or high-churn files",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dataSources/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dataSources.ids",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dataSources.local.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/sqlDataSources.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dynamic.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/uiDesigner.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dbnavigator.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Gradle",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/gradle.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/libraries",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Gradle and Maven with auto-import",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# When using Gradle or Maven with auto-import, you should exclude module files,",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# since they will be recreated, and may cause churn.  Uncomment if using",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# auto-import.",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/artifacts",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/compiler.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/jarRepositories.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/modules.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/*.iml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/modules",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# *.iml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# *.ipr",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# CMake",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+cmake-build-*/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Mongo Explorer plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/mongoSettings.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# File-based project format",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.iws",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# IntelliJ",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+out/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# mpeltonen/sbt-idea plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea_modules/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# JIRA plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+atlassian-ide-plugin.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Cursive Clojure plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/replstate.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# SonarLint plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/sonarlint/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Crashlytics plugin (for Android Studio and IntelliJ)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+com_crashlytics_export_strings.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+crashlytics.properties",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+crashlytics-build.properties",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+fabric.properties",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Editor-based Rest Client",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/httpRequests",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Android studio 3.1+ serialized cache file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/caches/build_file_checksums.ser",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# idea folder, uncomment if you don\u0027t need it",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Default ignored files",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+/shelf/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+/workspace.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003ccomponent name\u003d\"InspectionProjectProfileManager\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003cprofile version\u003d\"1.0\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003coption name\u003d\"myName\" value\u003d\"Project Default\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003cinspection_tool class\u003d\"PyPackageRequirementsInspection\" enabled\u003d\"true\" level\u003d\"WARNING\" enabled_by_default\u003d\"true\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+      \u003coption name\u003d\"ignoredPackages\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        \u003cvalue\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+          \u003clist size\u003d\"2\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u003citem index\u003d\"0\" class\u003d\"java.lang.String\" itemvalue\u003d\"pydantic_core\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u003citem index\u003d\"1\" class\u003d\"java.lang.String\" itemvalue\u003d\"typing_extensions\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+          \u003c/list\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        \u003c/value\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+      \u003c/option\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003c/inspection_tool\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/profile\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003ccomponent name\u003d\"InspectionProjectProfileManager\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003csettings\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003coption name\u003d\"USE_PROJECT_PROFILE\" value\u003d\"false\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003cversion value\u003d\"1.0\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/settings\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c?xml version\u003d\"1.0\" encoding\u003d\"UTF-8\"?\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003cmodule type\u003d\"PYTHON_MODULE\" version\u003d\"4\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"NewModuleRootManager\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003ccontent url\u003d\"file://$MODULE_DIR$\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003corderEntry type\u003d\"inheritedJdk\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003corderEntry type\u003d\"sourceFolder\" forTests\u003d\"false\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/module\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c?xml version\u003d\"1.0\" encoding\u003d\"UTF-8\"?\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003cproject version\u003d\"4\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"Black\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003coption name\u003d\"sdkName\" value\u003d\"Python 3.8\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"ProjectRootManager\" version\u003d\"2\" project-jdk-name\u003d\"Python 3.8\" project-jdk-type\u003d\"Python SDK\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/project\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c?xml version\u003d\"1.0\" encoding\u003d\"UTF-8\"?\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003cproject version\u003d\"4\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"ProjectModuleManager\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003cmodules\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+      \u003cmodule fileurl\u003d\"file://$PROJECT_DIR$/.idea/lab5.iml\" filepath\u003d\"$PROJECT_DIR$/.idea/lab5.iml\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003c/modules\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/project\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import random",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def guess_number():",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    print(\"Добро пожаловать в игру \u0027Угадай число\u0027!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    print(\"Я загадаю число от 1 до 100, а ты попробуй угадать его.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    secret_number \u003d random.randint(1, 100)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    attempts \u003d 0",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    max_attempts \u003d 10",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    while attempts \u003c max_attempts:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        guess \u003d int(input(\"Введите ваше предположение: \"))",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if guess \u003c secret_number:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Мое число больше вашего.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        elif guess \u003e secret_number:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Мое число меньше вашего.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Поздравляю! Вы угадали число!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            break",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        attempts +\u003d 1",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(f\"У вас осталось {max_attempts - attempts} попыток.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(\"К сожалению, вы исчерпали все попытки. Загаданное число было:\", secret_number)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    play_again \u003d input(\"Хотите сыграть еще раз? (да/нет): \").strip().lower()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if play_again \u003d\u003d \u0027да\u0027:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        guess_number()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(\"Спасибо за игру!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Запускаем игру",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+guess_number()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import random",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def get_user_choice():",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \"\"\"Функция для получения выбора пользователя.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    while True:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        user_choice \u003d input(\"Выберите камень (k), ножницы (n) или бумагу (b): \").strip().lower()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if user_choice in [\u0027k\u0027, \u0027n\u0027, \u0027b\u0027]:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return user_choice",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Пожалуйста, введите \u0027k\u0027 для камня, \u0027n\u0027 для ножниц или \u0027b\u0027 для бумаги.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def get_computer_choice():",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \"\"\"Функция для получения случайного выбора компьютера.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    choices \u003d [\u0027k\u0027, \u0027n\u0027, \u0027b\u0027]",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    return random.choice(choices)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def determine_winner(user_choice, computer_choice):",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \"\"\"Функция для определения победителя.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if user_choice \u003d\u003d computer_choice:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return \"Ничья!\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    elif (user_choice \u003d\u003d \u0027k\u0027 and computer_choice \u003d\u003d \u0027n\u0027) or \\",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+         (user_choice \u003d\u003d \u0027n\u0027 and computer_choice \u003d\u003d \u0027b\u0027) or \\",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+         (user_choice \u003d\u003d \u0027b\u0027 and computer_choice \u003d\u003d \u0027k\u0027):",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return \"Пользователь победил!\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return \"Компьютер победил!\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def play_game():",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \"\"\"Функция для запуска игры.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    print(\"Добро пожаловать в игру \u0027Камень, ножницы, бумага\u0027!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    while True:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        user_choice \u003d get_user_choice()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        computer_choice \u003d get_computer_choice()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(f\"Пользователь выбрал: {user_choice}\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(f\"Компьютер выбрал: {computer_choice}\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(determine_winner(user_choice, computer_choice))",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        play_again \u003d input(\"Хотите сыграть еще раз? (да/нет): \").strip().lower()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if play_again !\u003d \u0027да\u0027:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Спасибо за игру!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            break",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Запускаем игру",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+play_game()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Created by .ignore support plugin (hsz.mobi)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+### Python template",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Byte-compiled / optimized / DLL files",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+__pycache__/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.py[cod]",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*$py.class",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# C extensions",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.so",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Distribution / packaging",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.Python",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+env/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+build/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+develop-eggs/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+dist/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+downloads/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+eggs/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.eggs/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+lib/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+lib64/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+parts/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+sdist/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+var/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.egg-info/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.installed.cfg",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.egg",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# PyInstaller",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+#  Usually these files are written by a python script from a template",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+#  before PyInstaller builds the exe, so as to inject date/other infos into it.",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.manifest",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.spec",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Installer logs",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+pip-log.txt",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+pip-delete-this-directory.txt",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Unit test / coverage reports",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+htmlcov/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.tox/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.coverage",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.coverage.*",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.cache",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+nosetests.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+coverage.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*,cover",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.hypothesis/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Translations",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.mo",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.pot",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Django stuff:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.log",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+local_settings.py",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Flask stuff:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+instance/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.webassets-cache",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Scrapy stuff:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.scrapy",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Sphinx documentation",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+docs/_build/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# PyBuilder",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+target/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# IPython Notebook",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.ipynb_checkpoints",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# pyenv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.python-version",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# celery beat schedule file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+celerybeat-schedule",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# dotenv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.env",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# virtualenv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+venv/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+ENV/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Spyder project settings",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.spyderproject",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Rope project settings",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.ropeproject",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+### VirtualEnv template",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Virtualenv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Bb]in",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ii]nclude",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ll]ib",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ll]ib64",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ll]ocal",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+[Ss]cripts",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+pyvenv.cfg",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.venv",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+pip-selfcheck.json",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+### JetBrains template",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# User-specific stuff",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/workspace.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/tasks.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/usage.statistics.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dictionaries",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/shelf",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# AWS User-specific",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/aws.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Generated files",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/contentModel.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Sensitive or high-churn files",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dataSources/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dataSources.ids",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dataSources.local.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/sqlDataSources.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dynamic.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/uiDesigner.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/dbnavigator.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Gradle",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/gradle.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/libraries",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Gradle and Maven with auto-import",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# When using Gradle or Maven with auto-import, you should exclude module files,",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# since they will be recreated, and may cause churn.  Uncomment if using",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# auto-import.",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/artifacts",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/compiler.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/jarRepositories.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/modules.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/*.iml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea/modules",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# *.iml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# *.ipr",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# CMake",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+cmake-build-*/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Mongo Explorer plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/**/mongoSettings.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# File-based project format",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+*.iws",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# IntelliJ",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+out/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# mpeltonen/sbt-idea plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea_modules/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# JIRA plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+atlassian-ide-plugin.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Cursive Clojure plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/replstate.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# SonarLint plugin",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/sonarlint/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Crashlytics plugin (for Android Studio and IntelliJ)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+com_crashlytics_export_strings.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+crashlytics.properties",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+crashlytics-build.properties",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+fabric.properties",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Editor-based Rest Client",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/httpRequests",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Android studio 3.1+ serialized cache file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+.idea/caches/build_file_checksums.ser",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# idea folder, uncomment if you don\u0027t need it",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# .idea",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Default ignored files",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+/shelf/",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+/workspace.xml",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003ccomponent name\u003d\"InspectionProjectProfileManager\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003cprofile version\u003d\"1.0\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003coption name\u003d\"myName\" value\u003d\"Project Default\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003cinspection_tool class\u003d\"PyPackageRequirementsInspection\" enabled\u003d\"true\" level\u003d\"WARNING\" enabled_by_default\u003d\"true\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+      \u003coption name\u003d\"ignoredPackages\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        \u003cvalue\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+          \u003clist size\u003d\"2\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u003citem index\u003d\"0\" class\u003d\"java.lang.String\" itemvalue\u003d\"pydantic_core\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            \u003citem index\u003d\"1\" class\u003d\"java.lang.String\" itemvalue\u003d\"typing_extensions\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+          \u003c/list\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        \u003c/value\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+      \u003c/option\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003c/inspection_tool\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/profile\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003ccomponent name\u003d\"InspectionProjectProfileManager\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003csettings\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003coption name\u003d\"USE_PROJECT_PROFILE\" value\u003d\"false\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003cversion value\u003d\"1.0\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/settings\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c?xml version\u003d\"1.0\" encoding\u003d\"UTF-8\"?\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003cmodule type\u003d\"PYTHON_MODULE\" version\u003d\"4\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"NewModuleRootManager\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003ccontent url\u003d\"file://$MODULE_DIR$\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003corderEntry type\u003d\"inheritedJdk\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003corderEntry type\u003d\"sourceFolder\" forTests\u003d\"false\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/module\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c?xml version\u003d\"1.0\" encoding\u003d\"UTF-8\"?\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003cproject version\u003d\"4\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"Black\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003coption name\u003d\"sdkName\" value\u003d\"Python 3.8\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"ProjectRootManager\" version\u003d\"2\" project-jdk-name\u003d\"Python 3.8\" project-jdk-type\u003d\"Python SDK\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/project\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c?xml version\u003d\"1.0\" encoding\u003d\"UTF-8\"?\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003cproject version\u003d\"4\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003ccomponent name\u003d\"ProjectModuleManager\"\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003cmodules\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+      \u003cmodule fileurl\u003d\"file://$PROJECT_DIR$/.idea/lab5.iml\" filepath\u003d\"$PROJECT_DIR$/.idea/lab5.iml\" /\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \u003c/modules\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+  \u003c/component\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+\u003c/project\u003e",
+            "state": "CORRECT"
+          },
+          {
+            "value": "\\ No newline at end of file",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import random",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def guess_number():",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    print(\"Добро пожаловать в игру \u0027Угадай число\u0027!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    print(\"Я загадаю число от 1 до 100, а ты попробуй угадать его.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    secret_number \u003d random.randint(1, 100)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    attempts \u003d 0",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    max_attempts \u003d 10",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    while attempts \u003c max_attempts:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        guess \u003d int(input(\"Введите ваше предположение: \"))",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if guess \u003c secret_number:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Мое число больше вашего.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        elif guess \u003e secret_number:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Мое число меньше вашего.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Поздравляю! Вы угадали число!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            break",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        attempts +\u003d 1",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(f\"У вас осталось {max_attempts - attempts} попыток.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(\"К сожалению, вы исчерпали все попытки. Загаданное число было:\", secret_number)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    play_again \u003d input(\"Хотите сыграть еще раз? (да/нет): \").strip().lower()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if play_again \u003d\u003d \u0027да\u0027:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        guess_number()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(\"Спасибо за игру!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Запускаем игру",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+guess_number()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+import random",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def get_user_choice():",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \"\"\"Функция для получения выбора пользователя.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    while True:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        user_choice \u003d input(\"Выберите камень (k), ножницы (n) или бумагу (b): \").strip().lower()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if user_choice in [\u0027k\u0027, \u0027n\u0027, \u0027b\u0027]:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            return user_choice",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Пожалуйста, введите \u0027k\u0027 для камня, \u0027n\u0027 для ножниц или \u0027b\u0027 для бумаги.\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def get_computer_choice():",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \"\"\"Функция для получения случайного выбора компьютера.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    choices \u003d [\u0027k\u0027, \u0027n\u0027, \u0027b\u0027]",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    return random.choice(choices)",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def determine_winner(user_choice, computer_choice):",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \"\"\"Функция для определения победителя.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if user_choice \u003d\u003d computer_choice:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return \"Ничья!\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    elif (user_choice \u003d\u003d \u0027k\u0027 and computer_choice \u003d\u003d \u0027n\u0027) or \\",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+         (user_choice \u003d\u003d \u0027n\u0027 and computer_choice \u003d\u003d \u0027b\u0027) or \\",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+         (user_choice \u003d\u003d \u0027b\u0027 and computer_choice \u003d\u003d \u0027k\u0027):",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return \"Пользователь победил!\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    else:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        return \"Компьютер победил!\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+def play_game():",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    \"\"\"Функция для запуска игры.\"\"\"",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    print(\"Добро пожаловать в игру \u0027Камень, ножницы, бумага\u0027!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    while True:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        user_choice \u003d get_user_choice()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        computer_choice \u003d get_computer_choice()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(f\"Пользователь выбрал: {user_choice}\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(f\"Компьютер выбрал: {computer_choice}\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        print(determine_winner(user_choice, computer_choice))",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        play_again \u003d input(\"Хотите сыграть еще раз? (да/нет): \").strip().lower()",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+        if play_again !\u003d \u0027да\u0027:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            print(\"Спасибо за игру!\")",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+            break",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+# Запускаем игру",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+play_game()",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "IDENTICAL"
+      },
+      {
+        "id": "g2_1",
+        "number": 1,
+        "hash": "d5263ee63b153fe437f65324431c258771f35ab8",
+        "message": "change while condition",
+        "commitDate": "2024-04-15T11:27:14Z",
+        "authorDate": "2024-04-15T11:27:14Z",
+        "author": {
+          "name": "Elizaveta Avramova",
+          "email": "137611055+ElizavetaChip@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "+    while attempts \u003e max_attempts:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    ",
+            "state": "MISSED"
+          },
+          {
+            "value": "-    while attempts \u003c max_attempts:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-    print(\"Добро пожаловать в игру \u0027Угадай число\u0027!\")",
+            "state": "MISSED"
+          }
+        ],
+        "severity": "MOVABLE"
+      },
+      {
+        "id": "g2_2",
+        "number": 2,
+        "hash": "b05d88c3300484c28adbea4c59fc4e75771e10b5",
+        "message": "delete comment before",
+        "commitDate": "2024-04-15T11:21:25Z",
+        "authorDate": "2024-04-15T11:21:25Z",
+        "author": {
+          "name": "Elizaveta Avramova",
+          "email": "137611055+ElizavetaChip@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "+",
+            "state": "CORRECT"
+          },
+          {
+            "value": "-# Запускаем игру",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "MOVABLE"
+      },
+      {
+        "id": "g2_3",
+        "number": 3,
+        "hash": "5f7ef5f2b7703ca67c705283e2edfb4cbb242569",
+        "message": "play_game line",
+        "commitDate": "2024-04-15T11:19:51Z",
+        "authorDate": "2024-04-15T11:19:51Z",
+        "author": {
+          "name": "Elizaveta Avramova",
+          "email": "137611055+ElizavetaChip@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "+play_game()",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "MOVABLE"
+      },
+      {
+        "id": "g2_4",
+        "number": 4,
+        "hash": "a6a97fbd3acda7d5c2c43c7a50915a53993aa1fa",
+        "message": "change finish print",
+        "commitDate": "2024-04-15T11:15:50Z",
+        "authorDate": "2024-04-15T11:15:50Z",
+        "author": {
+          "name": "Elizaveta Avramova",
+          "email": "137611055+ElizavetaChip@users.noreply.github.com"
+        },
+        "diffs": [
+          {
+            "value": "-    if play_again \u003d\u003d \u0027да\u0027:",
+            "state": "CORRECT"
+          },
+          {
+            "value": "+    if play_again \u003d\u003d \u0027нет\u0027:",
+            "state": "CORRECT"
+          }
+        ],
+        "severity": "MOVABLE"
+      }
+    ],
+    "links": [
+      {
+        "source": "g1_2",
+        "target": "g1_1"
+      },
+      {
+        "source": "g1_14",
+        "target": "g1_13"
+      },
+      {
+        "source": "g1_11",
+        "target": "g1_4"
+      },
+      {
+        "source": "g1_13",
+        "target": "g1_10"
+      },
+      {
+        "source": "g1_3",
+        "target": "g1_2"
+      },
+      {
+        "source": "g1_15",
+        "target": "g1_14"
+      },
+      {
+        "source": "g2_2",
+        "target": "g1_3"
+      },
+      {
+        "source": "g1_8",
+        "target": "g1_7"
+      },
+      {
+        "source": "g1_14",
+        "target": "g1_12"
+      },
+      {
+        "source": "g1_13",
+        "target": "g1_6"
+      },
+      {
+        "source": "g1_9",
+        "target": "g1_8"
+      },
+      {
+        "source": "g1_10",
+        "target": "g1_9"
+      },
+      {
+        "source": "g2_4",
+        "target": "g2_3"
+      },
+      {
+        "source": "g1_5",
+        "target": "g2_1"
+      },
+      {
+        "source": "g1_5",
+        "target": "g1_0"
+      },
+      {
+        "source": "g1_6",
+        "target": "g1_5"
+      },
+      {
+        "source": "g2_3",
+        "target": "g2_2"
+      },
+      {
+        "source": "g1_11",
+        "target": "g2_4"
+      },
+      {
+        "source": "g1_4",
+        "target": "g1_3"
+      },
+      {
+        "source": "g1_12",
+        "target": "g1_11"
+      }
+    ]
+  },
+  "compare_result": {
+    "matched_hashes_1_to_2": {
+      "3b7ae2a0c8ad348aec2a43e8d59c20ee8b3e84f7": "3b7ae2a0c8ad348aec2a43e8d59c20ee8b3e84f7",
+      "5a29822206dad26da046d490ed01d6fe36083f86": "5a29822206dad26da046d490ed01d6fe36083f86",
+      "ec1e124970aa6152e015abbdae788ece38015238": "ec1e124970aa6152e015abbdae788ece38015238",
+      "b6bde4aeab9ddc3cc039d4e7a126921363fd116c": "1a03a1c82ff806ba9a64ee42513729c943bb4c77",
+      "01dda97f94be55c1f6c4f6e6d2beb9100a9de6c5": "01dda97f94be55c1f6c4f6e6d2beb9100a9de6c5",
+      "d4a554e8df140359b60ec9b3b12d8c2c9d387474": "d4a554e8df140359b60ec9b3b12d8c2c9d387474",
+      "g1_4": "g2_1",
+      "98e3985e776b04341b163d34b69d59ceaa150325": "98e3985e776b04341b163d34b69d59ceaa150325",
+      "g1_2": "g2_2",
+      "g1_1": "g2_3",
+      "11ca4818d8799801f1b89277182f127ffc881cd3": "11ca4818d8799801f1b89277182f127ffc881cd3",
+      "g1_0": "g2_4",
+      "e4c5cd59f8398b80b339d58cc79a6acf43ef69a9": "e4c5cd59f8398b80b339d58cc79a6acf43ef69a9",
+      "49e24e5051df6b4c13fc11b87719c01fc28e15fc": "49e24e5051df6b4c13fc11b87719c01fc28e15fc",
+      "8bc89d82d8e5849b3c32c2cba7afbd76bffbb69c": "8bc89d82d8e5849b3c32c2cba7afbd76bffbb69c",
+      "85e8cc9f35f37b1c5dd3398e376df46c47543b1f": "85e8cc9f35f37b1c5dd3398e376df46c47543b1f"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+.inputWrapper {
+    margin-bottom: 16px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.input {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    box-sizing: border-box;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: var(--text-main);
+}

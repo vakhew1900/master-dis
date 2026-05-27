@@ -1,0 +1,21 @@
+.viewWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mainLayout {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.graphColumn {
+    flex: 1;
+    min-width: 0;
+}
+
+.detailsColumn {
+    width: 400px;
+    flex-shrink: 0;
+}

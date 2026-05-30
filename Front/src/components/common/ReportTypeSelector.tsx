@@ -27,12 +27,12 @@ const ReportTypeSelector: React.FC<ReportTypeSelectorProps> = ({
   sx 
 }) => {
   return (
-    <Stack direction="row" spacing={2} sx={sx} alignItems="center">
+    <Stack direction="row" spacing={2} sx={{...sx, alignItems:"center"}} >
       <TextField
         select
         label="Тип отчета"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value as ReportType)}
         sx={{ minWidth: 250 }}
         size="small"
       >

@@ -17,6 +17,7 @@ import { getComparisonResultState } from '../../api/utils';
 import type { AdminSubmissionDto } from '../../api/generated/model';
 import { GradeSubmissionDialog } from '../../components/admin/GradeSubmissionDialog';
 import ReportTypeSelector from '../../components/common/ReportTypeSelector';
+import SubmissionStatus from '../../components/common/SubmissionStatus';
 
 const SubmissionDetailPage: React.FC = () => {
   const { submissionId } = useParams<{ submissionId: string }>();
@@ -95,7 +96,10 @@ const SubmissionDetailPage: React.FC = () => {
       </Button>
 
       <Paper sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom>Решение: {submission.taskDescription}</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+          <Typography variant="h4" gutterBottom>Решение: {submission.taskDescription}</Typography>
+          <SubmissionStatus isUploaded={!!submission.studentRepoPath} />
+        </Box>
         <Typography variant="subtitle1" sx={{ mt: 2 }}>Студент: {submission.student?.lastName} {submission.student?.firstName}</Typography>
         <Typography variant="body1" sx={{ mt: 2 }}>Оценка: {submission.grade ?? 'Не оценено'}</Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>Отзыв: {submission.feedback || 'Нет отзыва'}</Typography>

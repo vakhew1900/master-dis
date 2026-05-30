@@ -12,6 +12,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FileField } from '../../components/common/FileField';
 import ReportTypeSelector from '../../components/common/ReportTypeSelector';
+import SubmissionStatus from '../../components/common/SubmissionStatus';
 import { labService } from '../../services/labService';
 import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
@@ -105,7 +106,10 @@ const StudentSubmissionPage: React.FC = () => {
             
             {lab.task && (
               <Box sx={{ mt: 2, p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
-                <Typography variant="h6">Задание №{lab.task.number}</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Typography variant="h6">Задание №{lab.task.number}</Typography>
+                  <SubmissionStatus isUploaded={!!lab.task.submittedAt} />
+                </Box>
                 <Typography variant="body1">{lab.task.description}</Typography>
               </Box>
             )}

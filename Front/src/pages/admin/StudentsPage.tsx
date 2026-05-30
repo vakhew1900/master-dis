@@ -18,11 +18,10 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { labService } from '../../services/labService';
-import type { UserResponseDto, UserCreateDto, SubmissionDto } from '../../api/generated/model';
-import SubmissionCell from '../../components/common/SubmissionCell';
-import { ActionsMenu } from '../../components/common/ActionsMenu';
+import type { UserResponseDto, UserCreateDto } from '../../api/generated/model';
 import { useNotification } from '../../components/common/NotificationManager';
 import { CreateStudentDialog } from '../../components/admin/CreateStudentDialog';
+import StudentRow from '../../components/admin/StudentRow';
 
 const StudentsPage: React.FC = () => {
   const [students, setStudents] = useState<UserResponseDto[]>([]);
@@ -100,18 +99,11 @@ const StudentsPage: React.FC = () => {
           </TableHead>
           <TableBody>
             {students.map((student) => (
-              <TableRow key={student.id}>
-                <TableCell>{student.username}</TableCell>
-                <TableCell>{`${student.lastName || ''} ${student.firstName || ''}`.trim()}</TableCell>
-                <TableCell>
-                  {(student.submissions || []).map((sub: SubmissionDto, index: number) => (
-                    <SubmissionCell key={index} labNumber={sub.labNumber} submission={sub} />
-                  ))}
-                </TableCell>
-                <TableCell align="right">
-                  <ActionsMenu onDelete={() => setOpenDelete(student.id!)} />
-                </TableCell>
-              </TableRow>
+              <StudentRow 
+                key={student.id} 
+                student={student} 
+                onDelete={(id) => setOpenDelete(id)} 
+              />
             ))}
           </TableBody>
         </Table>

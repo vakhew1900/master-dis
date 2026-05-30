@@ -6,17 +6,17 @@ import {
   Box,
   CircularProgress,
   Paper,
-  TextField,
-  Stack,
-  MenuItem
+  Stack
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { labService } from '../../services/labService';
 import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
+import type { ReportType } from '../../api/models/constants';
 import { getComparisonResultState } from '../../api/utils';
 import type { AdminSubmissionDto } from '../../api/generated/model';
 import { GradeSubmissionDialog } from '../../components/admin/GradeSubmissionDialog';
+import ReportTypeSelector from '../../components/common/ReportTypeSelector';
 
 const SubmissionDetailPage: React.FC = () => {
   const { submissionId } = useParams<{ submissionId: string }>();
@@ -24,7 +24,7 @@ const SubmissionDetailPage: React.FC = () => {
   const [submission, setSubmission] = useState<AdminSubmissionDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [openGrade, setOpenGrade] = useState(false);
-  const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
+  const [reportType, setReportType] = useState<ReportType>(REPORT_TYPES.TWO_GRAPH);
 
 
   const loadSubmission = async (id: number) => {
@@ -100,24 +100,15 @@ const SubmissionDetailPage: React.FC = () => {
         <Typography variant="body1" sx={{ mt: 2 }}>Оценка: {submission.grade ?? 'Не оценено'}</Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>Отзыв: {submission.feedback || 'Нет отзыва'}</Typography>
         
-        <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
-          <Button variant="contained" color="primary" onClick={() => setOpenGrade(true)}>
+        <Stack direction="row" spacing={2} sx={{ mt: 4 }} alignItems="center">
+          <Button variant="contained" color="primary" onClick={() => setOpenGrade(true)} sx={{ height: 40 }}>
             Оценить
           </Button>
-          <TextField
-            select
-            label="Тип отчета"
+          <ReportTypeSelector 
             value={reportType}
-            onChange={(e) => setReportType(e.target.value)}
-            sx={{ minWidth: 200 }}
-          >
-            {Object.entries(REPORT_TYPES).map(([key, value]) => (
-              <MenuItem key={key} value={value}>{key}</MenuItem>
-            ))}
-          </TextField>
-          <Button variant="contained" onClick={handleCheck}>
-            Проверить (через {reportType})
-          </Button>
+            onChange={setReportType}
+            onCheck={handleCheck}
+          />
         </Stack>
       </Paper>
 

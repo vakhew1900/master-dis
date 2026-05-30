@@ -9,8 +9,11 @@ interface FileFieldProps {
   fileName?: string;
 }
 
-export const FileField: React.FC<FileFieldProps> = ({ label, onChange, accept = ".zip", fileName }) => {
+export const FileField: React.FC<FileFieldProps> = ({ label, onChange, accept = ".zip", fileName: propFileName }) => {
   const [dragActive, setDragActive] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+
+  const fileName = propFileName || selectedFileName;
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -27,12 +30,15 @@ export const FileField: React.FC<FileFieldProps> = ({ label, onChange, accept = 
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      onChange(e.dataTransfer.files[0]);
+      const file = e.dataTransfer.files[0];
+      setSelectedFileName(file.name);
+      onChange(file);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
+    setSelectedFileName(file?.name || null);
     onChange(file);
   };
 
@@ -117,6 +123,7 @@ export const FileField: React.FC<FileFieldProps> = ({ label, onChange, accept = 
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  setSelectedFileName(null);
                   onChange(null);
                 }}
                 sx={{ ml: 0.5 }}

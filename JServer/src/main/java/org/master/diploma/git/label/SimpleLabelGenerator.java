@@ -75,6 +75,7 @@ public class SimpleLabelGenerator extends LabelGenerator {
 
         commitGraph.getVertices().forEach(
                 vertex -> {
+                    vertex.getLabels().clear();
                     addLabels(vertex.asCommit());
                 }
         );
@@ -114,14 +115,14 @@ public class SimpleLabelGenerator extends LabelGenerator {
         for (String changes : diffList) {
             // Check if we are starting a new file diff
             // Проверяем, начинаем ли мы новый diff файла
-            if (changes.startsWith(DIFF_START)) {
+            if (changes.startsWith("diff --git")) {
                 isHunk = false;
             }
             // Check if we found a hunk header
             // Проверяем, найден ли заголовок "ханка"
             if (changes.startsWith(HUNK_START)) {
                 isHunk = true;
-            } else if (isHunk) {
+            } else if (isHunk && !changes.trim().isEmpty()) {
                 // If we are within a hunk, every line represents a change label
                 // Если мы находимся внутри "ханка", каждая строка представляет собой метку изменения
                 int id = idCounter++;

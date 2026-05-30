@@ -5,6 +5,7 @@
  * OpenAPI spec version: v0
  */
 import type { StudentTaskDto } from './studentTaskDto';
+import type { UserResponseDto } from './userResponseDto';
 
 export interface StudentLabDto {
   id?: number;
@@ -12,5 +13,6 @@ export interface StudentLabDto {
   topic?: string;
   description?: string;
   maxGrade?: number;
-  tasks?: StudentTaskDto[];
+  student?: UserResponseDto;
+  task?: StudentTaskDto;
 }

@@ -17,4 +17,21 @@
     padding: 8px 12px;
     border-radius: 6px;
     color: var(--text-main);
+    transition: border-color 0.2s;
 }
+
+.inputError {
+    border-color: #f44336;
+}
+
+.inputError:focus {
+    outline-color: #f44336;
+}
+
+.helperText {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #f44336;
+}
+

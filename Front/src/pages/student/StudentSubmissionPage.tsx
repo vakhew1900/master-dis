@@ -50,12 +50,10 @@ const StudentSubmissionPage: React.FC = () => {
   }, [labId]);
 
 
-  const currentGrade = (lab?.tasks || []).reduce((sum, t) => sum + (t.grade || 0), 0);
+  const currentGrade = lab?.task?.grade || 0;
 
   const handleUpload = async () => {
-    // If there are multiple tasks, we might need a selector. 
-    // For now, assume uploading to the first task if not specified.
-    const taskId = lab?.tasks?.[0]?.id;
+    const taskId = lab?.task?.id;
     
     if (selectedFile && taskId) {
       try {
@@ -71,7 +69,7 @@ const StudentSubmissionPage: React.FC = () => {
   };
 
   const handleCheck = async () => {
-    const taskId = lab?.tasks?.[0]?.id;
+    const taskId = lab?.task?.id;
     if (taskId) {
       try {
         const params = { reportType } as { 
@@ -103,13 +101,29 @@ const StudentSubmissionPage: React.FC = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <Box>
             <Typography variant="h4" gutterBottom>Лабораторная работа №{lab.number}: {lab.topic}</Typography>
-            <Typography variant="body1" sx={{ mb: 3 }}>{lab.description}</Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>{lab.description}</Typography>
+            
+            {lab.task && (
+              <Box sx={{ mt: 2, p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
+                <Typography variant="h6">Задание №{lab.task.number}</Typography>
+                <Typography variant="body1">{lab.task.description}</Typography>
+              </Box>
+            )}
           </Box>
-          <Box sx={{ textAlign: 'right' }}>
+          <Box sx={{ textAlign: 'right', minWidth: 100 }}>
             <Typography variant="h5" color="primary">
               {currentGrade} / {lab.maxGrade || 0}
             </Typography>
             <Typography variant="caption" color="text.secondary">Баллы</Typography>
+            {lab.task?.status && (
+              <Typography variant="subtitle2" sx={{ 
+                mt: 1,
+                color: lab.task.status === 'GRADED' ? 'success.main' : 
+                       lab.task.status === 'SUBMITTED' ? 'info.main' : 'text.secondary' 
+              }}>
+                {lab.task.status}
+              </Typography>
+            )}
           </Box>
         </Box>
         

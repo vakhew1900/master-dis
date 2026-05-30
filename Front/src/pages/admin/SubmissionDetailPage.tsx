@@ -116,7 +116,7 @@ const SubmissionDetailPage: React.FC = () => {
             ))}
           </TextField>
           <Button variant="contained" onClick={handleCheck}>
-            Проверить (через {reportType})
+            Проверить
           </Button>
         </Stack>
       </Paper>

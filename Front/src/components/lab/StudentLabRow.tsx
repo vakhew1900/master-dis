@@ -8,28 +8,38 @@ interface StudentLabRowProps {
 }
 
 const StudentLabRow: React.FC<StudentLabRowProps> = ({ lab, onOpen }) => {
-  const currentGrade = (lab.tasks || []).reduce((sum, task) => sum + (task.grade || 0), 0);
+  const task = lab.task;
+  const currentGrade = task?.grade || 0;
   const maxGrade = lab.maxGrade || 0;
 
   return (
     <TableRow key={lab.id}>
       <TableCell>{lab.number}</TableCell>
-      <TableCell>{lab.topic}</TableCell>
+      <TableCell>
+        <Typography variant="body1">{lab.topic}</Typography>
+        <Typography variant="caption" color="text.secondary">{lab.description}</Typography>
+      </TableCell>
       <TableCell>
         {currentGrade} / {maxGrade}
       </TableCell>
       <TableCell>
-        {lab.tasks?.map(task => (
-          <Typography key={task.id} variant="body2" sx={{ 
+        {task ? (
+          <Typography variant="body2" sx={{ 
             color: task.status === 'GRADED' ? 'success.main' : 
                    task.status === 'SUBMITTED' ? 'info.main' : 'text.secondary' 
           }}>
             Задание {task.number}: {task.status}
           </Typography>
-        ))}
+        ) : (
+          <Typography variant="body2" color="text.secondary">Нет задания</Typography>
+        )}
       </TableCell>
       <TableCell>
-        <Button variant="contained" onClick={() => onOpen(lab.id!)}>
+        <Button 
+          variant="contained" 
+          onClick={() => onOpen(lab.id!)}
+          disabled={!task}
+        >
           Открыть
         </Button>
       </TableCell>

@@ -7,6 +7,7 @@ export type UserResponse = UserResponseDto;
 
 export const authService = {
   login: async (credentials: LoginRequestDto): Promise<UserResponse> => {
+    // eslint-disable-next-line no-useless-catch
     try {
       // Сгенерированный метод login теперь возвращает Login200 (который содержит токен)
       const response = await api.login(credentials);

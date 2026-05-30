@@ -110,7 +110,7 @@ public class AdminStudentController {
                         .student(student)
                         .task(task)
                         .submittedAt(LocalDateTime.now()) // Placeholder until actual submission
-                        .studentRepoPath("NOT_SUBMITTED")
+                        .studentRepoPath("")
                         .build());
         
         return ResponseEntity.ok(adminLabService.convertToSubmissionDto(submissionRepository.save(submission)));

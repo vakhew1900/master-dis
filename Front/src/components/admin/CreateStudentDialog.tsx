@@ -14,7 +14,7 @@ export const CreateStudentDialog: React.FC<CreateStudentDialogProps> = ({ open, 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
 
   const handleSave = () => {
-    const usernameError = validateLogin(student.username);
+    const usernameError = validateLogin(student.username!);
     const passwordError = validatePassword(student.password || '');
     
     if (usernameError || passwordError) {

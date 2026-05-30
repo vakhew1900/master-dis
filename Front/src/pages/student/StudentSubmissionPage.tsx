@@ -6,13 +6,12 @@ import {
   Box,
   Paper,
   Stack,
-  TextField,
-  MenuItem,
   Divider,
   CircularProgress
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FileField } from '../../components/common/FileField';
+import ReportTypeSelector from '../../components/common/ReportTypeSelector';
 import { labService } from '../../services/labService';
 import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
@@ -143,22 +142,12 @@ const StudentSubmissionPage: React.FC = () => {
 
           <Box>
             <Typography variant="h6">Проверка решения</Typography>
-            <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-              <TextField
-                select
-                label="Тип отчета"
-                value={reportType}
-                onChange={(e) => setReportType(e.target.value)}
-                sx={{ minWidth: 200 }}
-              >
-                {Object.entries(REPORT_TYPES).map(([key, value]) => (
-                  <MenuItem key={key} value={value}>{key}</MenuItem>
-                ))}
-              </TextField>
-              <Button variant="contained" onClick={handleCheck}>
-                Проверить
-              </Button>
-            </Stack>
+            <ReportTypeSelector 
+              value={reportType}
+              onChange={setReportType}
+              onCheck={handleCheck}
+              sx={{ mt: 2 }}
+            />
           </Box>
         </Stack>
       </Paper>

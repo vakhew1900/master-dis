@@ -10,6 +10,7 @@ import { taskService } from '../services/taskService';
 import type { TaskDto } from '../api/generated/model';
 import commonStyles from '../styles/common.module.css';
 import styles from './ComparisonPage.module.css';
+import ReportTypeSelector from '../components/common/ReportTypeSelector';
 
 const ComparisonPage: React.FC = () => {
   const { user } = useAuth();
@@ -24,7 +25,7 @@ const ComparisonPage: React.FC = () => {
   const [taskId, setTaskId] = useState('');
   const [taskFile, setTaskFile] = useState<File | null>(null);
   
-  const [method, setMethod] = useState<"TWO_GRAPH" | "MERGED_GRAPH">(REPORT_TYPES.TWO_GRAPH);
+  const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -47,10 +48,10 @@ const ComparisonPage: React.FC = () => {
       let result;
       if (tab === 0) {
         if (!studentFile || !referenceFile) return;
-        result = await graphService.compareFiles(referenceFile, studentFile, { reportType: method });
+        result = await graphService.compareFiles(referenceFile, studentFile, { reportType: reportType as any });
       } else {
         if (!taskFile || !taskId) return;
-        result = await graphService.checkRepositoryByTaskId(parseInt(taskId), taskFile, { reportType: method });
+        result = await graphService.checkRepositoryByTaskId(parseInt(taskId), taskFile, { reportType: reportType as any });
       }
       
       navigate('/comparison-result', { state: getComparisonResultState(result) });
@@ -91,16 +92,14 @@ const ComparisonPage: React.FC = () => {
       )}
 
       <Box sx={{ mt: 3 }}>
-        <label>Метод сравнения</label>
-        <select value={method} onChange={(e) => setMethod(e.target.value as "TWO_GRAPH" | "MERGED_GRAPH")} className={styles.select}>
-            <option value="TWO_GRAPH">Two Graph (Side-by-side)</option>
-            <option value="MERGED_GRAPH">Merged Graph</option>
-        </select>
+        <ReportTypeSelector 
+          value={reportType}
+          onChange={setReportType}
+          onCheck={handleCompare}
+          loading={loading}
+          buttonText="Запустить сравнение"
+        />
       </Box>
-
-      <Button variant="contained" onClick={handleCompare} disabled={loading} sx={{ mt: 3 }}>
-        {loading ? 'Обработка...' : 'Запустить сравнение'}
-      </Button>
     </div>
   );
 };

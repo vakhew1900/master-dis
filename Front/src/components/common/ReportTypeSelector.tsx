@@ -2,17 +2,18 @@ import React from 'react';
 import { Stack, TextField, MenuItem, Button } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
 import { REPORT_TYPES } from '../../api/models/constants';
+import type { ReportType } from '../../api/models/constants';
 
 interface ReportTypeSelectorProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: ReportType;
+  onChange: (value: ReportType) => void;
   onCheck: () => void;
   loading?: boolean;
   buttonText?: string;
   sx?: SxProps<Theme>;
 }
 
-const REPORT_TYPE_LABELS: Record<string, string> = {
+const REPORT_TYPE_LABELS: Record<ReportType, string> = {
   [REPORT_TYPES.TWO_GRAPH]: 'Two Graph (Side-by-side)',
   [REPORT_TYPES.MERGED_GRAPH]: 'Merged Graph',
 };

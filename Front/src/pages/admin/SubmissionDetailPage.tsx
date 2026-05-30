@@ -12,6 +12,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { labService } from '../../services/labService';
 import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
+import type { ReportType } from '../../api/models/constants';
 import { getComparisonResultState } from '../../api/utils';
 import type { AdminSubmissionDto } from '../../api/generated/model';
 import { GradeSubmissionDialog } from '../../components/admin/GradeSubmissionDialog';
@@ -23,7 +24,7 @@ const SubmissionDetailPage: React.FC = () => {
   const [submission, setSubmission] = useState<AdminSubmissionDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [openGrade, setOpenGrade] = useState(false);
-  const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
+  const [reportType, setReportType] = useState<ReportType>(REPORT_TYPES.TWO_GRAPH);
 
 
   const loadSubmission = async (id: number) => {

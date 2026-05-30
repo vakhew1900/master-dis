@@ -15,6 +15,7 @@ import ReportTypeSelector from '../../components/common/ReportTypeSelector';
 import { labService } from '../../services/labService';
 import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
+import type { ReportType } from '../../api/models/constants';
 import { getComparisonResultState } from '../../api/utils';
 import type { StudentLabDto } from '../../api/generated/model';
 
@@ -24,7 +25,7 @@ const StudentSubmissionPage: React.FC = () => {
   const [lab, setLab] = useState<StudentLabDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
+  const [reportType, setReportType] = useState<ReportType>(REPORT_TYPES.TWO_GRAPH);
 
 
     const loadLabData = async (id: number) => {

@@ -4,6 +4,7 @@ import { Tabs, Tab, Box, TextField, MenuItem, Button } from '@mui/material';
 import { graphService } from '../services/graphService';
 import { FileField } from '../components/common/FileField';
 import { REPORT_TYPES, USER_ROLES } from '../api/models/constants';
+import type { ReportType } from '../api/models/constants';
 import { getComparisonResultState } from '../api/utils';
 import { useAuth } from '../context/AuthContext';
 import { taskService } from '../services/taskService';
@@ -25,7 +26,7 @@ const ComparisonPage: React.FC = () => {
   const [taskId, setTaskId] = useState('');
   const [taskFile, setTaskFile] = useState<File | null>(null);
   
-  const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
+  const [reportType, setReportType] = useState<ReportType>(REPORT_TYPES.TWO_GRAPH);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -48,10 +49,10 @@ const ComparisonPage: React.FC = () => {
       let result;
       if (tab === 0) {
         if (!studentFile || !referenceFile) return;
-        result = await graphService.compareFiles(referenceFile, studentFile, { reportType: reportType as any });
+        result = await graphService.compareFiles(referenceFile, studentFile, { reportType });
       } else {
         if (!taskFile || !taskId) return;
-        result = await graphService.checkRepositoryByTaskId(parseInt(taskId), taskFile, { reportType: reportType as any });
+        result = await graphService.checkRepositoryByTaskId(parseInt(taskId), taskFile, { reportType });
       }
       
       navigate('/comparison-result', { state: getComparisonResultState(result) });

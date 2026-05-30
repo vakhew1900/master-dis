@@ -13,7 +13,7 @@ const SubmissionCell: React.FC<SubmissionCellProps> = ({ submission }) => {
 
   if (submission && submission.exists) {
     return (
-      <Stack spacing={0.5} alignItems="center">
+      <Stack  spacing={0.5} sx={{alignItems:"center"}}>
         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 'bold' }}>
           ЛАБ {submission.labNumber}
         </Typography>

@@ -39,6 +39,8 @@ export const REPORT_TYPES = {
   MERGED_GRAPH: 'MERGED_GRAPH',
 } as const;
 
+export type ReportType = typeof REPORT_TYPES[keyof typeof REPORT_TYPES];
+
 export const SEVERITY_COLORS = {
   [SEVERITY.IDENTICAL]: { bg: '#365939', border: '#496c4b' },
   [SEVERITY.MODIFIED]: { bg: '#5e5339', border: '#80714a' },

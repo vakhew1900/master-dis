@@ -104,7 +104,7 @@ const SubmissionDetailPage: React.FC = () => {
         <Typography variant="body1" sx={{ mt: 2 }}>Оценка: {submission.grade ?? 'Не оценено'}</Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>Отзыв: {submission.feedback || 'Нет отзыва'}</Typography>
         
-        <Stack direction="row" spacing={2} sx={{ mt: 4 }} alignItems="center">
+        <Stack direction="row" spacing={2} sx={{mt: 4,  alignItems:"center"}}>
           <Button variant="contained" color="primary" onClick={() => setOpenGrade(true)} sx={{ height: 40 }}>
             Оценить
           </Button>

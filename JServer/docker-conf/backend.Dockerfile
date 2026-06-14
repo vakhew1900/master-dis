@@ -1,0 +1,72 @@
+# Stage 1: Build
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY . .
+# Собираем все модули
+RUN mvn clean package -DskipTests
+
+# Stage 2: Runtime
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+# Копируем JAR из модуля server
+COPY --from=build /app/server/target/server-1.0.0.jar app.jar
+ENTRYPOINT ["java", "-jar", "appservices:
+                                  # MinIO - S3 compatible storage for repository archives
+                                  minio:
+                                    image: minio/minio:latest
+                                    container_name: jserver-minio
+                                    ports:
+                                      - "9000:9000" # API
+                                      - "9001:9001" # Web Console
+                                    environment:
+                                      MINIO_ROOT_USER: minioadmin
+                                      MINIO_ROOT_PASSWORD: minioadmin
+                                    volumes:
+                                      - minio_data:/data
+                                    command: server /data --console-address ":9001"
+                                    healthcheck:
+                                      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+                                      interval: 30s
+                                      timeout: 20s
+                                      retries: 3
+
+                                  backend:
+                                    build:
+                                      context: ./JServer
+                                      dockerfile: ./docker-conf/backend.Dockerfile
+                                    ports:
+                                      - "8080:8080"
+                                    environment:
+                                      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/jserver
+                                      - SPRING_DATASOURCE_USERNAME=user
+                                      - SPRING_DATASOURCE_PASSWORD=password
+                                      - ADMIN_INITIAL_PASSWORD=admin123
+                                      - MINIO_URL=http://minio:9000
+                                      - MINIO_ACCESS_KEY=minioadmin
+                                      - MINIO_SECRET_KEY=minioadmin
+                                    depends_on:
+                                      - db
+
+                                  frontend:
+                                    build:
+                                      context: ./Front
+                                      dockerfile: ./docker-conf/frontend.Dockerfile
+                                    ports:
+                                      - "80:80"
+                                    depends_on:
+                                      - backend
+
+                                  db:
+                                    image: postgres:15-alpine
+                                    environment:
+                                      POSTGRES_DB: jserver
+                                      POSTGRES_USER: user
+                                      POSTGRES_PASSWORD: password
+                                    ports:
+                                      - "5432:5432"
+                                    volumes:
+                                      - postgres_data:/var/lib/postgresql/data  # <--- ОБЯЗАТЕЛЬНО
+
+                                volumes:
+                                  postgres_data:
+                                  minio_data:.jar"]

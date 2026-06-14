@@ -1,8 +1,9 @@
-package org.master.diploma.backend.service;
+package  org.git_tutor.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.git_tutor.server.dto.student_info.StudentLabDto;
 import org.git_tutor.server.dto.student_info.StudentTaskDto;
+import org.git_tutor.server.dto.user.UserResponseDto;
 import org.git_tutor.server.entity.LaboratoryWork;
 import org.git_tutor.server.entity.StudentSubmission;
 import org.git_tutor.server.entity.Task;

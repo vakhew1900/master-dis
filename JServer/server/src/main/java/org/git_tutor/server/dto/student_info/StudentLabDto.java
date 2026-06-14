@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.git_tutor.server.dto.user.UserResponseDto;
 
-import org.master.diploma.backend.dto.user.UserResponseDto;
 
 @Data
 @NoArgsConstructor

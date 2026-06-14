@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.git_tutor.server.config.Constants;
 import org.git_tutor.server.entity.User;
 import org.git_tutor.server.repository.UserRepository;
-import org.git_tutor.server.service.LaboratoryWorkService;
 import org.git_tutor.server.dto.student_info.StudentLabDto;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.git_tutor.server.service.LaboratoryWorkService;
 
 import java.util.List;
 

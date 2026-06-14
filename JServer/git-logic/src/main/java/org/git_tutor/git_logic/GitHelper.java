@@ -44,7 +44,6 @@ public final class GitHelper {
         Map<Integer, Set<Integer>> map = createAdjacencyMatrix(createHashToNumberMap(commits), revCommits);
 
         var graph = new CommitGraph(commits, map);
-        SimpleLabelGenerator.getInstance().makeLabelForGitGraph(graph);
 
         return graph;
     }
@@ -104,9 +103,10 @@ public final class GitHelper {
                 List<DiffEntry> diffEntries = new ArrayList<>();
                 
                 if (commit.getParentCount() > 0) {
-                    for (RevCommit parent : commit.getParents()) {
-                        diffEntries.addAll(diffFormatter.scan(parent.getTree(), commit.getTree()));
-                    }
+                    // Используем только первого родителя для сравнения,
+                    // чтобы избежать дублирования диффов в мердж-коммитах.
+                    RevCommit parent = commit.getParent(0);
+                    diffEntries = diffFormatter.scan(parent.getTree(), commit.getTree());
                 } else {
                     CanonicalTreeParser newTreeParser = new CanonicalTreeParser();
                     try (ObjectReader reader = repository.newObjectReader()) {

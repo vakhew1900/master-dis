@@ -7,9 +7,19 @@ interface InputFieldProps {
   onChange: (value: string) => void;
   placeholder?: string;
   type?: string;
+  error?: boolean;
+  helperText?: string | null;
 }
 
-export const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, placeholder, type = 'text' }) => {
+export const InputField: React.FC<InputFieldProps> = ({ 
+  label, 
+  value, 
+  onChange, 
+  placeholder, 
+  type = 'text',
+  error,
+  helperText 
+}) => {
   return (
     <div className={styles.inputWrapper}>
       <label className={styles.label}>{label}</label>
@@ -17,9 +27,10 @@ export const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, 
         type={type} 
         value={value} 
         onChange={(e) => onChange(e.target.value)}
-        className={styles.input}
+        className={`${styles.input} ${error ? styles.inputError : ''}`}
         placeholder={placeholder}
       />
+      {helperText && <span className={styles.helperText}>{helperText}</span>}
     </div>
   );
 };

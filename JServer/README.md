@@ -1,17 +1,33 @@
-# Supplementary material for the scientific paper "Methods of Finding the Maximum Common Transitive Subgraph: Experimental Comparison"
+# JServer Backend
 
-## Description
+Серверная часть приложения, отвечающая за анализ структуры Git-репозиториев, их трансформацию в графы и выполнение алгоритмов сравнения.
 
-This section serves as a navigator for the supplementary material accompanying the paper "Methods of Finding the Maximum
-Common Transitive Subgraph: Experimental Comparison."
-The supplementary material includes test results of methods for finding the maximum common transitive subgraph (MCTS),
-the prompt used for the LLM-based MCTS search, test samples, and more.
+## Основные компоненты
+`src/main/java/org/master/diploma/git`: Ядро приложения. Содержит логику парсинга Git, работы с `CommitGraph` и трансформации репозитория в граф.
+`src/main/java/org/master/diploma/backend`: Контроллеры и бизнес-логика (Spring Boot).
 
-## Navigation
+## Структура проекта
 
-- [Prompt used for the LLM-based MCTS search,](docs/llm-model/index.md)
-- [Application of the MCTS method in a tutor system designed to teach students how to work with Git repositories.](docs/tutor/index.md)
-- [Examples of test cases.](docs/test/examples/index.md)
-- [Description of the generative script for creating tests with large graphs.](docs/test/generation_script/index.md)
-- [Results of MCTS Maximum Common Transitive Subgraph) search methods evaluated on a test suite.](docs/test/method_executor/index.md)
-- [Dependence of the method's execution time on the number of vertices.](docs/test/comparison-algorithms-test.md)
+### 1. Ядро (org.master.diploma.git)
+Этот пакет содержит логику работы с Git:
+- **`GitHelper`**: Основной компонент, отвечающий за парсинг Git-директории и трансформацию репозитория в структуру графа.
+- **`Commit` / `CommitGraph`**: Модели данных, представляющие коммиты и их связи.
+
+### 2. Графы и сравнение (org.master.diploma.git.graph)
+Этот пакет отвечает за представление и анализ графов:
+- **`Graph` / `Vertex`**: Классы, описывающие графы и вершины (и их наследники).
+- **`subgraphmethod`**: Основная часть приложения — реализация метода поиска наибольшего общего подграфа. Основным и наиболее эффективным классом является `BranchMethodExecutor`.
+- **`GraphCompareResult`**: Результат работы `SubgraphMethodExecutor`, содержащий сопоставление вершин, а также информацию о пропущенных и лишних метках.
+- **`dto`**: Классы для передачи данных на фронтенд, включая логику их формирования на основе `CompareResult` и сравниваемых репозиториев.
+- **`label`**: Пакет для работы с атрибутами вершин (Label). Содержит `LabelGenerator` (абстрактный класс) и его реализации для создания меток на основе содержимого коммитов.
+
+### 3. Вспомогательные компоненты
+- **`org.master.diploma.backend.support`**: Включает `BranchLCSHelper` для поиска наибольшей общей подпоследовательности (LCS) двух веток.
+- **`org.master.diploma.backend.generator`**: Инструменты для генерации тестовых деревьев и оценки производительности алгоритмов.
+
+## Технологии
+- **Язык**: Java 17+
+- **Фреймворк**: Spring Boot
+- **Работа с Git**: JGit
+- **Хранение данных**: PostgreSQL, H2 (для тестов)
+- **Дополнительно**: Lombok, Guava, Gson, Log4j2

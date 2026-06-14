@@ -1677,11 +1677,11 @@
             "type": "number",
             "format": "double"
           },
-          "tasks": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StudentTaskDto"
-            }
+          "student": {
+            "$ref": "#/components/schemas/UserResponseDto"
+          },
+          "task": {
+            "$ref": "#/components/schemas/StudentTaskDto"
           }
         }
       },

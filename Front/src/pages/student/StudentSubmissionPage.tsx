@@ -6,16 +6,17 @@ import {
   Box,
   Paper,
   Stack,
-  TextField,
-  MenuItem,
   Divider,
   CircularProgress
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FileField } from '../../components/common/FileField';
+import ReportTypeSelector from '../../components/common/ReportTypeSelector';
+import SubmissionStatus from '../../components/common/SubmissionStatus';
 import { labService } from '../../services/labService';
 import { graphService } from '../../services/graphService';
 import { REPORT_TYPES } from '../../api/models/constants';
+import type { ReportType } from '../../api/models/constants';
 import { getComparisonResultState } from '../../api/utils';
 import type { StudentLabDto } from '../../api/generated/model';
 
@@ -25,7 +26,7 @@ const StudentSubmissionPage: React.FC = () => {
   const [lab, setLab] = useState<StudentLabDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [reportType, setReportType] = useState<string>(REPORT_TYPES.TWO_GRAPH);
+  const [reportType, setReportType] = useState<ReportType>(REPORT_TYPES.TWO_GRAPH);
 
 
     const loadLabData = async (id: number) => {
@@ -50,12 +51,10 @@ const StudentSubmissionPage: React.FC = () => {
   }, [labId]);
 
 
-  const currentGrade = (lab?.tasks || []).reduce((sum, t) => sum + (t.grade || 0), 0);
+  const currentGrade = lab?.task?.grade || 0;
 
   const handleUpload = async () => {
-    // If there are multiple tasks, we might need a selector. 
-    // For now, assume uploading to the first task if not specified.
-    const taskId = lab?.tasks?.[0]?.id;
+    const taskId = lab?.task?.id;
     
     if (selectedFile && taskId) {
       try {
@@ -71,7 +70,7 @@ const StudentSubmissionPage: React.FC = () => {
   };
 
   const handleCheck = async () => {
-    const taskId = lab?.tasks?.[0]?.id;
+    const taskId = lab?.task?.id;
     if (taskId) {
       try {
         const params = { reportType } as { 
@@ -103,13 +102,32 @@ const StudentSubmissionPage: React.FC = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <Box>
             <Typography variant="h4" gutterBottom>Лабораторная работа №{lab.number}: {lab.topic}</Typography>
-            <Typography variant="body1" sx={{ mb: 3 }}>{lab.description}</Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>{lab.description}</Typography>
+            
+            {lab.task && (
+              <Box sx={{ mt: 2, p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Typography variant="h6">Задание №{lab.task.number}</Typography>
+                  <SubmissionStatus isUploaded={!!lab.task.submittedAt} />
+                </Box>
+                <Typography variant="body1">{lab.task.description}</Typography>
+              </Box>
+            )}
           </Box>
-          <Box sx={{ textAlign: 'right' }}>
+          <Box sx={{ textAlign: 'right', minWidth: 100 }}>
             <Typography variant="h5" color="primary">
               {currentGrade} / {lab.maxGrade || 0}
             </Typography>
             <Typography variant="caption" color="text.secondary">Баллы</Typography>
+            {lab.task?.status && (
+              <Typography variant="subtitle2" sx={{ 
+                mt: 1,
+                color: lab.task.status === 'GRADED' ? 'success.main' : 
+                       lab.task.status === 'SUBMITTED' ? 'info.main' : 'text.secondary' 
+              }}>
+                {lab.task.status}
+              </Typography>
+            )}
           </Box>
         </Box>
         
@@ -129,22 +147,12 @@ const StudentSubmissionPage: React.FC = () => {
 
           <Box>
             <Typography variant="h6">Проверка решения</Typography>
-            <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-              <TextField
-                select
-                label="Тип отчета"
-                value={reportType}
-                onChange={(e) => setReportType(e.target.value)}
-                sx={{ minWidth: 200 }}
-              >
-                {Object.entries(REPORT_TYPES).map(([key, value]) => (
-                  <MenuItem key={key} value={value}>{key}</MenuItem>
-                ))}
-              </TextField>
-              <Button variant="contained" onClick={handleCheck}>
-                Проверить
-              </Button>
-            </Stack>
+            <ReportTypeSelector 
+              value={reportType}
+              onChange={setReportType}
+              onCheck={handleCheck}
+              sx={{ mt: 2 }}
+            />
           </Box>
         </Stack>
       </Paper>

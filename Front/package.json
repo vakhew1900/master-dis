@@ -26,7 +26,8 @@
     "remark-parse": "^11.0.0",
     "remark-toc": "^9.0.0",
     "unist-util-visit": "^5.1.0",
-    "vis-network": "^10.0.3"
+    "vis-network": "^10.0.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

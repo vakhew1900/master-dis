@@ -61,7 +61,7 @@ const StudentLabsPage: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell width={80}>Номер</TableCell>
-              <TableCell>Тема</TableCell>
+              <TableCell>Тема и описание</TableCell>
               <TableCell width={150}>Оценка (тек./макс.)</TableCell>
               <TableCell>Статус заданий</TableCell>
               <TableCell width={120}>Действие</TableCell>

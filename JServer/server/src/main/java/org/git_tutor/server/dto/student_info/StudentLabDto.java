@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
+
+import org.master.diploma.backend.dto.user.UserResponseDto;
 
 @Data
 @NoArgsConstructor
@@ -16,5 +17,6 @@ public class StudentLabDto {
     private String topic;
     private String description;
     private Double maxGrade;
-    private List<StudentTaskDto> tasks;
+    private UserResponseDto student;
+    private StudentTaskDto task;
 }

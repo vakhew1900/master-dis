@@ -5,19 +5,30 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.git_tutor</groupId>
-        <artifactId>JServer-Parent</artifactId>
-        <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.0</version>
+        <relativePath/>
     </parent>
 
+    <groupId>org.git_tutor</groupId>
     <artifactId>server</artifactId>
+    <version>1.0.0</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <skipTests>true</skipTests>
+        <springdoc.version>2.7.0</springdoc.version>
+    </properties>
 
     <dependencies>
         <!-- Module Dependency -->
         <dependency>
             <groupId>org.git_tutor</groupId>
             <artifactId>git-logic</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- Spring Boot Starters -->
@@ -92,11 +103,12 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,6 +1,6 @@
 package org.git_tutor.server.repository;
 
-import org.master.diploma.backend.entity.User;
+import org.git_tutor.server.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

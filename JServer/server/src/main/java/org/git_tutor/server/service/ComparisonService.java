@@ -43,8 +43,8 @@ public class ComparisonService {
         try {
             return compareDirectories(referenceDir, studentDir, reportType, method);
         } finally {
-            org.master.diploma.backend.support.FileHelper.deleteRecursive(referenceDir);
-            org.master.diploma.backend.support.FileHelper.deleteRecursive(studentDir);
+            org.git_tutor.server.support.FileHelper.deleteRecursive(referenceDir);
+            org.git_tutor.server.support.FileHelper.deleteRecursive(studentDir);
         }
     }
 

@@ -1,11 +1,11 @@
 package org.git_tutor.server.service;
 
 import lombok.RequiredArgsConstructor;
-import org.master.diploma.backend.dto.SubmissionDto;
-import org.master.diploma.backend.dto.user.UserResponseDto;
-import org.master.diploma.backend.entity.LaboratoryWork;
-import org.master.diploma.backend.entity.StudentSubmission;
-import org.master.diploma.backend.entity.User;
+import org.git_tutor.server.dto.SubmissionDto;
+import org.git_tutor.server.dto.user.UserResponseDto;
+import org.git_tutor.server.entity.LaboratoryWork;
+import org.git_tutor.server.entity.StudentSubmission;
+import org.git_tutor.server.entity.User;
 import org.git_tutor.server.repository.LaboratoryWorkRepository;
 import org.git_tutor.server.repository.StudentSubmissionRepository;
 import org.git_tutor.server.repository.UserRepository;

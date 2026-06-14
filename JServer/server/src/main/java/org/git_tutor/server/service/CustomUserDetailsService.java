@@ -1,7 +1,7 @@
 package org.git_tutor.server.service;
 
 import lombok.RequiredArgsConstructor;
-import org.master.diploma.backend.entity.User;
+import org.git_tutor.server.entity.User;
 import org.git_tutor.server.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;

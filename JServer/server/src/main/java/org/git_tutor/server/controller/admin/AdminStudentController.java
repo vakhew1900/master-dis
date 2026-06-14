@@ -4,13 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.git_tutor.git_logic.graph.dto.GitComparisonResultDto;
-import org.master.diploma.backend.config.Constants;
-import org.master.diploma.backend.dto.admin.AdminSubmissionDto;
-import org.master.diploma.backend.dto.user.UserCreateDto;
-import org.master.diploma.backend.dto.user.UserResponseDto;
-import org.master.diploma.backend.entity.StudentSubmission;
-import org.master.diploma.backend.entity.Task;
-import org.master.diploma.backend.entity.User;
+import org.git_tutor.server.config.Constants;
+import org.git_tutor.server.dto.admin.AdminSubmissionDto;
+import org.git_tutor.server.dto.user.UserCreateDto;
+import org.git_tutor.server.dto.user.UserResponseDto;
+import org.git_tutor.server.entity.StudentSubmission;
+import org.git_tutor.server.entity.Task;
+import org.git_tutor.server.entity.User;
 import org.git_tutor.server.repository.StudentSubmissionRepository;
 import org.git_tutor.server.repository.TaskRepository;
 import org.git_tutor.server.repository.UserRepository;
@@ -29,10 +29,10 @@ public class AdminStudentController {
     private final UserRepository userRepository;
     private final StudentSubmissionRepository submissionRepository;
     private final TaskRepository taskRepository;
-    private final org.master.diploma.backend.service.FileService fileService;
-    private final org.master.diploma.backend.service.ComparisonService comparisonService;
-    private final org.master.diploma.backend.service.UserService userService;
-    private final org.master.diploma.backend.service.AdminLabService adminLabService;
+    private final org.git_tutor.server.service.FileService fileService;
+    private final org.git_tutor.server.service.ComparisonService comparisonService;
+    private final org.git_tutor.server.service.UserService userService;
+    private final org.git_tutor.server.service.AdminLabService adminLabService;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @GetMapping
@@ -45,8 +45,8 @@ public class AdminStudentController {
     @Operation(summary = "Check submission solution (Admin)")
     public ResponseEntity<GitComparisonResultDto> checkSubmission(
             @PathVariable Long submissionId,
-            @RequestParam(defaultValue = "MERGED_GRAPH") org.master.diploma.backend.service.ComparisonService.ReportType reportType,
-            @RequestParam(defaultValue = "BRANCH") org.master.diploma.backend.service.ComparisonService.ComparisonMethod method) throws java.io.IOException {
+            @RequestParam(defaultValue = "MERGED_GRAPH") org.git_tutor.server.service.ComparisonService.ReportType reportType,
+            @RequestParam(defaultValue = "BRANCH") org.git_tutor.server.service.ComparisonService.ComparisonMethod method) throws java.io.IOException {
         
         StudentSubmission submission = submissionRepository.findById(submissionId).orElseThrow();
         

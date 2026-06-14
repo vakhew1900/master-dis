@@ -1,11 +1,11 @@
 package org.git_tutor.server.service;
 
 import lombok.RequiredArgsConstructor;
-import org.master.diploma.backend.dto.admin.AdminLabDto;
-import org.master.diploma.backend.dto.admin.AdminSubmissionDto;
-import org.master.diploma.backend.dto.admin.AdminTaskDto;
-import org.master.diploma.backend.entity.LaboratoryWork;
-import org.master.diploma.backend.entity.Task;
+import org.git_tutor.server.dto.admin.AdminLabDto;
+import org.git_tutor.server.dto.admin.AdminSubmissionDto;
+import org.git_tutor.server.dto.admin.AdminTaskDto;
+import org.git_tutor.server.entity.LaboratoryWork;
+import org.git_tutor.server.entity.Task;
 import org.git_tutor.server.repository.LaboratoryWorkRepository;
 import org.git_tutor.server.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -63,12 +63,12 @@ public class AdminLabService {
         laboratoryWorkRepository.deleteById(id);
     }
 
-    public AdminSubmissionDto convertToSubmissionDto(org.master.diploma.backend.entity.StudentSubmission submission) {
+    public AdminSubmissionDto convertToSubmissionDto(org.git_tutor.server.entity.StudentSubmission submission) {
         return AdminSubmissionDto.builder()
                 .id(submission.getId())
                 .taskId(submission.getTask().getId())
                 .taskDescription(submission.getTask().getDescription())
-                .student(org.master.diploma.backend.dto.user.UserResponseDto.from(submission.getStudent()))
+                .student(org.git_tutor.server.dto.user.UserResponseDto.from(submission.getStudent()))
                 .studentRepoPath(submission.getStudentRepoPath())
                 .grade(submission.getGrade())
                 .feedback(submission.getFeedback())

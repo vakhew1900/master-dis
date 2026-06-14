@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
-import org.master.diploma.backend.dto.user.UserResponseDto;
+import org.git_tutor.server.dto.user.UserResponseDto;
 
 @Data
 @NoArgsConstructor

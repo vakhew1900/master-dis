@@ -3,11 +3,11 @@ package org.git_tutor.server.controller.admin;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.master.diploma.backend.config.Constants;
-import org.master.diploma.backend.dto.admin.AdminLabDto;
-import org.master.diploma.backend.dto.admin.AdminTaskDto;
-import org.master.diploma.backend.entity.LaboratoryWork;
-import org.master.diploma.backend.service.AdminLabService;
+import org.git_tutor.server.config.Constants;
+import org.git_tutor.server.dto.admin.AdminLabDto;
+import org.git_tutor.server.dto.admin.AdminTaskDto;
+import org.git_tutor.server.entity.LaboratoryWork;
+import org.git_tutor.server.service.AdminLabService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

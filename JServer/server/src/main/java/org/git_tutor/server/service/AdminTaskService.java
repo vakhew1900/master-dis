@@ -1,8 +1,8 @@
 package org.git_tutor.server.service;
 
 import lombok.RequiredArgsConstructor;
-import org.master.diploma.backend.dto.admin.AdminTaskDto;
-import org.master.diploma.backend.entity.Task;
+import org.git_tutor.server.dto.admin.AdminTaskDto;
+import org.git_tutor.server.entity.Task;
 import org.git_tutor.server.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 

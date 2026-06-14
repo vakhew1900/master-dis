@@ -1,12 +1,12 @@
 package org.git_tutor.server.service;
 
 import lombok.RequiredArgsConstructor;
-import org.master.diploma.backend.dto.student_info.StudentLabDto;
-import org.master.diploma.backend.dto.student_info.StudentTaskDto;
-import org.master.diploma.backend.entity.LaboratoryWork;
-import org.master.diploma.backend.entity.StudentSubmission;
-import org.master.diploma.backend.entity.Task;
-import org.master.diploma.backend.entity.User;
+import org.git_tutor.server.dto.student_info.StudentLabDto;
+import org.git_tutor.server.dto.student_info.StudentTaskDto;
+import org.git_tutor.server.entity.LaboratoryWork;
+import org.git_tutor.server.entity.StudentSubmission;
+import org.git_tutor.server.entity.Task;
+import org.git_tutor.server.entity.User;
 import org.git_tutor.server.repository.LaboratoryWorkRepository;
 import org.git_tutor.server.repository.StudentSubmissionRepository;
 import org.springframework.stereotype.Service;

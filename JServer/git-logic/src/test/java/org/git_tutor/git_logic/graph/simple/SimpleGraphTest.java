@@ -1,7 +1,5 @@
 package org.git_tutor.git_logic.graph.simple;
 
-import org.git_tutor.git_logic.graph.simple.SimpleGraph;
-import org.git_tutor.git_logic.graph.simple.SimpleVertex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,12 +1,12 @@
 package org.git_tutor.git_logic.graph.simple;
 
-import org.git_tutor.git_logic.git.graph.simple.SimpleGraph;
-import org.git_tutor.git_logic.git.graph.simple.SimpleVertex;
+import org.git_tutor.git_logic.graph.simple.SimpleGraph;
+import org.git_tutor.git_logic.graph.simple.SimpleVertex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.git_tutor.git_logic.git.graph.Graph;
-import org.git_tutor.git_logic.git.graph.Vertex;
+import org.git_tutor.git_logic.graph.Graph;
+import org.git_tutor.git_logic.graph.Vertex;
 
 import java.util.*;
 

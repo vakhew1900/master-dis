@@ -1,10 +1,9 @@
 package org.git_tutor.git_logic.json;
 
 import com.google.gson.Gson;
-import org.git_tutor.git_logic.git.json.JsonGraph;
 import org.junit.jupiter.api.Test;
-import org.git_tutor.git_logic.git.graph.Graph;
-import org.git_tutor.git_logic.git.graph.label.SimpleLabelVertex;
+import org.git_tutor.git_logic.graph.Graph;
+import org.git_tutor.git_logic.graph.label.SimpleLabelVertex;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

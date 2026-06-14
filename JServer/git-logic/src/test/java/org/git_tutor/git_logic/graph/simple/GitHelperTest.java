@@ -2,8 +2,8 @@ package org.git_tutor.git_logic.graph.simple;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.git_tutor.git_logic.git.git.GitHelper;
-import org.git_tutor.git_logic.git.git.model.CommitGraph;
+import org.git_tutor.git_logic.GitHelper;
+import org.git_tutor.git_logic.model.CommitGraph;
 
 public class GitHelperTest {
 

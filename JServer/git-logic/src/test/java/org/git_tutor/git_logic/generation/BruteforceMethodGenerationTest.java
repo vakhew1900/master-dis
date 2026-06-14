@@ -1,7 +1,7 @@
 package org.git_tutor.git_logic.generation;
 
-import org.git_tutor.git_logic.git.graph.subgraphmethod.BruteForceMethodExecutor;
-import org.git_tutor.git_logic.git.graph.subgraphmethod.SubgraphMethodExecutor;
+import org.git_tutor.git_logic.graph.subgraphmethod.BruteForceMethodExecutor;
+import org.git_tutor.git_logic.graph.subgraphmethod.SubgraphMethodExecutor;
 
 public class BruteforceMethodGenerationTest  extends GenerationTest{
     @Override

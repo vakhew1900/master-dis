@@ -1,7 +1,7 @@
 package org.git_tutor.git_logic.graph.method;
 
-import org.git_tutor.git_logic.git.graph.subgraphmethod.SubgraphMethodExecutor;
-import org.git_tutor.git_logic.git.graph.subgraphmethod.UniqueLabelMethodExecutor;
+import org.git_tutor.git_logic.graph.subgraphmethod.SubgraphMethodExecutor;
+import org.git_tutor.git_logic.graph.subgraphmethod.UniqueLabelMethodExecutor;
 
 /**
  * Test class for {@link UniqueLabelMethodExecutor}, extending the common test functionality

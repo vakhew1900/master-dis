@@ -3,6 +3,7 @@ package org.master.diploma.backend.controller.admin;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.git_tutor.git_logic.graph.dto.GitComparisonResultDto;
 import org.master.diploma.backend.config.Constants;
 import org.master.diploma.backend.dto.admin.AdminSubmissionDto;
 import org.master.diploma.backend.dto.user.UserCreateDto;
@@ -42,14 +43,14 @@ public class AdminStudentController {
 
     @PostMapping("/submissions/{submissionId}/check")
     @Operation(summary = "Check submission solution (Admin)")
-    public ResponseEntity<org.master.diploma.git.graph.dto.GitComparisonResultDto> checkSubmission(
+    public ResponseEntity<GitComparisonResultDto> checkSubmission(
             @PathVariable Long submissionId,
             @RequestParam(defaultValue = "MERGED_GRAPH") org.master.diploma.backend.service.ComparisonService.ReportType reportType,
             @RequestParam(defaultValue = "BRANCH") org.master.diploma.backend.service.ComparisonService.ComparisonMethod method) throws java.io.IOException {
         
         StudentSubmission submission = submissionRepository.findById(submissionId).orElseThrow();
         
-        org.master.diploma.git.graph.dto.GitComparisonResultDto result = comparisonService.compareRepositories(
+        GitComparisonResultDto result = comparisonService.compareRepositories(
                 submission.getTask().getReferenceRepoPath(), 
                 submission.getStudentRepoPath(),
                 reportType,

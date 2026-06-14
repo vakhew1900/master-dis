@@ -10,7 +10,7 @@ import org.master.diploma.backend.service.ZipProcessingService;
 import org.master.diploma.backend.repository.TaskRepository;
 import org.master.diploma.backend.entity.Task;
 import org.master.diploma.backend.support.FileHelper;
-import org.master.diploma.git.graph.dto.GitComparisonResultDto;
+import org.git_tutor.git_logic.graph.dto.GitComparisonResultDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;

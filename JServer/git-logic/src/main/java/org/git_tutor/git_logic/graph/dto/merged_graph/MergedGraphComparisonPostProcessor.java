@@ -1,0 +1,51 @@
+package org.git_tutor.git_logic.graph.dto.merged_graph;
+
+import org.git_tutor.git_logic.model.Commit;
+import org.git_tutor.git_logic.model.CommitGraph;
+import org.git_tutor.git_logic.graph.dto.GitComparisonPostProcessor;
+import org.git_tutor.git_logic.graph.dto.samples.NodeDto;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Post-processor for the merged graph view.
+ * Updates NodeDto severities directly within the merged DTO after it is built.
+ */
+public class MergedGraphComparisonPostProcessor extends GitComparisonPostProcessor<MergedGraphComparisonResultDto> {
+
+    @Override
+    public void postProcess(MergedGraphComparisonResultDto dto, CommitGraph first, CommitGraph second) {
+        List<NodeDto> nodes = dto.getMergedGraph().getNodes();
+        
+        Set<String> matchedInSecond = new HashSet<>(dto.getCompareResult().getMatchedHashes1To2().values());
+
+        for (NodeDto node : nodes) {
+            if (!NodeDto.SEVERITY_EXTRA.equals(node.getSeverity())) {
+                continue;
+            }
+
+            Commit commit = first.getVertex(node.getNumber());
+
+            for (NodeDto otherNode : nodes) {
+                if (!NodeDto.SEVERITY_MISSED.equals(otherNode.getSeverity()) || matchedInSecond.contains(otherNode.getId())) {
+                    continue;
+                }
+
+                Commit otherCommit = second.getVertex(otherNode.getNumber());
+
+                if (commit.canRelate(otherCommit)) {
+                    node.setSeverity(NodeDto.SEVERITY_MOVABLE);
+                    otherNode.setSeverity(NodeDto.SEVERITY_MOVABLE);
+                    dto.getCompareResult().getMatchedHashes1To2().put(node.getId(), otherNode.getId());
+                    matchedInSecond.add(otherNode.getId());
+                    
+                    // Recalculate diffs for the paired nodes to show actual differences instead of just EXTRACT/MISSED
+                    recalculateDiffs(node, otherNode, commit, otherCommit);
+                    break;
+                }
+            }
+        }
+    }
+}

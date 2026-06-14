@@ -14,7 +14,7 @@ import org.master.diploma.backend.repository.UserRepository;
 import org.master.diploma.backend.service.ComparisonService;
 import org.master.diploma.backend.service.FileService;
 import org.master.diploma.backend.support.FileHelper;
-import org.master.diploma.git.graph.dto.GitComparisonResultDto;
+import org.git_tutor.git_logic.graph.dto.GitComparisonResultDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -1,10 +1,10 @@
 package org.master.diploma.backend.config;
 
+import org.git_tutor.git_logic.graph.subgraphmethod.*;
 import org.master.diploma.backend.service.ComparisonService;
-import org.master.diploma.git.graph.dto.ComparisonResultBuilder;
-import org.master.diploma.git.graph.dto.merged_graph.MergedGraphResultBuilder;
-import org.master.diploma.git.graph.dto.two_graph.TwoGraphResultBuilder;
-import org.master.diploma.git.graph.subgraphmethod.*;
+import org.git_tutor.git_logic.graph.dto.ComparisonResultBuilder;
+import org.git_tutor.git_logic.graph.dto.merged_graph.MergedGraphResultBuilder;
+import org.git_tutor.git_logic.graph.dto.two_graph.TwoGraphResultBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

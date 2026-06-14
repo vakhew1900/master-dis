@@ -1,13 +1,13 @@
 package org.master.diploma.backend.service;
 
 import lombok.RequiredArgsConstructor;
-import org.master.diploma.git.git.GitHelper;
-import org.master.diploma.git.git.model.CommitGraph;
-import org.master.diploma.git.graph.GraphCompareResult;
-import org.master.diploma.git.graph.dto.ComparisonResultBuilder;
-import org.master.diploma.git.graph.dto.GitComparisonResultDto;
-import org.master.diploma.git.graph.subgraphmethod.SubgraphMethodExecutor;
-import org.master.diploma.git.label.SimpleLabelGenerator;
+import org.git_tutor.git_logic.GitHelper;
+import org.git_tutor.git_logic.model.CommitGraph;
+import org.git_tutor.git_logic.graph.GraphCompareResult;
+import org.git_tutor.git_logic.graph.dto.ComparisonResultBuilder;
+import org.git_tutor.git_logic.graph.dto.GitComparisonResultDto;
+import org.git_tutor.git_logic.graph.subgraphmethod.SubgraphMethodExecutor;
+import org.git_tutor.git_logic.label.SimpleLabelGenerator;
 import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;

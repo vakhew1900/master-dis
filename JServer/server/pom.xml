@@ -119,7 +119,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.master.diploma.backend.JServerBackendApplication</mainClass>
+                    <mainClass>org.git_tutor.server.JServerBackendApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

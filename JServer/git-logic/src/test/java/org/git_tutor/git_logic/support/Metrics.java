@@ -1,4 +1,4 @@
-package org.git_tutor.git_logic.metrics;
+package org.git_tutor.git_logic.support;
 
 import com.google.common.collect.Sets;
 import de.vandermeer.asciitable.AsciiTable;

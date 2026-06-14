@@ -3,6 +3,7 @@ package org.git_tutor.git_logic.graph.method;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.git_tutor.git_logic.support.Metrics;
 import org.junit.jupiter.api.*;
 import org.git_tutor.git_logic.graph.Graph;
 import org.git_tutor.git_logic.graph.GraphCompareResult;
@@ -10,14 +11,14 @@ import org.git_tutor.git_logic.graph.JsonPairGraph;
 import org.git_tutor.git_logic.graph.label.SimpleLabelVertex;
 import org.git_tutor.git_logic.graph.subgraphmethod.BranchMethodExecutor;
 import org.git_tutor.git_logic.graph.subgraphmethod.SubgraphMethodExecutor;
-import org.git_tutor.git_logic.metrics.Metrics;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.git_tutor.git_logic.metrics.Metrics.findMetric;
+import static org.git_tutor.git_logic.support.Metrics.findMetric;
+
 
 /**
  * Abstract base class for testing different SubgraphMethodExecutor implementations.

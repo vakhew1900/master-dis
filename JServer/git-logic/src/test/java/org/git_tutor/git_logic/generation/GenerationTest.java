@@ -1,5 +1,6 @@
 package org.git_tutor.git_logic.generation;
 
+import org.git_tutor.git_logic.support.Metrics;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
@@ -13,7 +14,6 @@ import org.git_tutor.git_logic.graph.label.LabelVertex;
 import org.git_tutor.git_logic.graph.simple.SimpleGraph;
 import org.git_tutor.git_logic.graph.subgraphmethod.SubgraphMethodExecutor;
 import org.git_tutor.git_logic.label.SimpleLabel;
-import org.git_tutor.git_logic.metrics.Metrics;
 
 import java.util.ArrayList;
 import java.util.Collection;
